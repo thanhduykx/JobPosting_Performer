@@ -1,9 +1,12 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="SendWeeklyEmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:uga="clr-namespace:UiPath.GSuite.Activities;assembly=UiPath.GSuite.Activities" xmlns:ugage="clr-namespace:UiPath.GSuite.Activities.Gmail.Enums;assembly=UiPath.GSuite.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.GSuite.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="SendWeeklyEmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:uga="clr-namespace:UiPath.GSuite.Activities;assembly=UiPath.GSuite.Activities" xmlns:ugage="clr-namespace:UiPath.GSuite.Activities.Gmail.Enums;assembly=UiPath.GSuite.Activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.GSuite.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="out_Error" Type="OutArgument(x:String)" />
     <x:Property Name="out_IsSent" Type="OutArgument(x:Boolean)" />
     <x:Property sap2010:Annotation.AnnotationText="Generated HTML Email Body" Name="in_str_Body" Type="InArgument(x:String)" />
     <x:Property sap2010:Annotation.AnnotationText="Recipient Email Address" Name="in_str_ToEmail" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Email Subject Line" Name="in_str_Subject" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Connection ID for Gmail integration" Name="in_str_ConnectionId" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Attachment file path" Name="in_str_AttachmentPath" Type="InArgument(x:String)" />
   </x:Members>
   <VisualBasic.Settings>
     <x:Null />
@@ -81,30 +84,84 @@
       <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="SendWeeklyEmail" sap:VirtualizedContainerService.HintSize="866,527.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="SendWeeklyEmail" sap:VirtualizedContainerService.HintSize="866,1392" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <uga:SendEmailConnections ArgumentAttachmentPaths="{x:Null}" ArgumentAttachments="{x:Null}" AttachmentPaths="[New String(){&quot;Data\Input\2026 Open Demand Dummy List.xlsx&quot;}]" Bcc="{x:Null}" Cc="{x:Null}" ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" ReplyTo="{x:Null}" SingleAttachment="{x:Null}" TextBody="{x:Null}" AttachmentInputMode="UseExisting" AuthScopesInvalid="False" Body="[in_str_Body]" ConnectionId="a03a0f0a-762f-44c5-9d07-4d280413f2ed" DisplayName="Send Email to Candidate (Open Demand)" sap:VirtualizedContainerService.HintSize="449.6,504" sap2010:WorkflowViewState.IdRef="SendEmailConnections_1" Importance="Normal" InputType="HTML" SaveAsDraft="False" Subject="Weekly Open Demand Update - 2026" To="[New String(){in_str_ToEmail}]" UseConnectionService="True">
-      <uga:SendEmailConnections.Attachments>
-        <InArgument x:TypeArguments="scg:IEnumerable(upr:IResource)" />
-      </uga:SendEmailConnections.Attachments>
-      <uga:SendEmailConnections.AttachmentsBackup>
-        <usau:BackupSlot x:TypeArguments="ugage:AttachmentInputMode" StoredValue="UseExisting">
-          <usau:BackupSlot.BackupValues>
-            <scg:Dictionary x:TypeArguments="ugage:AttachmentInputMode, scg:List(x:Object)" />
-          </usau:BackupSlot.BackupValues>
-        </usau:BackupSlot>
-      </uga:SendEmailConnections.AttachmentsBackup>
-      <uga:SendEmailConnections.InputTypeBackup>
-        <usau:BackupSlot x:TypeArguments="ugage:BodyInputType" StoredValue="HTML">
-          <usau:BackupSlot.BackupValues>
-            <scg:Dictionary x:TypeArguments="ugage:BodyInputType, scg:List(x:Object)" />
-          </usau:BackupSlot.BackupValues>
-        </usau:BackupSlot>
-      </uga:SendEmailConnections.InputTypeBackup>
-    </uga:SendEmailConnections>
+    <TryCatch DisplayName="Try Send Weekly Email" sap:VirtualizedContainerService.HintSize="451.2,1368.8" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <Sequence DisplayName="Try" sap:VirtualizedContainerService.HintSize="449.6,912.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <uga:SendEmailConnections ArgumentAttachmentPaths="{x:Null}" ArgumentAttachments="{x:Null}" ConnectionAccountName="{x:Null}" AttachmentInputMode="UseExisting" AttachmentPaths="[New String(){in_str_AttachmentPath}]" AuthScopesInvalid="False" Bcc="{x:Null}" Body="[in_str_Body]" Cc="{x:Null}" ConnectionId="a03a0f0a-762f-44c5-9d07-4d280413f2ed" ContinueOnError="{x:Null}" DisplayName="Send Email to Candidate (Open Demand)" sap:VirtualizedContainerService.HintSize="416,512.8" sap2010:WorkflowViewState.IdRef="SendEmailConnections_1" Importance="Normal" InputType="HTML" ReplyTo="{x:Null}" SaveAsDraft="False" SingleAttachment="{x:Null}" Subject="[in_str_Subject]" TextBody="{x:Null}" To="[New String(){in_str_ToEmail}]" UseConnectionService="True">
+            <uga:SendEmailConnections.Attachments>
+              <InArgument x:TypeArguments="scg:IEnumerable(upr:IResource)" />
+            </uga:SendEmailConnections.Attachments>
+            <uga:SendEmailConnections.AttachmentsBackup>
+              <usau:BackupSlot x:TypeArguments="ugage:AttachmentInputMode" StoredValue="UseExisting">
+                <usau:BackupSlot.BackupValues>
+                  <scg:Dictionary x:TypeArguments="ugage:AttachmentInputMode, scg:List(x:Object)" />
+                </usau:BackupSlot.BackupValues>
+              </usau:BackupSlot>
+            </uga:SendEmailConnections.AttachmentsBackup>
+            <uga:SendEmailConnections.InputTypeBackup>
+              <usau:BackupSlot x:TypeArguments="ugage:BodyInputType" StoredValue="HTML">
+                <usau:BackupSlot.BackupValues>
+                  <scg:Dictionary x:TypeArguments="ugage:BodyInputType, scg:List(x:Object)" />
+                </usau:BackupSlot.BackupValues>
+              </usau:BackupSlot>
+            </uga:SendEmailConnections.InputTypeBackup>
+          </uga:SendEmailConnections>
+          <Assign DisplayName="Assign out_IsSent True" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign DisplayName="Assign out_Error Empty" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[String.Empty]</InArgument>
+            </Assign.Value>
+          </Assign>
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="381.3333333333333,23.333333333333332" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="Exception" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Catch" sap:VirtualizedContainerService.HintSize="400,271.2" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <Assign DisplayName="Assign out_IsSent False" sap:VirtualizedContainerService.HintSize="366.4,104.8" sap2010:WorkflowViewState.IdRef="Assign_3">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:Boolean">[False]</InArgument>
+                </Assign.Value>
+              </Assign>
+              <Assign DisplayName="Assign out_Error Message" sap:VirtualizedContainerService.HintSize="366.4,104.8" sap2010:WorkflowViewState.IdRef="Assign_4">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">[Exception.Message]</InArgument>
+                </Assign.Value>
+              </Assign>
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
   </Sequence>
 </Activity>

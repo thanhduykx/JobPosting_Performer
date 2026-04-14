@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f7f8fa;
+      color: #1f2937;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 680px;
+      margin: 24px auto;
+      background-color: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .header {
+      background-color: #0f4c81;
+      color: #ffffff;
+      padding: 20px 24px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .content {
+      padding: 24px;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .footer {
+      border-top: 1px solid #e5e7eb;
+      padding: 14px 24px;
+      font-size: 12px;
+      color: #6b7280;
+      background-color: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">Weekly Open Demand Update</div>
+    <div class="content">
+      <p>Hello {{Name}},</p>
+      <p>Thank you for your interest. At this moment, we do not have a matching open role for your selected criteria.</p>
+      <p>We will continue to share weekly openings and contact you as soon as a suitable opportunity is available.</p>
+      <p>Best regards,<br><strong>Recruitment Team</strong></p>
+    </div>
+    <div class="footer">
+      This email was sent to <strong>{{Email}}</strong> · Generated automatically
+    </div>
+  </div>
+</body>
+</html>

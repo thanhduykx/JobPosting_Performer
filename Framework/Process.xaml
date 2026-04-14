@@ -86,6 +86,10 @@
       <Variable x:TypeArguments="x:String" Name="str_EmailBody" />
       <Variable x:TypeArguments="x:String" Name="str_TemplateName" />
       <Variable x:TypeArguments="x:String" Name="str_Role" />
+      <Variable x:TypeArguments="x:String" Name="str_EmailSubject" />
+      <Variable x:TypeArguments="x:String" Name="str_ConnectionId" />
+      <Variable x:TypeArguments="x:String" Name="str_SendError" />
+      <Variable x:TypeArguments="x:Boolean" Name="bool_IsSent" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -141,13 +145,40 @@
         <OutArgument x:TypeArguments="x:String" x:Key="out_EmailBody">[str_EmailBody]</OutArgument>
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
+    <Assign DisplayName="Assign Subject from Config or Current Year" sap:VirtualizedContainerService.HintSize="333.6,104.8" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_EmailSubject]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("WeeklyEmailSubject") AndAlso Not String.IsNullOrWhiteSpace(in_Config("WeeklyEmailSubject").ToString), in_Config("WeeklyEmailSubject").ToString, "Weekly Open Demand Update - " + Now.ToString("yyyy"))]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Assign ConnectionId from Config or Default" sap:VirtualizedContainerService.HintSize="333.6,104.8" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_ConnectionId]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("GmailConnectionId") AndAlso Not String.IsNullOrWhiteSpace(in_Config("GmailConnectionId").ToString), in_Config("GmailConnectionId").ToString, "a03a0f0a-762f-44c5-9d07-4d280413f2ed")]</InArgument>
+      </Assign.Value>
+    </Assign>
     <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke SendWeeklyEmail" sap:VirtualizedContainerService.HintSize="333.6,113.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\SendWeeklyEmail.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_str_Body">[str_EmailBody]</InArgument>
         <InArgument x:TypeArguments="x:String" x:Key="in_str_ToEmail">[str_CandidateEmail]</InArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Error" />
-        <OutArgument x:TypeArguments="x:Boolean" x:Key="out_IsSent" />
+        <InArgument x:TypeArguments="x:String" x:Key="in_str_Subject">[str_EmailSubject]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_str_ConnectionId">[str_ConnectionId]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_str_AttachmentPath">[If(in_Config.ContainsKey("WeeklyAttachmentPath") AndAlso Not String.IsNullOrWhiteSpace(in_Config("WeeklyAttachmentPath").ToString), in_Config("WeeklyAttachmentPath").ToString, "Data\Input\2026 Open Demand Dummy List.xlsx")]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Error">[str_SendError]</OutArgument>
+        <OutArgument x:TypeArguments="x:Boolean" x:Key="out_IsSent">[bool_IsSent]</OutArgument>
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
+    <If Condition="[Not bool_IsSent]" DisplayName="Throw if Email Not Sent" sap:VirtualizedContainerService.HintSize="333.6,244.8" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Throw DisplayName="Throw SendEmail Failed Exception" Exception="[New Exception(&quot;SendWeeklyEmail failed: &quot; + str_SendError)]" sap:VirtualizedContainerService.HintSize="200,113.6" sap2010:WorkflowViewState.IdRef="Throw_1" />
+      </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="200,24.8" sap2010:WorkflowViewState.IdRef="Sequence_2" />
+      </If.Else>
+    </If>
   </Sequence>
 </Activity>
