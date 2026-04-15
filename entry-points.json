@@ -2,11 +2,6 @@
   "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
   "entryPoints": [
     {
-      "filePath": "Main_JobEmail.xaml",
-      "uniqueId": "f7a92db5-e28a-4dbe-aae6-4ac6477e594e",
-      "type": "process"
-    },
-    {
       "filePath": "Main.xaml",
       "uniqueId": "5e5f34c6-35ef-4a3b-ba6c-8f98447405eb",
       "type": "process",
