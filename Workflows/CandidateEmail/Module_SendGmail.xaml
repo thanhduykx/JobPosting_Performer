@@ -98,14 +98,14 @@
       <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="SendWeeklyEmail" sap:VirtualizedContainerService.HintSize="1180.4,1764.8" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="SendWeeklyEmail" sap:VirtualizedContainerService.HintSize="1180.4,1695.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Start Send WeeklyEmail&quot;]" />
-    <TryCatch DisplayName="Try Send Weekly Email" sap:VirtualizedContainerService.HintSize="451.2,1567.2" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+    <ui:LogMessage DisplayName="Log Message - module" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Start Send Module Email&quot;]" />
+    <TryCatch DisplayName="Try Send Weekly Email" sap:VirtualizedContainerService.HintSize="451.2,1497.6" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
         <Sequence DisplayName="Try" sap:VirtualizedContainerService.HintSize="449.6,912.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
           <sap:WorkflowViewStateService.ViewState>
