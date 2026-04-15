@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="GetTransactionData" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="GetTransactionData" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property sap2010:Annotation.AnnotationText="Sequential counter of transaction items." Name="in_TransactionNumber" Type="InArgument(x:Int32)" />
     <x:Property sap2010:Annotation.AnnotationText="Dictionary structure to store configuration data of the process (settings, constants and assets)." Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
@@ -15,35 +15,34 @@
   <sap2010:WorkflowViewState.IdRef>GetTransactionData_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <scg:List x:TypeArguments="x:String" Capacity="31">
-      <x:String>System.Activities</x:String>
-      <x:String>System.Activities.Statements</x:String>
-      <x:String>System.Activities.Expressions</x:String>
-      <x:String>System.Activities.Validation</x:String>
-      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.Activities</x:String>
       <x:String>Microsoft.VisualBasic</x:String>
       <x:String>Microsoft.VisualBasic.Activities</x:String>
       <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
       <x:String>System.Collections</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
       <x:String>System.Data</x:String>
       <x:String>System.Diagnostics</x:String>
       <x:String>System.Drawing</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
       <x:String>System.Net.Mail</x:String>
-      <x:String>System.Xml</x:String>
-      <x:String>System.Xml.Linq</x:String>
-      <x:String>UiPath.Core</x:String>
-      <x:String>UiPath.Core.Activities</x:String>
-      <x:String>System.Windows.Markup</x:String>
-      <x:String>Microsoft.Activities</x:String>
-      <x:String>UiPath.Excel.Activities</x:String>
-      <x:String>System.Collections.ObjectModel</x:String>
-      <x:String>System.Activities.DynamicUpdate</x:String>
-      <x:String>System.Runtime.Serialization</x:String>
       <x:String>System.Reflection</x:String>
       <x:String>System.Runtime.InteropServices</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
       <x:String>System.Xml.Serialization</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.Excel.Activities</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -78,6 +77,7 @@
       <AssemblyReference>System.Xml.Linq</AssemblyReference>
       <AssemblyReference>UiPath.Excel</AssemblyReference>
       <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Platform</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
@@ -100,7 +100,7 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log Message Get Transaction Item" sap:VirtualizedContainerService.HintSize="588.8,112" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Prompting user for candidate inputs...&quot;]" />
-    <ui:InputDialog DisplayName="Input Dialog Request Candidate Email" sap:VirtualizedContainerService.HintSize="588.8,241.6" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Enter Candidate Email Address (Leave blank to stop processing and exit):&#xA;Format: abc@gmail.com" Title="Step 1/3: Candidate Email">
+    <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Input Dialog Request Candidate Email" sap:VirtualizedContainerService.HintSize="588.8,241.6" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Enter Candidate Email Address (Leave blank to stop processing and exit):&#xA;Format: abc@gmail.com" Title="Step 1/3: Candidate Email" TopMost="False">
       <ui:InputDialog.Result>
         <OutArgument x:TypeArguments="x:String">[str_CandidateEmail]</OutArgument>
       </ui:InputDialog.Result>
@@ -130,7 +130,7 @@
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:InputDialog DisplayName="Input Dialog - Select Email Template" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_Template" IsPassword="False" Label="What kind of template are you looking for?" OptionsString="Spring;Summer;Autumn" Title="Step 2/3: Template Selection" TopMost="False">
+          <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog - Select Email Template" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_Template" IsPassword="False" Label="What kind of template are you looking for?" OptionsString="Spring;Summer;Autumn" Title="Step 2/3: Template Selection" TopMost="False">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:String">[str_SelectedTemplate]</OutArgument>
             </ui:InputDialog.Result>
@@ -158,7 +158,7 @@
               <InArgument x:TypeArguments="x:String">[String.Join(";", dt_Roles.AsEnumerable().Select(Function(r) r("Role").ToString()).Distinct().ToArray()) + ";All"]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:InputDialog DisplayName="Input Dialog Request Role" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_3" IsPassword="False" Label="Select the Role/Position for this candidate:" OptionsString="[str_RolesString]" Title="Step 3/3: Role">
+          <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog Request Role" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_3" IsPassword="False" Label="Select the Role/Position for this candidate:" OptionsString="[str_RolesString]" Title="Step 3/3: Role" TopMost="False">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:String">[str_Role]</OutArgument>
             </ui:InputDialog.Result>
