@@ -100,7 +100,7 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log Message Get Transaction Item" sap:VirtualizedContainerService.HintSize="588.8,112" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Prompting user for candidate inputs...&quot;]" />
-    <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Input Dialog Request Candidate Email" sap:VirtualizedContainerService.HintSize="588.8,241.6" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Enter Candidate Email Address (Leave blank to stop processing and exit):&#xA;Format: abc@gmail.com" Title="Step 1/3: Candidate Email">
+    <ui:InputDialog DisplayName="Input Dialog Request Candidate Email" sap:VirtualizedContainerService.HintSize="588.8,241.6" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Enter Candidate Email Address (Leave blank to stop processing and exit):&#xA;Format: abc@gmail.com" Title="Step 1/3: Candidate Email">
       <ui:InputDialog.Result>
         <OutArgument x:TypeArguments="x:String">[str_CandidateEmail]</OutArgument>
       </ui:InputDialog.Result>
@@ -130,7 +130,7 @@
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog - Select Email Template" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_Template" IsPassword="False" Label="What kind of template are you looking for?" OptionsString="Spring;Summer;Autumn" Title="Step 2/3: Template Selection" TopMost="False">
+          <ui:InputDialog DisplayName="Input Dialog - Select Email Template" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_Template" IsPassword="False" Label="What kind of template are you looking for?" OptionsString="Spring;Summer;Autumn" Title="Step 2/3: Template Selection" TopMost="False">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:String">[str_SelectedTemplate]</OutArgument>
             </ui:InputDialog.Result>
@@ -158,7 +158,7 @@
               <InArgument x:TypeArguments="x:String">[String.Join(";", dt_Roles.AsEnumerable().Select(Function(r) r("Role").ToString()).Distinct().ToArray()) + ";All"]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:InputDialog Options="{x:Null}" DisplayName="Input Dialog Request Role" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_3" IsPassword="False" Label="Select the Role/Position for this candidate:" OptionsString="[str_RolesString]" Title="Step 3/3: Role">
+          <ui:InputDialog DisplayName="Input Dialog Request Role" sap:VirtualizedContainerService.HintSize="492.8,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_3" IsPassword="False" Label="Select the Role/Position for this candidate:" OptionsString="[str_RolesString]" Title="Step 3/3: Role">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:String">[str_Role]</OutArgument>
             </ui:InputDialog.Result>

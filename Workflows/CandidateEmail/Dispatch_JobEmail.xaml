@@ -51,7 +51,7 @@
       <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Dispatch_JobEmail" sap:VirtualizedContainerService.HintSize="1040,3960" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="Dispatch_JobEmail" sap:VirtualizedContainerService.HintSize="1040,6005.6" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="dt_Emails" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_Jobs" />
@@ -87,7 +87,7 @@
         <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("JobEmail_Mode") AndAlso Not String.IsNullOrWhiteSpace(in_Config("JobEmail_Mode").ToString), in_Config("JobEmail_Mode").ToString.Trim.ToUpper, "AUTO")]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:InputDialog Options="{x:Null}" DisplayName="Choose sending mode (AUTO/MANUAL)" sap:VirtualizedContainerService.HintSize="1040,295.2" sap2010:WorkflowViewState.IdRef="InputDialog_Mode" IsPassword="False" Label="Select execution mode for this run:" OptionsString="AUTO;MANUAL" Title="Job Email Mode" TopMost="False">
+    <ui:InputDialog DisplayName="Choose sending mode (AUTO/MANUAL)" sap:VirtualizedContainerService.HintSize="1040,327.2" sap2010:WorkflowViewState.IdRef="InputDialog_Mode" IsPassword="False" Label="Select execution mode for this run:" OptionsString="AUTO;MANUAL" Title="Job Email Mode" TopMost="False">
       <ui:InputDialog.Result>
         <OutArgument x:TypeArguments="x:String">[str_Mode]</OutArgument>
       </ui:InputDialog.Result>
@@ -100,12 +100,17 @@
         <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(str_Mode), "AUTO", str_Mode.Trim.ToUpper)]</InArgument>
       </Assign.Value>
     </Assign>
+    <ui:InputDialog DisplayName="Select email template style" sap:VirtualizedContainerService.HintSize="1040,327.2" sap2010:WorkflowViewState.IdRef="InputDialog_TemplateGlobal" IsPassword="False" Label="Select email template style for this run (AUTO/MANUAL):" OptionsString="Weekly Template;Spring Template;Summer Template;Autumn Template;Winter Template" Title="Template Selection" TopMost="False">
+      <ui:InputDialog.Result>
+        <OutArgument x:TypeArguments="x:String">[str_TemplateName]</OutArgument>
+      </ui:InputDialog.Result>
+    </ui:InputDialog>
     <Assign DisplayName="Assign email list path" sap:VirtualizedContainerService.HintSize="1040,174.4" sap2010:WorkflowViewState.IdRef="Assign_2">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[str_EmailExcelPath]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("JobEmail_EmailListPath"), in_Config("JobEmail_EmailListPath").ToString, "Data\Input\EmailList.xlsx")]</InArgument>
+        <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("JobEmail_EmailListPath"), in_Config("JobEmail_EmailListPath").ToString, "Data\Input\CandidateEmailList.xlsx")]</InArgument>
       </Assign.Value>
     </Assign>
     <Assign DisplayName="Assign jobs path" sap:VirtualizedContainerService.HintSize="1040,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
@@ -113,7 +118,7 @@
         <OutArgument x:TypeArguments="x:String">[str_JobsExcelPath]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("JobEmail_JobsPath"), in_Config("JobEmail_JobsPath").ToString, "Data\Input\Jobs.xlsx")]</InArgument>
+        <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("JobEmail_JobsPath"), in_Config("JobEmail_JobsPath").ToString, "Data\Input\2026 Open Demand Dummy List.xlsx")]</InArgument>
       </Assign.Value>
     </Assign>
     <Assign DisplayName="Assign logs path" sap:VirtualizedContainerService.HintSize="1040,174.4" sap2010:WorkflowViewState.IdRef="Assign_4">
@@ -132,47 +137,43 @@
         <InArgument x:TypeArguments="x:Int32">[If(in_Config.ContainsKey("JobEmail_DelayMs"), CInt(in_Config("JobEmail_DelayMs")), 3000)]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:ReadRange AddHeaders="True" DataTable="[dt_Jobs]" DisplayName="Read Jobs" sap:VirtualizedContainerService.HintSize="1040,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_1" Password="{x:Null}" Range="{x:Null}" SheetName="Open Demands" WorkbookPath="Data\Input\2026 Open Demand Dummy List.xlsx" />
-    <ui:ReadCell Cell="G2" DisplayName="Read Qualifications from G2" sap:VirtualizedContainerService.HintSize="1040,113.6" sap2010:WorkflowViewState.IdRef="ReadCell_1" SheetName="Open Demands" WorkbookPath="Data\Input\2026 Open Demand Dummy List.xlsx">
+    <ui:ReadRange AddHeaders="True" DataTable="[dt_Jobs]" DisplayName="Read Jobs" sap:VirtualizedContainerService.HintSize="1040,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_1" Password="{x:Null}" Range="{x:Null}" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" WorkbookPathResource="{x:Null}" />
+    <ui:ReadCell Cell="G2" DisplayName="Read Qualifications from G2" sap:VirtualizedContainerService.HintSize="1040,113.6" sap2010:WorkflowViewState.IdRef="ReadCell_1" Password="{x:Null}" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" WorkbookPathResource="{x:Null}">
       <ui:ReadCell.Result>
         <OutArgument x:TypeArguments="x:String">[str_Qualifications]</OutArgument>
       </ui:ReadCell.Result>
     </ui:ReadCell>
-    <ui:InvokeCode Code="Dim options As New List(Of String)()&#xA;options.Add(&quot;ALL&quot;)&#xA;&#xA;For Each row As DataRow In dt.Rows&#xA;    Dim item As String = String.Empty&#xA;    If row.Table.Columns.Contains(&quot;JobID&quot;) Then&#xA;        item = row(&quot;JobID&quot;).ToString().Trim()&#xA;    ElseIf row.Table.Columns.Contains(&quot;Role&quot;) Then&#xA;        item = row(&quot;Role&quot;).ToString().Trim()&#xA;    End If&#xA;&#xA;    If Not String.IsNullOrWhiteSpace(item) AndAlso Not options.Contains(item) Then&#xA;        options.Add(item)&#xA;    End If&#xA;Next&#xA;&#xA;out_Options = String.Join(&quot;;&quot;, options)" ContinueOnError="{x:Null}" DisplayName="Build job dropdown options" sap:VirtualizedContainerService.HintSize="1040,164" sap2010:WorkflowViewState.IdRef="InvokeCode_BuildJobOptions">
+    <ui:InvokeCode Code="Dim options As New List(Of String)()&#xA;options.Add(&quot;ALL&quot;)&#xA;&#xA;For Each row As DataRow In dt.Rows&#xA;    Dim item As String = String.Empty&#xA;    If row.Table.Columns.Contains(&quot;JobID&quot;) Then&#xA;        item = row(&quot;JobID&quot;).ToString().Trim()&#xA;    ElseIf row.Table.Columns.Contains(&quot;Role&quot;) Then&#xA;        item = row(&quot;Role&quot;).ToString().Trim()&#xA;    End If&#xA;&#xA;    If Not String.IsNullOrWhiteSpace(item) AndAlso Not options.Contains(item) Then&#xA;        options.Add(item)&#xA;    End If&#xA;Next&#xA;&#xA;out_Options = String.Join(&quot;;&quot;, options)" ContinueOnError="{x:Null}" DisplayName="Build job dropdown options" sap:VirtualizedContainerService.HintSize="1040,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_BuildJobOptions">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="sd:DataTable" x:Key="dt">[dt_Jobs]</InArgument>
         <OutArgument x:TypeArguments="x:String" x:Key="out_Options">[str_JobOptions]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <If Condition="[str_Mode = &quot;MANUAL&quot;]" DisplayName="If MANUAL mode" sap:VirtualizedContainerService.HintSize="1040,1014.4" sap2010:WorkflowViewState.IdRef="If_1">
+    <If Condition="[str_Mode = &quot;MANUAL&quot;]" DisplayName="If MANUAL mode" sap:VirtualizedContainerService.HintSize="1040,1569.6" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
-        <Sequence DisplayName="Manual mode" sap:VirtualizedContainerService.HintSize="449.6,598.4" sap2010:WorkflowViewState.IdRef="Sequence_2">
+        <Sequence DisplayName="Manual mode" sap:VirtualizedContainerService.HintSize="449.6,1153.6" sap2010:WorkflowViewState.IdRef="Sequence_2">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="Input email(s)" sap:VirtualizedContainerService.HintSize="416,273.6" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Enter one or multiple emails (comma/semicolon separated)." Title="Manual Send - Emails" TopMost="False">
+          <ui:InputDialog DisplayName="Input email(s)" sap:VirtualizedContainerService.HintSize="416,273.6" sap2010:WorkflowViewState.IdRef="InputDialog_1" IsPassword="False" Label="Enter one or multiple emails (comma/semicolon separated)." Title="Manual Send - Emails" TopMost="False">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:String">[str_ManualEmails]</OutArgument>
             </ui:InputDialog.Result>
           </ui:InputDialog>
-          <ui:InputDialog Options="{x:Null}" DisplayName="Select template" sap:VirtualizedContainerService.HintSize="416,264.8" sap2010:WorkflowViewState.IdRef="InputDialog_TemplateManual" IsPassword="False" Label="Select email template style:" OptionsString="Weekly Template;Spring Template;Summer Template;Autumn Template;Winter Template" Title="Manual Send - Template" TopMost="False">
-            <ui:InputDialog.Result>
-              <OutArgument x:TypeArguments="x:String">[str_TemplateName]</OutArgument>
-            </ui:InputDialog.Result>
-          </ui:InputDialog>
-          <ui:InputDialog Options="{x:Null}" DisplayName="Select job from list" sap:VirtualizedContainerService.HintSize="416,264.8" sap2010:WorkflowViewState.IdRef="InputDialog_2" IsPassword="False" Label="Select a job from the list (or ALL)." OptionsString="[str_JobOptions]" Title="Manual Send - Job Selection" TopMost="False">
+
+          <ui:InputDialog DisplayName="Select job from list" sap:VirtualizedContainerService.HintSize="416,327.2" sap2010:WorkflowViewState.IdRef="InputDialog_2" IsPassword="False" Label="Select a job from the list (or ALL)." OptionsString="[str_JobOptions]" Title="Manual Send - Job Selection" TopMost="False">
             <ui:InputDialog.Result>
               <OutArgument x:TypeArguments="x:String">[str_ManualJobIds]</OutArgument>
             </ui:InputDialog.Result>
           </ui:InputDialog>
-          <Assign DisplayName="Normalize selected job filter" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_ManualJobFilter">
+          <Assign DisplayName="Normalize selected job filter" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_ManualJobFilter">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[str_ManualJobIds]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(str_ManualJobIds) OrElse str_ManualJobIds.Trim.ToUpper=&quot;ALL&quot;, String.Empty, str_ManualJobIds.Trim)]</InArgument>
+              <InArgument x:TypeArguments="x:String">[If(String.IsNullOrWhiteSpace(str_ManualJobIds) OrElse str_ManualJobIds.Trim.ToUpper="ALL", String.Empty, str_ManualJobIds.Trim)]</InArgument>
             </Assign.Value>
           </Assign>
         </Sequence>
@@ -228,15 +229,16 @@
           <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="449.6,568.8" sap2010:WorkflowViewState.IdRef="Sequence_4">
             <sap:WorkflowViewStateService.ViewState>
               <scg:Dictionary x:TypeArguments="x:String, x:Object">
-                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                <x:Boolean x:Key="IsExpanded" />
               </scg:Dictionary>
             </sap:WorkflowViewStateService.ViewState>
+            <ui:LogMessage DisplayName="Log sending email" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="LogMessage_Sending" Level="Info" Message="[&quot;Processing email for: &quot; + row(&quot;Email&quot;).ToString]" />
             <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke Process_SendEmail" sap:VirtualizedContainerService.HintSize="416,175.2" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" Level="{x:Null}" LogEntry="{x:Null}" LogExit="{x:Null}" Timeout="{x:Null}" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Process_SendEmail.xaml">
               <ui:InvokeWorkflowFile.Arguments>
                 <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
                 <InArgument x:TypeArguments="x:String" x:Key="in_Email">[row("Email").ToString.Trim]</InArgument>
                 <InArgument x:TypeArguments="x:String" x:Key="in_JobIds">[If(str_Mode = "MANUAL", str_ManualJobIds, String.Empty)]</InArgument>
-                <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[If(str_Mode = "MANUAL" AndAlso Not String.IsNullOrWhiteSpace(str_TemplateName), str_TemplateName.Replace(" ", "") + ".html", "WeeklyTemplate.html")]</InArgument>
+                <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[If(Not String.IsNullOrWhiteSpace(str_TemplateName), str_TemplateName.Replace(" ", "") + ".html", "WeeklyTemplate.html")]</InArgument>
                 <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Jobs">[dt_Jobs]</InArgument>
                 <InArgument x:TypeArguments="x:String" x:Key="in_Qualifications">[str_Qualifications]</InArgument>
                 <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[str_Status]</OutArgument>
@@ -246,17 +248,21 @@
             </ui:InvokeWorkflowFile>
             <If Condition="[str_Status = &quot;Success&quot;]" DisplayName="Count success/failed" sap:VirtualizedContainerService.HintSize="416,337.6" sap2010:WorkflowViewState.IdRef="If_CountSendStatus">
               <If.Then>
-                <Assign DisplayName="Increase success count" sap:VirtualizedContainerService.HintSize="334.4,82.4" sap2010:WorkflowViewState.IdRef="Assign_SuccessCount">
-                  <Assign.To>
-                    <OutArgument x:TypeArguments="x:Int32">[int_SuccessCount]</OutArgument>
-                  </Assign.To>
-                  <Assign.Value>
-                    <InArgument x:TypeArguments="x:Int32">[int_SuccessCount + 1]</InArgument>
-                  </Assign.Value>
-                </Assign>
+                <Sequence DisplayName="Success Log &amp; Count" sap:VirtualizedContainerService.HintSize="377.6,339.2" sap2010:WorkflowViewState.IdRef="Sequence_SuccessLog">
+                  <ui:LogMessage DisplayName="Log Success" sap:VirtualizedContainerService.HintSize="334.4,165.6" sap2010:WorkflowViewState.IdRef="LogMessage_Success" Level="Info" Message="[&quot;Successfully sent email to: &quot; + row(&quot;Email&quot;).ToString]" />
+                  <Assign DisplayName="Increase success count" sap:VirtualizedContainerService.HintSize="334.4,82.4" sap2010:WorkflowViewState.IdRef="Assign_SuccessCount">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:Int32">[int_SuccessCount]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:Int32">[int_SuccessCount + 1]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                </Sequence>
               </If.Then>
               <If.Else>
-                <Sequence DisplayName="Count failed" sap:VirtualizedContainerService.HintSize="334.4,169.6" sap2010:WorkflowViewState.IdRef="Sequence_CountFailed">
+                <Sequence DisplayName="Count failed" sap:VirtualizedContainerService.HintSize="334.4,360.8" sap2010:WorkflowViewState.IdRef="Sequence_CountFailed">
+                  <ui:LogMessage DisplayName="Log Failure" sap:VirtualizedContainerService.HintSize="300.8,165.6" sap2010:WorkflowViewState.IdRef="LogMessage_Fail" Level="Warn" Message="[&quot;Failed to send email to: &quot; + row(&quot;Email&quot;).ToString + &quot;. Error: &quot; + str_Error]" />
                   <Assign DisplayName="Increase failed count" sap:VirtualizedContainerService.HintSize="300.8,82.4" sap2010:WorkflowViewState.IdRef="Assign_FailedCount">
                     <Assign.To>
                       <OutArgument x:TypeArguments="x:Int32">[int_FailedCount]</OutArgument>
@@ -282,7 +288,7 @@
         </ActivityAction>
       </ui:ForEachRow.Body>
     </ui:ForEachRow>
-    <ui:WriteRange DataTable="[dt_Logs]" DisplayName="Write Logs.xlsx" sap:VirtualizedContainerService.HintSize="1040,278.4" sap2010:WorkflowViewState.IdRef="WriteRange_1" Password="{x:Null}" SheetName="[If(in_Config.ContainsKey(&quot;JobEmail_LogsSheet&quot;), in_Config(&quot;JobEmail_LogsSheet&quot;).ToString, &quot;Logs&quot;)]" StartingCell="A1" WorkbookPath="Data\Output\Logs.xlsx" />
+    <ui:WriteRange DataTable="[dt_Logs]" DisplayName="Write Logs.xlsx" sap:VirtualizedContainerService.HintSize="1040,278.4" sap2010:WorkflowViewState.IdRef="WriteRange_1" Password="{x:Null}" SheetName="[If(in_Config.ContainsKey(&quot;JobEmail_LogsSheet&quot;), in_Config(&quot;JobEmail_LogsSheet&quot;).ToString, &quot;Logs&quot;)]" StartingCell="A1" WorkbookPath="[str_LogsPath]" WorkbookPathResource="{x:Null}" />
     <ui:LogMessage DisplayName="Log completion" sap:VirtualizedContainerService.HintSize="1040,165.6" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Job opportunity email flow completed. Total recipients: &quot; + dt_Emails.Rows.Count.ToString + &quot;, Success: &quot; + int_SuccessCount.ToString + &quot;, Failed: &quot; + int_FailedCount.ToString]" />
     <If Condition="[int_SuccessCount = 0]" DisplayName="If no email sent successfully then throw" sap:VirtualizedContainerService.HintSize="1040,337.6" sap2010:WorkflowViewState.IdRef="If_NoSuccess">
       <If.Then>
@@ -294,4 +300,3 @@
     </If>
   </Sequence>
 </Activity>
-
