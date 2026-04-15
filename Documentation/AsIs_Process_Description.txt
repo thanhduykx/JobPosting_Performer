@@ -1,0 +1,38 @@
+JOB POSTING PERFORMER - AS-IS PROCESS DESCRIPTION
+--------------------------------------------------
+Project: Candidate Email Dispatch Workflow
+Methodology: Local Synchronization via Google Drive Desktop (G: Drive)
+
+1. STARTING THE PROCESS
+   - The workflow "Dispatch_JobEmail.xaml" is manually or schedule-triggered.
+   - It initializes local paths and connects to the mapped "G:\" drive.
+
+2. DYNAMIC FILE DISCOVERY (G: Drive)
+   - Jobs Discovery: Robot scans "G:\My Drive\Jobs & Email\Jobs" for the latest "Openings Dummy Copy*.xlsx" using LastWriteTime.
+   - Emails Discovery (Auto Mode): Robot scans "G:\My Drive\Jobs & Email\Mail" for the latest "CandidateEmailList*.xlsx".
+   - Local Copy: Robot copies these files to "Data\Input\" locally to ensure performance and avoid file-locking errors if users have them open.
+
+3. DATA EXTRACTION
+   - Robot reads the Jobs file and extracts a unique list of JobIDs/Roles.
+   - Robot reads Cell G2 to retrieve job qualifications/requirements.
+
+4. USER INTERACTION (English UI)
+   - Step 1: Select Recipient Mode (Manual entry via semicolon OR Auto list from Drive).
+   - Step 2: Select JobIDs from a dynamic Dropdown Menu (including 'ALL' option).
+   - Step 3: Select Email Template (Weekly, Spring, Summer, Autumn, Winter themes).
+
+5. EXECUTION & DISPATCH LOOP
+   - Robot iterates through each recipient.
+   - Logic: Filters jobs based on user selection (Step 2).
+   - Action: Invokes "Process_SendEmail.xaml" for each individual email.
+   - Parameters: Config, Email, JobIDs, Template Name, Jobs DataTable, and Qualifications.
+
+6. LOGGING & ERROR HANDLING
+   - Real-time logging: "Attempting to send...", "Successfully sent...", or "Failed to send... [Error Detail]".
+   - Exception handling: If Jobs files are missing from G: drive, the robot throws a specific error and stops safely.
+
+7. END PROCESS
+   - Logs total execution summary in the Output panel.
+--------------------------------------------------
+Last Updated: 2026-04-15
+Technician: Antigravity AI Assistant
