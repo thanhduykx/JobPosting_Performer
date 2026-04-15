@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Recruitment Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: var(--card);
+            width: 550px;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+        }
+        .header p {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            color: #94a3b8;
+        }
+
+        .mode-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .mode-card {
+            border: 2px solid #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .mode-card:hover { border-color: #cbd5e1; }
+        .mode-card.active {
+            border-color: var(--primary);
+            background-color: #eff6ff;
+        }
+        .mode-card strong { display: block; margin-bottom: 5px; }
+        .mode-card span { font-size: 12px; color: #64748b; }
+
+        #dynamicContent {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+        }
+
+        .job-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .job-item:last-child { border: none; }
+        .job-item input { margin-right: 12px; width: 18px; height: 18px; cursor: pointer; }
+        .job-item label { font-size: 14px; cursor: pointer; flex: 1; }
+
+        textarea {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: inherit;
+            resize: none;
+            box-sizing: border-box;
+        }
+
+        .footer-btns {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .btn-confirm { background: var(--primary); color: white; }
+        .btn-confirm:hover { background: #1d4ed8; }
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+
+        /* Custom scrollbar */
+        #dynamicContent::-webkit-scrollbar { width: 6px; }
+        #dynamicContent::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <p>RECRUITMENT AUTOMATION</p>
+            <h1>Welcome to Job Posting</h1>
+        </div>
+
+        <div class="section-title">Step 1: Select Operation Mode</div>
+        <div class="mode-options">
+            <div class="mode-card" id="modeAuto" onclick="setMode('Auto')">
+                <strong>Drive Auto</strong>
+                <span>Fetch from Google Cloud</span>
+            </div>
+            <div class="mode-card" id="modeManual" onclick="setMode('Manual')">
+                <strong>Manual Entry</strong>
+                <span>Paste candidates list</span>
+            </div>
+        </div>
+
+        <div class="section-title" id="dynamicTitle">Step 2: Configuration</div>
+        <div id="dynamicContent">
+            <p style="color:#94a3b8; text-align:center; margin-top:50px;">Please select a mode to continue...</p>
+        </div>
+
+        <div class="footer-btns">
+            <button class="btn btn-cancel" onclick="window.external.setResult('')">Cancel</button>
+            <button class="btn btn-confirm" onclick="submit()">Confirm Dispatch</button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = '';
+        let jobOptions = [];
+
+        // Parse job options from URL query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const jobsRaw = urlParams.get('jobs');
+        if (jobsRaw) {
+            jobOptions = jobsRaw.split(';');
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('modeAuto').classList.toggle('active', mode === 'Auto');
+            document.getElementById('modeManual').classList.toggle('active', mode === 'Manual');
+            
+            const container = document.getElementById('dynamicContent');
+            const title = document.getElementById('dynamicTitle');
+            
+            if (mode === 'Auto') {
+                title.innerText = 'Step 2: Select Job ID(s) (Checkboxes)';
+                container.innerHTML = jobOptions.map(job => `
+                    <div class="job-item">
+                        <input type="checkbox" name="jobId" value="${job}" id="job_${job}">
+                        <label for="job_${job}">${job}</label>
+                    </div>
+                `).join('');
+            } else {
+                title.innerText = 'Step 2: Enter Recipient Emails';
+                container.innerHTML = `
+                    <textarea id="emailList" placeholder="example1@gmail.com; example2@gmail.com..."></textarea>
+                `;
+            }
+        }
+
+        function submit() {
+            if (!currentMode) {
+                alert("Please select a mode.");
+                return;
+            }
+
+            let selectedJobs = [];
+            let emails = "";
+
+            if (currentMode === 'Auto') {
+                const checkboxes = document.querySelectorAll('input[name="jobId"]:checked');
+                selectedJobs = Array.from(checkboxes).map(cb => cb.value);
+                if (selectedJobs.length === 0) {
+                    alert("Please select at least one Job ID.");
+                    return;
+                }
+            } else {
+                emails = document.getElementById('emailList').value;
+                if (!emails.trim()) {
+                    alert("Please enter recipient emails.");
+                    return;
+                }
+            }
+
+            const result = {
+                "mode": currentMode,
+                "jobs": selectedJobs.join(";"),
+                "emails": emails
+            };
+            window.external.setResult(JSON.stringify(result));
+        }
+    </script>
+</body>
+</html>

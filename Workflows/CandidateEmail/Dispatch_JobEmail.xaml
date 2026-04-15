@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Dispatch_JobEmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="Dispatch_JobEmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
   </x:Members>
@@ -23,6 +23,9 @@
       <x:String>System.Xml.Serialization</x:String>
       <x:String>System.Reflection</x:String>
       <x:String>System.Linq.Expressions</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>System.Activities.Statements</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -54,9 +57,21 @@
       <AssemblyReference>System.Reflection.Metadata</AssemblyReference>
       <AssemblyReference>System.Reflection.TypeExtensions</AssemblyReference>
       <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.Console</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Linq.Async</AssemblyReference>
+      <AssemblyReference>NPOI.Core</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.Collections.NonGeneric</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Dispatch_JobEmail" sap:VirtualizedContainerService.HintSize="866,3500" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="Dispatch_JobEmail" sap:VirtualizedContainerService.HintSize="570,7488.8" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="dt_Emails" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_Jobs" />
@@ -72,32 +87,54 @@
       <Variable x:TypeArguments="x:String" Name="str_TemplateSelection" />
       <Variable x:TypeArguments="x:String" Name="str_ItemStatus" />
       <Variable x:TypeArguments="x:String" Name="str_ItemError" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_ExecutionReport" />
+      <Variable x:TypeArguments="x:String" Name="str_TemplateOptions" />
+      <Variable x:TypeArguments="x:String" Name="str_Confirmed" />
+      <Variable x:TypeArguments="x:Boolean" Name="bool_GroupMode" />
+      <Variable x:TypeArguments="x:String" Name="str_ResultJSON" />
+      <Variable x:TypeArguments="x:String" Name="str_ExitChoice" />
+      <Variable x:TypeArguments="x:String" Name="str_CurrentSelect" />
     </Sequence.Variables>
-    
-    <Sequence DisplayName="Environment Setup (Cleanup)" sap2010:WorkflowViewState.IdRef="Sequence_Cleanup">
-      <ui:LogMessage DisplayName="Log cleanup" sap2010:WorkflowViewState.IdRef="LogMessage_Cleanup" Level="Info" Message="[&quot;Cleaning up local input directory...&quot;]" />
-      <ui:CreateDirectory ContinueOnError="True" DisplayName="Ensure Input Dir" sap2010:WorkflowViewState.IdRef="CreateDirectory_Input" Path="Data\Input" />
-      <ui:InvokeCode ContinueOnError="True" DisplayName="Invoke Code - Clear Excel Files" sap2010:WorkflowViewState.IdRef="InvokeCode_ClearFiles">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:InvokeCode Code="Dim dt As New DataTable(&quot;ExecutionReport&quot;)&#xA;dt.Columns.Add(&quot;Candidate Email&quot;)&#xA;dt.Columns.Add(&quot;Status&quot;)&#xA;dt.Columns.Add(&quot;Details&quot;)&#xA;dt.Columns.Add(&quot;Timestamp&quot;)&#xA;out_dtReport = dt" ContinueOnError="True" DisplayName="Invoke Code - Initialize Report DT" sap:VirtualizedContainerService.HintSize="520,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_InitReport">
+      <ui:InvokeCode.Arguments>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_dtReport">[dt_ExecutionReport]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <Sequence DisplayName="Environment Setup (Cleanup)" sap:VirtualizedContainerService.HintSize="520,576.8" sap2010:WorkflowViewState.IdRef="Sequence_Cleanup">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <ui:LogMessage DisplayName="Log cleanup" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Cleanup" Level="Info" Message="[&quot;Cleaning up local input directory...&quot;]" />
+      <ui:CreateDirectory Output="{x:Null}" ContinueOnError="True" DisplayName="Ensure Input Dir" sap:VirtualizedContainerService.HintSize="416,122.4" sap2010:WorkflowViewState.IdRef="CreateDirectory_Input" Path="Data\Input" />
+      <ui:InvokeCode Code="Array.ForEach(Directory.GetFiles(&quot;Data\Input&quot;, &quot;*.xlsx&quot;), Sub(f) File.Delete(f))" ContinueOnError="True" DisplayName="Invoke Code - Clear Excel Files" sap:VirtualizedContainerService.HintSize="416,188" sap2010:WorkflowViewState.IdRef="InvokeCode_ClearFiles">
         <ui:InvokeCode.Arguments>
           <scg:Dictionary x:TypeArguments="x:String, Argument" />
         </ui:InvokeCode.Arguments>
-        <ui:InvokeCode.Code>Array.ForEach(Directory.GetFiles("Data\Input", "*.xlsx"), Sub(f) File.Delete(f))</ui:InvokeCode.Code>
       </ui:InvokeCode>
     </Sequence>
-
-    <ui:LogMessage DisplayName="Log start" sap2010:WorkflowViewState.IdRef="LogMessage_Start" Level="Info" Message="[&quot;Starting Daily Dispatch process...&quot;]" />
-    
-    <Assign DisplayName="Set Drive Base Path" sap2010:WorkflowViewState.IdRef="Assign_DrivePath">
+    <ui:LogMessage DisplayName="Log start" sap:VirtualizedContainerService.HintSize="513.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Start" Level="Info" Message="[&quot;Starting Daily Dispatch process...&quot;]" />
+    <Assign DisplayName="Set Drive Base Path (from Config)" sap:VirtualizedContainerService.HintSize="513.6,174.4" sap2010:WorkflowViewState.IdRef="Assign_DrivePath">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[str_DriveBasePath]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">G:\My Drive\Jobs &amp; Email</InArgument>
+        <InArgument x:TypeArguments="x:String">[If(in_Config IsNot Nothing AndAlso in_Config.ContainsKey("Drive_BasePath"), in_Config("Drive_BasePath").ToString, "G:\My Drive\Jobs &amp; Email")]</InArgument>
       </Assign.Value>
     </Assign>
-
-    <Sequence DisplayName="Fetch Jobs File" sap2010:WorkflowViewState.IdRef="Sequence_FetchJobs">
-      <Assign DisplayName="Find latest Jobs file" sap2010:WorkflowViewState.IdRef="Assign_FindJobs">
+    <Sequence DisplayName="Fetch Jobs File" sap:VirtualizedContainerService.HintSize="513.6,956.8" sap2010:WorkflowViewState.IdRef="Sequence_FetchJobs">
+      <sap:WorkflowViewStateService.ViewState>
+        <scg:Dictionary x:TypeArguments="x:String, x:Object">
+          <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        </scg:Dictionary>
+      </sap:WorkflowViewStateService.ViewState>
+      <Assign DisplayName="Find latest Jobs file" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_FindJobs">
         <Assign.To>
           <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
         </Assign.To>
@@ -105,10 +142,15 @@
           <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(str_DriveBasePath, "Jobs"), "Openings Dummy Copy*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
         </Assign.Value>
       </Assign>
-      <If Condition="[Not String.IsNullOrEmpty(str_FoundFile)]" DisplayName="If Jobs Found" sap2010:WorkflowViewState.IdRef="If_JobsFound">
+      <If Condition="[Not String.IsNullOrEmpty(str_FoundFile)]" DisplayName="If Jobs Found" sap:VirtualizedContainerService.HintSize="451.2,690.4" sap2010:WorkflowViewState.IdRef="If_JobsFound">
         <If.Then>
-          <Sequence DisplayName="Then" sap2010:WorkflowViewState.IdRef="Sequence_JobsFound">
-            <Assign DisplayName="Local Path" sap2010:WorkflowViewState.IdRef="Assign_LocalJobPath">
+          <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="449.6,448" sap2010:WorkflowViewState.IdRef="Sequence_JobsFound">
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <Assign DisplayName="Local Path" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_LocalJobPath">
               <Assign.To>
                 <OutArgument x:TypeArguments="x:String">[str_JobsExcelPath]</OutArgument>
               </Assign.To>
@@ -116,18 +158,16 @@
                 <InArgument x:TypeArguments="x:String">[Path.Combine(Environment.CurrentDirectory, "Data\Input\Jobs_Local.xlsx")]</InArgument>
               </Assign.Value>
             </Assign>
-            <ui:CopyFile ContinueOnError="{x:Null}" Destination="[str_JobsExcelPath]" DisplayName="Copy Jobs to Local" sap2010:WorkflowViewState.IdRef="CopyFile_Jobs" Overwrite="True" Path="[str_FoundFile]" />
+            <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[str_JobsExcelPath]" DisplayName="Copy Jobs to Local" sap:VirtualizedContainerService.HintSize="416,213.6" sap2010:WorkflowViewState.IdRef="CopyFile_Jobs" Overwrite="True" Path="[str_FoundFile]" />
           </Sequence>
         </If.Then>
         <If.Else>
-          <Throw DisplayName="Throw Jobs Missing" Exception="[New Exception(&quot;Error: Jobs Excel file not found in: &quot; + Path.Combine(str_DriveBasePath, &quot;Jobs&quot;))]" sap2010:WorkflowViewState.IdRef="Throw_JobsMissing" />
+          <Throw DisplayName="Throw Jobs Missing" Exception="[New Exception(&quot;Error: Jobs Excel file not found in: &quot; + Path.Combine(str_DriveBasePath, &quot;Jobs&quot;))]" sap:VirtualizedContainerService.HintSize="449.6,90.4" sap2010:WorkflowViewState.IdRef="Throw_JobsMissing" />
         </If.Else>
       </If>
     </Sequence>
-
-    <ui:ReadRange AddHeaders="True" DataTable="[dt_Jobs]" DisplayName="Read Jobs" sap2010:WorkflowViewState.IdRef="ReadRange_Jobs" Range="{x:Null}" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" />
-    
-    <Assign DisplayName="Extract Job IDs for Dropdown" sap2010:WorkflowViewState.IdRef="Assign_JobOptions">
+    <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[dt_Jobs]" DisplayName="Read Jobs" sap:VirtualizedContainerService.HintSize="513.6,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_Jobs" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" />
+    <Assign DisplayName="Extract Job IDs for Dropdown" sap:VirtualizedContainerService.HintSize="513.6,174.4" sap2010:WorkflowViewState.IdRef="Assign_JobOptions">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[str_JobOptions]</OutArgument>
       </Assign.To>
@@ -135,53 +175,274 @@
         <InArgument x:TypeArguments="x:String">["ALL;" + String.Join(";", dt_Jobs.AsEnumerable().Select(Function(r) If(dt_Jobs.Columns.Contains("JobID"), r("JobID").ToString, If(dt_Jobs.Columns.Contains("Role"), r("Role").ToString, r(0).ToString))).Distinct())]</InArgument>
       </Assign.Value>
     </Assign>
-
-    <ui:ReadCell Cell="G2" DisplayName="Read Qualifications" sap2010:WorkflowViewState.IdRef="ReadCell_Quals" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]">
+    <ui:ReadCell Cell="G2" DisplayName="Read Qualifications" sap:VirtualizedContainerService.HintSize="513.6,226.4" sap2010:WorkflowViewState.IdRef="ReadCell_Quals" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]">
       <ui:ReadCell.Result>
         <OutArgument x:TypeArguments="x:String">[str_Qualifications]</OutArgument>
       </ui:ReadCell.Result>
     </ui:ReadCell>
-
-    <ui:InputDialog DisplayName="1. Recipient Mode" sap2010:WorkflowViewState.IdRef="ID_Mode" IsPassword="False" Label="Please select the sending mode:" OptionsString="Specific Recipients (Manual);Drive Recipient List (Auto)" Title="1. Recipient Selection">
-      <ui:InputDialog.Result>
-        <OutArgument x:TypeArguments="x:String">[str_Mode]</OutArgument>
-      </ui:InputDialog.Result>
-    </ui:InputDialog>
-    
-    <ui:InputDialog DisplayName="2. Job Selection" sap2010:WorkflowViewState.IdRef="ID_Jobs" IsPassword="False" Label="Select JobID to promote (ALL to include all openings):" OptionsString="[str_JobOptions]" Title="2. Job Selection">
-      <ui:InputDialog.Result>
-        <OutArgument x:TypeArguments="x:String">[str_JobIds]</OutArgument>
-      </ui:InputDialog.Result>
-    </ui:InputDialog>
-
-    <ui:InputDialog DisplayName="3. Template Selection" sap2010:WorkflowViewState.IdRef="ID_Template" IsPassword="False" Label="Choose the Email Template design:" OptionsString="Weekly Template;Spring Template;Summer Template;Autumn Template;Winter Template" Title="3. Template Selection">
-      <ui:InputDialog.Result>
-        <OutArgument x:TypeArguments="x:String">[str_TemplateSelection]</OutArgument>
-      </ui:InputDialog.Result>
-    </ui:InputDialog>
-
-    <Assign DisplayName="Format Template Filename" sap2010:WorkflowViewState.IdRef="Assign_TemplateFile">
-      <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_TemplateName]</OutArgument>
-      </Assign.To>
-      <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[str_TemplateSelection.Replace(" ", "") + ".html"]</InArgument>
-      </Assign.Value>
-    </Assign>
-
-    <If Condition="[str_Mode.Contains(&quot;Drive&quot;)]" DisplayName="If Drive Mode" sap2010:WorkflowViewState.IdRef="If_IsDrive">
-      <If.Then>
-        <Sequence DisplayName="Drive Sequence" sap2010:WorkflowViewState.IdRef="Sequence_DriveEmails">
-          <Assign DisplayName="Find Emails file" sap2010:WorkflowViewState.IdRef="Assign_FindEmails">
+    <ui:InvokeCode Code="out_TemplateOptions = String.Join(&quot;;&quot;, Directory.GetFiles(&quot;Templates&quot;, &quot;*.html&quot;).Select(Function(f) Path.GetFileNameWithoutExtension(f)))" ContinueOnError="True" DisplayName="Invoke Code - DiscTemplates" sap:VirtualizedContainerService.HintSize="520,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_DiscTemplates">
+      <ui:InvokeCode.Arguments>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_TemplateOptions">[str_TemplateOptions]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <ui:InterruptibleWhile CurrentIndex="{x:Null}" Condition="[String.IsNullOrEmpty(str_Confirmed) OrElse str_Confirmed.Equals(&quot;No&quot;)]" DisplayName="Selection &amp; Confirmation Loop" sap:VirtualizedContainerService.HintSize="520,3940" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_1">
+      <ui:InterruptibleWhile.Body>
+        <Sequence DisplayName="Input Phase" sap:VirtualizedContainerService.HintSize="518.4,3809.6" sap2010:WorkflowViewState.IdRef="Seq_InputPhase">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:InputDialog Options="{x:Null}" DisplayName="1. Mode Selection" sap:VirtualizedContainerService.HintSize="484.8,327.2" sap2010:WorkflowViewState.IdRef="InputDialog_ModeNative" IsPassword="False" Label="[&quot;Welcome to Job Posting! 🚀&quot; + Environment.NewLine + Environment.NewLine + &quot;🎯 Please select the dispatch mode:&quot; + Environment.NewLine + &quot;----------------------------------&quot; + Environment.NewLine]" OptionsString="Import emails from Google Drive Excel;Enter Manual" Title="Welcome to Job Posting" TopMost="False">
+            <ui:InputDialog.Result>
+              <OutArgument x:TypeArguments="x:String">[str_Mode]</OutArgument>
+            </ui:InputDialog.Result>
+          </ui:InputDialog>
+          <If Condition="[String.IsNullOrEmpty(str_Mode)]" DisplayName="Handle X Mode" sap2010:WorkflowViewState.IdRef="If_Exit_Mode_Safety">
+            <If.Then>
+              <Sequence DisplayName="Exit Check Mode" sap2010:WorkflowViewState.IdRef="Seq_ExitMode_Safety">
+                <ui:MessageBox Buttons="YesNo" Caption="Exit Confirmation" ChosenButton="[str_ExitChoice]" DisplayName="Confirm Exit Mode" sap2010:WorkflowViewState.IdRef="MessageBox_ExitMode" Text="[&quot;Are you sure you want to exit the process? Your progress will be lost.&quot;]" />
+                <If Condition="[str_ExitChoice.Equals(&quot;Yes&quot;)]" DisplayName="If Yes Exit Mode" sap2010:WorkflowViewState.IdRef="If_TermMode_Safety">
+                  <If.Then>
+                    <Sequence DisplayName="Terminate Mode" sap2010:WorkflowViewState.IdRef="Seq_TermMode_Safety">
+                      <TerminateWorkflow DisplayName="Terminate Workflow Mode" Reason="User opted to exit during mode selection." sap2010:WorkflowViewState.IdRef="Term_Mode" />
+                    </Sequence>
+                  </If.Then>
+                  <If.Else>
+                    <Sequence DisplayName="Continue Mode" sap2010:WorkflowViewState.IdRef="Seq_ContMode_Safety">
+                      <ui:Continue sap2010:WorkflowViewState.IdRef="Cont_Mode" />
+                    </Sequence>
+                  </If.Else>
+                </If>
+              </Sequence>
+            </If.Then>
+          </If>
+          <Assign sap:VirtualizedContainerService.HintSize="484.8,174.4" sap2010:WorkflowViewState.IdRef="Assign_CleanMode">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[str_Mode]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(str_DriveBasePath, "Mail"), "CandidateEmailList*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
+              <InArgument x:TypeArguments="x:String">[If(str_Mode.Contains("Google") Or str_Mode.Contains("Drive"), "Auto", "Manual")]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:CopyFile ContinueOnError="{x:Null}" Destination="[Path.Combine(Environment.CurrentDirectory, &quot;Data\Input\Emails_Local.xlsx&quot;)]" DisplayName="Copy Emails" sap2010:WorkflowViewState.IdRef="CopyFile_Emails" Overwrite="True" Path="[str_FoundFile]" />
-          <ui:ReadRange AddHeaders="True" DataTable="[dt_Emails]" DisplayName="Read Emails" sap2010:WorkflowViewState.IdRef="ReadRange_Emails" Range="{x:Null}" SheetName="Sheet1" WorkbookPath="[Path.Combine(Environment.CurrentDirectory, &quot;Data\Input\Emails_Local.xlsx&quot;)]" />
+          <If Condition="[str_Mode.Equals(&quot;Manual&quot;)]" DisplayName="If Manual Mode" sap:VirtualizedContainerService.HintSize="478.4,200.8" sap2010:WorkflowViewState.IdRef="If_ManualPrompt">
+            <If.Then>
+              <ui:InputDialog Options="{x:Null}" OptionsString="{x:Null}" DisplayName="2. Recipient Emails" sap2010:WorkflowViewState.IdRef="InputDialog_EmailsNative" IsPassword="False" Label="Please paste the recipient email list (separated by ; or ,):" Title="Manual Email Entry" TopMost="False">
+                <ui:InputDialog.Result>
+                  <OutArgument x:TypeArguments="x:String">[str_ManualEmails]</OutArgument>
+                </ui:InputDialog.Result>
+              </ui:InputDialog>
+            </If.Then>
+          </If>
+          <Sequence DisplayName="3. Job Selection (Loop Selection)" sap:VirtualizedContainerService.HintSize="478.4,408" sap2010:WorkflowViewState.IdRef="Seq_JobSelectionLoop">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:String" Default="Yes" Name="str_AddMore" />
+            </Sequence.Variables>
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <Assign DisplayName="Reset Job IDs" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_ResetJobs">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:String">[str_JobIds]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:String">[String.Empty]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <ui:InterruptibleWhile CurrentIndex="{x:Null}" Condition="[str_AddMore.Equals(&quot;Yes&quot;)]" DisplayName="While selecting more jobs" sap:VirtualizedContainerService.HintSize="416,141.6" sap2010:WorkflowViewState.IdRef="While_JobSelect">
+              <ui:InterruptibleWhile.Body>
+                <Sequence DisplayName="Single Selection" sap2010:WorkflowViewState.IdRef="Seq_SingleJob">
+                  <ui:InputDialog Options="{x:Null}" DisplayName="Pick a Job ID" sap2010:WorkflowViewState.IdRef="InputDialog_JobIterative" IsPassword="False" Label="[&quot;Selected so far: &quot; + str_JobIds + Environment.NewLine + Environment.NewLine + &quot;Pick a Job ID to add:&quot;]" OptionsString="[str_JobOptions]" Title="Job Selection" TopMost="False">
+                    <ui:InputDialog.Result>
+                      <OutArgument x:TypeArguments="x:String">[str_CurrentSelect]</OutArgument>
+                    </ui:InputDialog.Result>
+                  </ui:InputDialog>
+                  <If Condition="[String.IsNullOrEmpty(str_CurrentSelect)]" DisplayName="Handle X Job" sap2010:WorkflowViewState.IdRef="If_Exit_Job_Safety">
+                    <If.Then>
+                      <Sequence DisplayName="Exit Check Job" sap2010:WorkflowViewState.IdRef="Seq_ExitJob_Safety">
+                        <ui:MessageBox Buttons="YesNo" Caption="Exit Confirmation" ChosenButton="[str_ExitChoice]" DisplayName="Confirm Exit Job" sap2010:WorkflowViewState.IdRef="MessageBox_ExitJob" Text="[&quot;Are you sure you want to exit the process? Your progress will be lost.&quot;]" />
+                        <If Condition="[str_ExitChoice.Equals(&quot;Yes&quot;)]" DisplayName="If Yes Exit Job" sap2010:WorkflowViewState.IdRef="If_TermJob_Safety">
+                          <If.Then>
+                            <Sequence DisplayName="Terminate Job" sap2010:WorkflowViewState.IdRef="Seq_TermJob_Safety">
+                              <TerminateWorkflow DisplayName="Terminate Workflow Job" Reason="User opted to exit during job selection." sap2010:WorkflowViewState.IdRef="Term_Job" />
+                            </Sequence>
+                          </If.Then>
+                          <If.Else>
+                            <Sequence DisplayName="Continue Job" sap2010:WorkflowViewState.IdRef="Seq_ContJob_Safety">
+                              <ui:Continue sap2010:WorkflowViewState.IdRef="Cont_Job" />
+                            </Sequence>
+                          </If.Else>
+                        </If>
+                      </Sequence>
+                    </If.Then>
+                  </If>
+                  <Assign DisplayName="Append Job" sap2010:WorkflowViewState.IdRef="Assign_AppendJob">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[str_JobIds]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[If(String.IsNullOrEmpty(str_JobIds), str_CurrentSelect, str_JobIds + ";" + str_CurrentSelect)]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <If Condition="[str_CurrentSelect.ToUpper.Contains(&quot;ALL&quot;)]" DisplayName="If All Jobs - Skip More" sap2010:WorkflowViewState.IdRef="If_AllSkip">
+                    <If.Then>
+                      <Assign DisplayName="Stop Loop" sap2010:WorkflowViewState.IdRef="Assign_StopJob">
+                        <Assign.To>
+                          <OutArgument x:TypeArguments="x:String">[str_AddMore]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                          <InArgument x:TypeArguments="x:String">No</InArgument>
+                        </Assign.Value>
+                      </Assign>
+                    </If.Then>
+                    <If.Else>
+                      <ui:MessageBox AutoCloseAfter="00:00:00" Buttons="YesNo" Caption="Add More?" ChosenButton="[str_AddMore]" DisplayName="Add more jobs?" sap2010:WorkflowViewState.IdRef="MessageBox_AddMore" Text="[&quot;Do you want to select another Job for Group Mode?&quot;]" />
+                    </If.Else>
+                  </If>
+                </Sequence>
+              </ui:InterruptibleWhile.Body>
+            </ui:InterruptibleWhile>
+          </Sequence>
+          <ui:InputDialog Options="{x:Null}" DisplayName="3. Template Selection" sap2010:WorkflowViewState.IdRef="ID_Template" IsPassword="False" Label="Choose the Email Template design:" OptionsString="[str_TemplateOptions]" Title="3. Template Selection" TopMost="False">
+            <ui:InputDialog.Result>
+              <OutArgument x:TypeArguments="x:String">[str_TemplateSelection]</OutArgument>
+            </ui:InputDialog.Result>
+          </ui:InputDialog>
+          <If Condition="[String.IsNullOrEmpty(str_TemplateSelection)]" DisplayName="Handle X Template" sap2010:WorkflowViewState.IdRef="If_ExitTemplate_Safety">
+            <If.Then>
+              <Sequence DisplayName="Exit Check Template" sap2010:WorkflowViewState.IdRef="Seq_ExitTemp_Safety">
+                <ui:MessageBox Buttons="YesNo" Caption="Exit Confirmation" ChosenButton="[str_ExitChoice]" DisplayName="Confirm Exit Template" sap2010:WorkflowViewState.IdRef="MessageBox_ExitTemplate" Text="[&quot;Are you sure you want to exit the process? Your progress will be lost.&quot;]" />
+                <If Condition="[str_ExitChoice.Equals(&quot;Yes&quot;)]" DisplayName="If Yes Exit Template" sap2010:WorkflowViewState.IdRef="If_TermTemp_Safety">
+                  <If.Then>
+                    <Sequence DisplayName="Terminate Template" sap2010:WorkflowViewState.IdRef="Seq_TermTemp_Safety">
+                      <TerminateWorkflow DisplayName="Terminate Workflow" Reason="User opted to exit during template selection." sap2010:WorkflowViewState.IdRef="Term_Template" />
+                    </Sequence>
+                  </If.Then>
+                  <If.Else>
+                    <Sequence DisplayName="Continue Template" sap2010:WorkflowViewState.IdRef="Seq_ContTemp_Safety">
+                      <ui:Continue sap2010:WorkflowViewState.IdRef="Cont_Template" />
+                    </Sequence>
+                  </If.Else>
+                </If>
+              </Sequence>
+            </If.Then>
+          </If>
+          <Assign DisplayName="Format Template Filename" sap:VirtualizedContainerService.HintSize="484.8,174.4" sap2010:WorkflowViewState.IdRef="Assign_TemplateFile">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[str_TemplateName]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[str_TemplateSelection.Replace(" ", "") + ".html"]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Sequence DisplayName="Final Review &amp; Confirmation" sap:VirtualizedContainerService.HintSize="484.8,2137.6" sap2010:WorkflowViewState.IdRef="Seq_Confirm">
+            <Sequence.Variables>
+              <Variable x:TypeArguments="x:Int32" Name="int_RecipientCount" />
+              <Variable x:TypeArguments="x:String" Name="str_SummaryMsg" />
+            </Sequence.Variables>
+            <sap:WorkflowViewStateService.ViewState>
+              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              </scg:Dictionary>
+            </sap:WorkflowViewStateService.ViewState>
+            <Assign DisplayName="Check Group Mode" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_GroupCheck">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:Boolean">[bool_GroupMode]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:Boolean">[str_JobIds.Split(";"c).Length &gt; 1]</InArgument>
+              </Assign.Value>
+            </Assign>
+            <If Condition="[str_Mode.Equals(&quot;Auto&quot;)]" DisplayName="Fetch Emails early for Review" sap:VirtualizedContainerService.HintSize="451.2,1212.8" sap2010:WorkflowViewState.IdRef="If_ReviewFetch">
+              <If.Then>
+                <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="449.6,848.8" sap2010:WorkflowViewState.IdRef="Seq_FetchReview">
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <Assign DisplayName="Find Emails file" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_FindEmailsReview">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(str_DriveBasePath, "Mail"), "CandidateEmailList*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[Path.Combine(Environment.CurrentDirectory, &quot;Data\Input\Emails_Local.xlsx&quot;)]" DisplayName="Copy Emails Review" sap:VirtualizedContainerService.HintSize="416,222.4" sap2010:WorkflowViewState.IdRef="CopyFile_EmailsReview" Overwrite="True" Path="[str_FoundFile]" />
+                  <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[dt_Emails]" DisplayName="Read Emails Review" sap:VirtualizedContainerService.HintSize="416,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_EmailsReview" SheetName="Sheet1" WorkbookPath="[Path.Combine(Environment.CurrentDirectory, &quot;Data\Input\Emails_Local.xlsx&quot;)]" />
+                  <Assign DisplayName="Count Auto" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_CountAuto">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:Int32">[int_RecipientCount]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:Int32">[dt_Emails.Rows.Count]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                </Sequence>
+              </If.Then>
+              <If.Else>
+                <Sequence DisplayName="Else" sap:VirtualizedContainerService.HintSize="449.6,225.6" sap2010:WorkflowViewState.IdRef="Seq_ManualPrompt">
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <Assign DisplayName="Count Manual" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_CountManual">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:Int32">[int_RecipientCount]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:Int32">[If(Not String.IsNullOrEmpty(str_ManualEmails), str_ManualEmails.Split({";",","}, StringSplitOptions.RemoveEmptyEntries).Length, 0)]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                </Sequence>
+              </If.Else>
+            </If>
+            <Assign DisplayName="Build Summary Preview" sap2010:WorkflowViewState.IdRef="Assign_Summary">
+              <Assign.To>
+                <OutArgument x:TypeArguments="x:String">[str_SummaryMsg]</OutArgument>
+              </Assign.To>
+              <Assign.Value>
+                <InArgument x:TypeArguments="x:String">[String.Format("RECIPIENT PREVIEW{0}{0}Jobs (Count: {1}): {2}{0}Template: {3}{0}Total Recipients: {4}{0}{0}👉 See candidates list in dropdown below.{0}👉 Press OK to move to Final Confirmation.", Environment.NewLine, str_JobIds.Split(";"c).Length, str_JobIds.Replace(";", ", "), str_TemplateSelection, int_RecipientCount)]</InArgument>
+              </Assign.Value>
+            </Assign>
+
+            <ui:InputDialog Options="{x:Null}" DisplayName="Step 1: Preview List" sap2010:WorkflowViewState.IdRef="InputDialog_Preview" IsPassword="False" Label="[str_SummaryMsg]" OptionsString="[String.Join(&quot;;&quot;, If(dt_Emails IsNot Nothing, dt_Emails.AsEnumerable().Select(Function(r) r(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;CANDIDATES&quot;)).ColumnName).ToString + &quot; &lt;&quot; + r(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;EMAIL&quot;)).ColumnName).ToString + &quot;&gt;&quot;).ToArray(), str_ManualEmails.Split({&quot;;&quot;,&quot;,&quot;}, StringSplitOptions.RemoveEmptyEntries)))]" Title="Recipient Preview" TopMost="False">
+              <ui:InputDialog.Result>
+                <OutArgument x:TypeArguments="x:String">[str_CurrentSelect]</OutArgument>
+              </ui:InputDialog.Result>
+            </ui:InputDialog>
+            <If Condition="[String.IsNullOrEmpty(str_CurrentSelect)]" DisplayName="Handle X Preview" sap2010:WorkflowViewState.IdRef="If_ExitPreview_Safety">
+              <If.Then>
+                <Sequence DisplayName="Exit Check Preview" sap2010:WorkflowViewState.IdRef="Seq_ExitPrev_Safety">
+                  <ui:MessageBox Buttons="YesNo" Caption="Exit Confirmation" ChosenButton="[str_ExitChoice]" DisplayName="Confirm Exit Preview" sap2010:WorkflowViewState.IdRef="MessageBox_ExitPreview" Text="[&quot;Are you sure you want to exit the process? Your progress will be lost.&quot;]" />
+                  <If Condition="[str_ExitChoice.Equals(&quot;Yes&quot;)]" DisplayName="If Yes Exit Preview" sap2010:WorkflowViewState.IdRef="If_TermPrev_Safety">
+                    <If.Then>
+                      <Sequence DisplayName="Terminate Preview" sap2010:WorkflowViewState.IdRef="Seq_TermPrev_Safety">
+                        <TerminateWorkflow DisplayName="Terminate Workflow" Reason="User opted to exit during preview." sap2010:WorkflowViewState.IdRef="Term_Preview" />
+                      </Sequence>
+                    </If.Then>
+                    <If.Else>
+                      <Sequence DisplayName="Continue Preview" sap2010:WorkflowViewState.IdRef="Seq_ContPrev_Safety">
+                        <ui:Continue sap2010:WorkflowViewState.IdRef="Cont_Preview" />
+                      </Sequence>
+                    </If.Else>
+                  </If>
+                </Sequence>
+              </If.Then>
+            </If>
+            
+            <ui:MessageBox Buttons="YesNo" Caption="Step 2: Final Confirmation" ChosenButton="[str_Confirmed]" DisplayName="Review Summary" sap2010:WorkflowViewState.IdRef="MessageBox_FinalConfirm" Text="[&quot;Are you sure you want to start dispatching &quot; + int_RecipientCount.ToString + &quot; emails?&quot;]" />
+          </Sequence>
+        </Sequence>
+      </ui:InterruptibleWhile.Body>
+    </ui:InterruptibleWhile>
+    <If Condition="[str_Mode.Equals(&quot;Auto&quot;)]" DisplayName="If Drive Mode" sap:VirtualizedContainerService.HintSize="520,178.4" sap2010:WorkflowViewState.IdRef="If_IsDrive">
+      <If.Then>
+        <Sequence DisplayName="Drive Sequence" sap2010:WorkflowViewState.IdRef="Sequence_DriveEmails">
           <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[dt_Emails]" DisplayName="Loop Drive Emails" sap2010:WorkflowViewState.IdRef="ForEachRow_Drive">
             <ui:ForEachRow.Body>
               <ActivityAction x:TypeArguments="sd:DataRow">
@@ -189,21 +450,42 @@
                   <DelegateInArgument x:TypeArguments="sd:DataRow" Name="row" />
                 </ActivityAction.Argument>
                 <Sequence DisplayName="Send &amp; Log" sap2010:WorkflowViewState.IdRef="Seq_SendLogAuto">
-                  <ui:LogMessage DisplayName="Log Sending" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;--&gt; Attempting to send email to: &quot; + row(&quot;Email&quot;).ToString + &quot; using &quot; + str_TemplateSelection]" />
-                  <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke (AUTO)" sap2010:WorkflowViewState.IdRef="Invoke_Auto" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Process_SendEmail.xaml">
+                  <Sequence DisplayName="Check Stop Signals" sap2010:WorkflowViewState.IdRef="Seq_CheckStop">
+                    <Sequence.Variables>
+                      <Variable x:TypeArguments="x:Boolean" Name="bool_ShouldStop" />
+                    </Sequence.Variables>
+                    <ui:ShouldStop DisplayName="Check Orchestrator Stop" sap2010:WorkflowViewState.IdRef="ShouldStop_1" Result="[bool_ShouldStop]" />
+                    <If Condition="[bool_ShouldStop Or File.Exists(&quot;Data\Stop.txt&quot;)]" DisplayName="If Stop Requested" sap2010:WorkflowViewState.IdRef="If_Stop">
+                      <If.Then>
+                        <Sequence sap2010:WorkflowViewState.IdRef="Seq_Break">
+                          <ui:LogMessage sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Warn" Message="[&quot;Stop signal detected. Finishing batch...&quot;]" />
+                          <ui:Break sap2010:WorkflowViewState.IdRef="Break_1" />
+                        </Sequence>
+                      </If.Then>
+                    </If>
+                  </Sequence>
+                  <ui:LogMessage DisplayName="Log Sending" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;--&gt; Attempting to send email to: &quot; + row(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;EMAIL&quot;)).ColumnName).ToString + &quot; using &quot; + str_TemplateSelection]" />
+                  <If Condition="[String.IsNullOrWhiteSpace(row(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;EMAIL&quot;)).ColumnName).ToString)]" DisplayName="If Email is Empty" sap2010:WorkflowViewState.IdRef="If_EmptyEmail">
+                    <If.Then>
+                      <ui:Continue sap2010:WorkflowViewState.IdRef="Continue_Empty" />
+                    </If.Then>
+                  </If>
+                  <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke (AUTO)" sap2010:WorkflowViewState.IdRef="Invoke_Auto" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Process_SendEmail.xaml">
                     <ui:InvokeWorkflowFile.Arguments>
                       <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
-                      <InArgument x:TypeArguments="x:String" x:Key="in_Email">[row("Email").ToString]</InArgument>
-                      <InArgument x:TypeArguments="x:String" x:Key="in_JobIds">[If(str_JobIds.ToUpper.Equals("ALL"), "", str_JobIds)]</InArgument>
+                      <InArgument x:TypeArguments="x:String" x:Key="in_Email">[row(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains("EMAIL")).ColumnName).ToString]</InArgument>
+                      <InArgument x:TypeArguments="x:String" x:Key="in_JobIds">[If(str_JobIds.ToUpper.Contains("ALL"), "", str_JobIds)]</InArgument>
                       <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[str_TemplateName]</InArgument>
                       <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Jobs">[dt_Jobs]</InArgument>
                       <InArgument x:TypeArguments="x:String" x:Key="in_Qualifications">[str_Qualifications]</InArgument>
+                      <InArgument x:TypeArguments="x:Boolean" x:Key="in_IsGroupMode">[bool_GroupMode]</InArgument>
                       <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[str_ItemStatus]</OutArgument>
                       <OutArgument x:TypeArguments="x:String" x:Key="out_ErrorMessage">[str_ItemError]</OutArgument>
                       <OutArgument x:TypeArguments="x:String" x:Key="out_ResolvedJobIds" />
                     </ui:InvokeWorkflowFile.Arguments>
                   </ui:InvokeWorkflowFile>
-                  <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="[If(str_ItemStatus.Equals(&quot;Success&quot;), LogLevel.Info, LogLevel.Error)]" Message="[If(str_ItemStatus.Equals(&quot;Success&quot;), &quot;Successfully sent email to: &quot; + row(&quot;Email&quot;).ToString, &quot;Failed to send to &quot; + row(&quot;Email&quot;).ToString + &quot;. Error: &quot; + str_ItemError)]" />
+                  <ui:LogMessage DisplayName="Log Result" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="[If(str_ItemStatus.Equals(&quot;Success&quot;), LogLevel.Info, LogLevel.Error)]" Message="[If(str_ItemStatus.Equals(&quot;Success&quot;), &quot;Successfully sent email to: &quot; + row(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;EMAIL&quot;)).ColumnName).ToString, &quot;Failed to send to &quot; + row(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;EMAIL&quot;)).ColumnName).ToString + &quot;. Error: &quot; + str_ItemError)]" />
+                  <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{row(dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains(&quot;EMAIL&quot;)).ColumnName).ToString, str_ItemStatus, str_ItemError, DateTime.Now.ToString}]" DataTable="[dt_ExecutionReport]" DisplayName="Add to Report" sap2010:WorkflowViewState.IdRef="AddDataRow_Auto" />
                 </Sequence>
               </ActivityAction>
             </ui:ForEachRow.Body>
@@ -212,11 +494,6 @@
       </If.Then>
       <If.Else>
         <Sequence DisplayName="Manual Mode Sequence" sap2010:WorkflowViewState.IdRef="Sequence_ManualEmails">
-          <ui:InputDialog DisplayName="Input emails" sap2010:WorkflowViewState.IdRef="ID_ManualEmails" IsPassword="False" Label="Enter recipient emails (separated by semicolon):" Title="Manual Recipients Input">
-            <ui:InputDialog.Result>
-              <OutArgument x:TypeArguments="x:String">[str_ManualEmails]</OutArgument>
-            </ui:InputDialog.Result>
-          </ui:InputDialog>
           <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="Loop Manual List" sap2010:WorkflowViewState.IdRef="ForEach_Manual" Values="[str_ManualEmails.Split({&quot;;&quot;,&quot;,&quot;}, StringSplitOptions.RemoveEmptyEntries)]">
             <ui:ForEach.Body>
               <ActivityAction x:TypeArguments="x:String">
@@ -224,8 +501,20 @@
                   <DelegateInArgument x:TypeArguments="x:String" Name="email" />
                 </ActivityAction.Argument>
                 <Sequence DisplayName="Send &amp; Log Manual" sap2010:WorkflowViewState.IdRef="Seq_SendLogManual">
+                  <Sequence DisplayName="Check Stop Manual" sap2010:WorkflowViewState.IdRef="Seq_CheckStopManual">
+                    <If Condition="[File.Exists(&quot;Data\Stop.txt&quot;)]" DisplayName="Check Stop File Manual" sap2010:WorkflowViewState.IdRef="If_StopManual">
+                      <If.Then>
+                        <ui:Break sap2010:WorkflowViewState.IdRef="Break_Manual" />
+                      </If.Then>
+                    </If>
+                  </Sequence>
                   <ui:LogMessage DisplayName="Log Sending" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;--&gt; Attempting to send email (Manual) to: &quot; + email.Trim + &quot; using &quot; + str_TemplateSelection]" />
-                  <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke (MANUAL)" sap2010:WorkflowViewState.IdRef="Invoke_Manual" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Process_SendEmail.xaml">
+                  <If Condition="[String.IsNullOrWhiteSpace(email)]" DisplayName="If Manual Email is Empty" sap2010:WorkflowViewState.IdRef="If_EmptyManual">
+                    <If.Then>
+                      <ui:Continue sap2010:WorkflowViewState.IdRef="Continue_ManualEmpty" />
+                    </If.Then>
+                  </If>
+                  <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke (MANUAL)" sap2010:WorkflowViewState.IdRef="Invoke_Manual" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Process_SendEmail.xaml">
                     <ui:InvokeWorkflowFile.Arguments>
                       <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
                       <InArgument x:TypeArguments="x:String" x:Key="in_Email">[email.Trim]</InArgument>
@@ -233,12 +522,14 @@
                       <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[str_TemplateName]</InArgument>
                       <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Jobs">[dt_Jobs]</InArgument>
                       <InArgument x:TypeArguments="x:String" x:Key="in_Qualifications">[str_Qualifications]</InArgument>
+                      <InArgument x:TypeArguments="x:Boolean" x:Key="in_IsGroupMode">[bool_GroupMode]</InArgument>
                       <OutArgument x:TypeArguments="x:String" x:Key="out_Status">[str_ItemStatus]</OutArgument>
                       <OutArgument x:TypeArguments="x:String" x:Key="out_ErrorMessage">[str_ItemError]</OutArgument>
                       <OutArgument x:TypeArguments="x:String" x:Key="out_ResolvedJobIds" />
                     </ui:InvokeWorkflowFile.Arguments>
                   </ui:InvokeWorkflowFile>
                   <ui:LogMessage DisplayName="Log Result Manual" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="[If(str_ItemStatus.Equals(&quot;Success&quot;), LogLevel.Info, LogLevel.Error)]" Message="[If(str_ItemStatus.Equals(&quot;Success&quot;), &quot;Successfully sent manual email to: &quot; + email.Trim, &quot;Failed to send manual email to &quot; + email.Trim + &quot;. Error: &quot; + str_ItemError)]" />
+                  <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{email.Trim, str_ItemStatus, str_ItemError, DateTime.Now.ToString}]" DataTable="[dt_ExecutionReport]" DisplayName="Add Manual to Report" sap2010:WorkflowViewState.IdRef="AddDataRow_Manual" />
                 </Sequence>
               </ActivityAction>
             </ui:ForEach.Body>
@@ -246,5 +537,7 @@
         </Sequence>
       </If.Else>
     </If>
+    <ui:WriteRange DataTable="[dt_ExecutionReport]" DisplayName="Write Execution Report (English)" sap:VirtualizedContainerService.HintSize="520,278.4" sap2010:WorkflowViewState.IdRef="WriteRange_Report" SheetName="Report" StartingCell="A1" WorkbookPath="[&quot;Data\Output\ExecutionReport_&quot; + DateTime.Now.ToString(&quot;yyyyMMdd_HHmm&quot;) + &quot;.xlsx&quot;]" />
+    <ui:LogMessage DisplayName="Log end" sap:VirtualizedContainerService.HintSize="513.6,165.6" sap2010:WorkflowViewState.IdRef="LogMessage_End" Level="Info" Message="[&quot;Dispatch process completed. Report generated in Data\Output.&quot;]" />
   </Sequence>
 </Activity>

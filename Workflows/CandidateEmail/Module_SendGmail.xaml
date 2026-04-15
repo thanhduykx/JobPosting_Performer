@@ -104,7 +104,6 @@
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:LogMessage DisplayName="Log Message - module" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Start Send Module Email&quot;]" />
     <TryCatch DisplayName="Try Send Weekly Email" sap:VirtualizedContainerService.HintSize="451.2,1497.6" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
         <Sequence DisplayName="Try" sap:VirtualizedContainerService.HintSize="449.6,912.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
