@@ -161,7 +161,7 @@
         <InArgument x:TypeArguments="x:String">[If(in_Config.ContainsKey("GmailConnectionId") AndAlso Not String.IsNullOrWhiteSpace(in_Config("GmailConnectionId").ToString), in_Config("GmailConnectionId").ToString, "a03a0f0a-762f-44c5-9d07-4d280413f2ed")]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke SendWeeklyEmail" sap:VirtualizedContainerService.HintSize="333.6,113.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\SendWeeklyEmail.xaml">
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Invoke Module_SendGmail" sap:VirtualizedContainerService.HintSize="333.6,113.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Module_SendGmail.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_str_Body">[str_EmailBody]</InArgument>
         <InArgument x:TypeArguments="x:String" x:Key="in_str_ToEmail">[str_CandidateEmail]</InArgument>

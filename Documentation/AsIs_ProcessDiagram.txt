@@ -1,0 +1,45 @@
+================================================================================
+                    AS-IS PROCESS DIAGRAM (JOB EMAIL DISPATCH)
+================================================================================
+
+[START: Main.xaml]
+      |
+      v
+[Invoke: Dispatch_JobEmail.xaml]
+      |
+      +-----> [Download Jobs from Google Drive] ------> (Jobs_FromDrive.xlsx)
+      |
+      +-----> [Input Dialog: Select Job] -------------> (User selects JobID/ALL)
+      |
+      +-----> [Input Dialog: Recipient Mode]
+      |           |
+      |           +---(Option: Specific)----> [Input Dialog: Enter Emails]
+      |           |
+      |           +---(Option: Drive Group)--> [Download Emails from Google Drive]
+      |                                        (GroupEmails_FromDrive.xlsx)
+      |
+      +-----> [Input Dialog: Select Template] --------> (Weekly, Spring, etc.)
+      |
+      v
+[Loop: For Each Recipient]
+      |
+      +-----> [Invoke: Process_SendEmail.xaml]
+      |           |
+      |           +---> [Map Job Data & Build HTML Content]
+      |           |     (Uses chọn JobID and Template Logic)
+      |           |
+      |           +---> [Invoke: Module_SendGmail.xaml]
+      |                 (Sends via Gmail Integration Service)
+      |
+      +-----> [Wait Delay (e.g. 3s)]
+      |
+      v
+[Write Results to Data\Output\Logs.xlsx]
+      |
+      v
+[END]
+
+================================================================================
+Generated on: 2026-04-15
+Status: Cleaned & Google Drive Integrated
+================================================================================

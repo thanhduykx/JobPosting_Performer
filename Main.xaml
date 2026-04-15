@@ -71,23 +71,11 @@
         <InArgument x:TypeArguments="x:String">[If(Config.ContainsKey("MainDispatcherMode") AndAlso Not String.IsNullOrWhiteSpace(Config("MainDispatcherMode").ToString), Config("MainDispatcherMode").ToString.Trim.ToUpper, "JOBEMAIL")]</InArgument>
       </Assign.Value>
     </Assign>
-    <If Condition="[str_MainMode = &quot;LEGACY&quot;]" DisplayName="If LEGACY then REFramework else JobEmail" sap:VirtualizedContainerService.HintSize="720,394" sap2010:WorkflowViewState.IdRef="If_1">
-      <If.Then>
-        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Legacy Main" sap:VirtualizedContainerService.HintSize="400,144" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Main_REFrameworkLegacy.xaml">
-          <ui:InvokeWorkflowFile.Arguments>
-            <InArgument x:TypeArguments="x:String" x:Key="in_OrchestratorQueueName">[in_OrchestratorQueueName]</InArgument>
-            <InArgument x:TypeArguments="x:String" x:Key="in_OrchestratorQueueFolder">[in_OrchestratorQueueFolder]</InArgument>
-          </ui:InvokeWorkflowFile.Arguments>
-        </ui:InvokeWorkflowFile>
-      </If.Then>
-      <If.Else>
-        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Dispatch_JobEmail" sap:VirtualizedContainerService.HintSize="400,113" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Dispatch_JobEmail.xaml">
-          <ui:InvokeWorkflowFile.Arguments>
-            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[Config]</InArgument>
-          </ui:InvokeWorkflowFile.Arguments>
-        </ui:InvokeWorkflowFile>
-      </If.Else>
-    </If>
-    <ui:LogMessage DisplayName="Log end" sap:VirtualizedContainerService.HintSize="720,92" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Main dispatcher flow completed. Mode: &quot; + str_MainMode]" />
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Dispatch_JobEmail" sap:VirtualizedContainerService.HintSize="338,113" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\Dispatch_JobEmail.xaml">
+      <ui:InvokeWorkflowFile.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[Config]</InArgument>
+      </ui:InvokeWorkflowFile.Arguments>
+    </ui:InvokeWorkflowFile>
+    <ui:LogMessage DisplayName="Log end" sap:VirtualizedContainerService.HintSize="338,92" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Main dispatcher flow completed.&quot;]" />
   </Sequence>
 </Activity>

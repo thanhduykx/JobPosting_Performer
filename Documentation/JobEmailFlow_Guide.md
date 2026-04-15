@@ -1,67 +1,36 @@
-﻿# Job Opportunity Email Flow - Implementation Guide
+# Job Opportunity Email Flow - Implementation Guide
 
-## New workflows
-- Main orchestration (dispatcher): `Main.xaml`
-- Legacy REFramework backup: `Main_REFrameworkLegacy.xaml`
-- Dedicated email main: `Main_JobEmail.xaml`
-- Mode dispatcher: `Workflows\CandidateEmail\Dispatch_JobEmail.xaml`
-- Reusable sender: `Workflows\CandidateEmail\Process_SendEmail.xaml`
-- Existing sender updated: `Workflows\CandidateEmail\SendWeeklyEmail.xaml`
+## Workflows
+- **Main orchestrator**: `Main.xaml` (Primary entry point)
+- **Mode dispatcher**: `Workflows\CandidateEmail\Dispatch_JobEmail.xaml` (Handles Drive downloads and user interaction)
+- **Job Logic & Resolver**: `Workflows\CandidateEmail\Process_SendEmail.xaml` (Builds HTML body from template and job data)
+- **Gmail Sender Module**: `Workflows\CandidateEmail\Module_SendGmail.xaml` (Low-level send command via Integration Service)
+- **Template Builder**: `Workflows\CandidateEmail\BuildEmailTemplate.xaml` (Helper to load HTML templates)
 
-## Design
-- `Main.xaml`:
-  - Read config from `Data\Config.xlsx` (Settings + Constants)
-  - Decide branch:
-  - `MainDispatcherMode=JOBEMAIL` -> invoke `Dispatch_JobEmail.xaml`
-  - `MainDispatcherMode=LEGACY` -> invoke `Main_REFrameworkLegacy.xaml`
-- `Dispatch_JobEmail.xaml`:
-  - Decide mode from config: `AUTO` or `MANUAL`
-  - Read jobs file
-  - Build recipient list (Excel in AUTO, Input Dialog in MANUAL)
-  - Deduplicate + validate emails
-  - Loop recipients and call reusable `Process_SendEmail.xaml`
-  - Add delay between sends
-  - Write logs to `Logs.xlsx`
-- `Process_SendEmail.xaml`:
-  - Build HTML email body from predefined jobs
-  - Filter jobs by optional Job IDs (manual mode)
-  - Send email
-  - Return status/error/result job IDs for logging
+## Design & Workflow
+1. **Source Data**:
+   - Job list is dynamically downloaded from Google Drive to `Data\Input\Jobs_FromDrive.xlsx`.
+   - Recipient group list is dynamically downloaded to `Data\Input\GroupEmails_FromDrive.xlsx` (if chosen).
+2. **User Interaction**:
+   - Prompt to select a specific Job ID or "ALL".
+   - Prompt to choose between "Specific Recipient" (manual input) or "Drive Group".
+   - Prompt to select the Email Template (Weekly, Spring, Summer, Autumn, Winter).
+3. **Execution**:
+   - Robot loops through all recipients.
+   - For each recipient, it generates a personalized HTML body using the chosen template and job data.
+   - Sends the email using Gmail Integration Service.
+   - Logs results (Email, Job IDs, Status, Timestamp) to `Data\Output\Logs.xlsx`.
 
-## Required Config keys (add in `Config.xlsx` -> Settings)
-- `MainDispatcherMode` = `JOBEMAIL` or `LEGACY`
-- `JobEmail_Mode` = `AUTO` or `MANUAL`
-- `JobEmail_EmailListPath` = `Data\Input\EmailList.xlsx`
-- `JobEmail_EmailSheet` = `Sheet1`
-- `JobEmail_JobsPath` = `Data\Input\Jobs.xlsx`
-- `JobEmail_JobsSheet` = `Sheet1`
-- `JobEmail_LogsPath` = `Data\Output\Logs.xlsx`
-- `JobEmail_LogsSheet` = `Logs`
-- `JobEmail_DelayMs` = `3000`
-- `JobEmail_SubjectTemplate` = `Weekly Job Opportunities`
-- `JobEmail_AttachmentPath` = optional (blank allowed)
-- `GmailConnectionId` = your Integration Service connection id
+## Required Config keys (`Data\Config.xlsx`)
+- `GmailConnectionId`: Integration Service connection ID for Gmail.
+- `JobEmail_SubjectTemplate`: Default subject line (e.g., "Job Opportunities").
+- `JobEmail_LogsPath`: Path to the log file (default: `Data\Output\Logs.xlsx`).
+- `JobEmail_DelayMs`: Delay between sending emails to prevent flooding (default: `3000`).
 
-## Data format
-### Jobs.xlsx (required columns)
-- `JobID`
-- `Title`
-- `Description`
-- `Link`
+## Email Templates (`Templates\`)
+- Standard HTML files with placeholders like `{{Name}}`, `{{Email}}`, `{{JobsTableContent}}`, and `{{Qualifications}}`.
+- Located in the `Templates` folder.
 
-### EmailList.xlsx (required columns)
-- `Email`
-
-### Logs.xlsx output columns
-- `Email`
-- `JobIDs`
-- `Timestamp`
-- `Status`
-- `Error Message`
-
-## Running
-- Run process entrypoint: `Main.xaml`
-- For email campaign flow: set `MainDispatcherMode=JOBEMAIL`
-- For old REFramework flow: set `MainDispatcherMode=LEGACY`
-- Schedule weekly in Orchestrator using `Main.xaml` + `MainDispatcherMode=JOBEMAIL` + `JobEmail_Mode=AUTO`
-- For on-demand run, set `JobEmail_Mode=MANUAL`.
+## Running the Process
+- Simply run `Main.xaml`.
+- Follow the interactive prompts in the UiPath Studio/Assistant interface to select jobs, recipients, and templates.
