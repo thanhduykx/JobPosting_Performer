@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dispatch Review</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('Fonts/BROmega-Medium-BF6556cee4bc2e2.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+        :root {
+            --primary: #c2e7ff;
+            --primary-hover: #b3d9f2;
+            --primary-text: #001d35;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'BR Omega', 'Inter', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h1 { font-size: 24px; margin-top: 0; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+        h1 .badge { background: #dbeafe; color: #1e40af; font-size: 14px; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .summary-item {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .summary-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
+        .summary-value { font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        .recipient-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--bg);
+        }
+        .recipient-list-header h2 { font-size: 16px; margin: 0; color: var(--text-muted); }
+
+        .list-container {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 350px;
+            overflow-y: auto;
+            margin-bottom: 30px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 15px; background: #f8fafc; font-size: 12px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
+        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover { background: #f8fafc; }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+        button {
+            padding: 12px 28px;
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-cancel { 
+            background: #f1f5f9; 
+            color: var(--text); 
+        }
+        .btn-cancel:hover { 
+            background: #e2e8f0; 
+            transform: scale(1.02);
+        }
+        .btn-send { 
+            background: var(--primary); 
+            color: var(--primary-text); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            flex-grow: 1; 
+        }
+        .btn-send:hover { 
+            background: var(--primary-hover); 
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        .list-container::-webkit-scrollbar { width: 8px; }
+        .list-container::-webkit-scrollbar-track { background: transparent; }
+        .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <span>Final Employee Review</span>
+            <span class="badge" id="modeBadge">Auto Mode</span>
+        </h1>
+
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-label">Jobs Selected</div>
+                <div class="summary-value" id="summaryJobs" title="">-</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Template</div>
+                <div class="summary-value" id="summaryTemplate" title="">-</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Recipients</div>
+                <div class="summary-value" id="summaryCount">-</div>
+            </div>
+        </div>
+
+        <div class="recipient-list-header">
+            <h2>Employee Mailing List</h2>
+        </div>
+        
+        <div class="list-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="40">#</th>
+                        <th>Name</th>
+                        <th>Email Address</th>
+                    </tr>
+                </thead>
+                <tbody id="recipientBody">
+                    <!-- Rows injected here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="actions">
+            <button class="btn-cancel" onclick="finish(false)">Cancel</button>
+            <button class="btn-send" onclick="finish(true)">Confirm & Send Emails Now</button>
+        </div>
+    </div>
+
+    <script src="review_data.js"></script>
+    <script>
+        function getQueryParam(name) {
+            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+            if (results == null) return null;
+            return decodeURIComponent(results[1].replace(/\+/g, ' ')) || "";
+        }
+
+        // Maximize Window & Professional Title 
+        document.title = "Dispatch Final Review";
+        try {
+            window.moveTo(0, 0);
+            window.resizeTo(screen.availWidth, screen.availHeight);
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, "Dispatch Final Review", window.location.pathname);
+            }
+        } catch(e) {}
+
+        // Data from URL or Global File
+        var mode = typeof global_mode !== 'undefined' ? global_mode : (getQueryParam('mode') || "Auto");
+        var jobs = typeof global_jobs !== 'undefined' ? global_jobs : (getQueryParam('jobs') || "None");
+        var template = typeof global_template !== 'undefined' ? global_template : (getQueryParam('template') || "None");
+        var employeesRaw = typeof global_employees !== 'undefined' ? global_employees : (getQueryParam('employees') || getQueryParam('candidates') || "");
+
+        // Update Summary
+        document.getElementById('modeBadge').innerText = mode + " Mode";
+        document.getElementById('summaryJobs').innerText = jobs;
+        document.getElementById('summaryJobs').title = jobs.replace(/;/g, ', ');
+        document.getElementById('summaryTemplate').innerText = template;
+        document.getElementById('summaryTemplate').title = template;
+
+        // Parse and Render Employees
+        var employeeList = [];
+        if (employeesRaw) {
+            employeeList = employeesRaw.split(';');
+        }
+        document.getElementById('summaryCount').innerText = employeeList.length;
+
+        var tableBody = document.getElementById('recipientBody');
+        if (employeeList.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px; color: #94a3b8;">No recipients found.</td></tr>';
+        } else {
+            for (var i = 0; i < employeeList.length; i++) {
+                var entry = employeeList[i].trim();
+                var name = entry;
+                var email = "";
+                
+                // Try to split "Name <email>"
+                if (entry.indexOf('<') !== -1) {
+                    var parts = entry.split('<');
+                    name = parts[0].replace('•', '').trim();
+                    email = parts[1].replace('>', '').trim();
+                }
+
+                var row = document.createElement('tr');
+                row.innerHTML = '<td>' + (i+1) + '</td>' +
+                                '<td><strong>' + name + '</strong></td>' +
+                                '<td><code style="background:#f1f5f9; padding: 2px 6px; border-radius:4px; font-family: monospace;">' + email + '</code></td>';
+                tableBody.appendChild(row);
+            }
+        }
+
+        function finish(confirmed) {
+            var result = confirmed ? "Yes" : "No";
+            try {
+                if (window.external && typeof window.external.setResult !== 'undefined') window.external.setResult(result);
+                else if (window.uipath && typeof window.uipath.setResult !== 'undefined') window.uipath.setResult(result);
+            } catch (e) {}
+        }
+    </script>
+</body>
+</html>

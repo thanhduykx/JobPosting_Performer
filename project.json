@@ -95,6 +95,12 @@
       "uniqueId": "5e5f34c6-35ef-4a3b-ba6c-8f98447405eb",
       "input": [],
       "output": []
+    },
+    {
+      "filePath": "Workflows\\CandidateEmail\\Module_SendGmail.xaml",
+      "uniqueId": "58cf54d9-0da7-4186-a26e-1a0b37314e66",
+      "input": [],
+      "output": []
     }
   ],
   "isTemplate": false,
