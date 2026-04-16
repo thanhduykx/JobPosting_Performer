@@ -49,6 +49,8 @@
       <x:String>UiPath.GSuite.Gmail.Enums</x:String>
       <x:String>System.Text.RegularExpressions</x:String>
       <x:String>System.IO</x:String>
+      <x:String>System.Linq.Expressions</x:String>
+      <x:String>System.Numerics</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -88,6 +90,12 @@
       <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
       <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
       <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.CodeDom</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Forms</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic.Core</AssemblyReference>
+      <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>System.Runtime.Numerics</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence DisplayName="Process_DeliveryStatusNotifications" sap:VirtualizedContainerService.HintSize="1248,3080" sap2010:WorkflowViewState.IdRef="Sequence_1">
@@ -105,12 +113,10 @@
     <ui:LogMessage DisplayName="Log: Start Processing DSN" sap:VirtualizedContainerService.HintSize="1248,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;[DSN] Starting to process Delivery Status Notifications...&quot;]" />
     <uga:GetEmailListConnections ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" CurrentIndex="{x:Null}" FolderIdBackup="{x:Reference __ReferenceID0}" ManualEntryFolder="{x:Null}" QueryFilter="{x:Null}" AllLabels="W3siSWQiOiJDSEFUIiwiTmFtZSI6IkNIQVQiLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IlNFTlQiLCJOYW1lIjoiU0VOVCIsIlR5cGUiOiJzeXN0ZW0ifSx7IklkIjoiSU5CT1giLCJOYW1lIjoiSU5CT1giLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IklNUE9SVEFOVCIsIk5hbWUiOiJJTVBPUlRBTlQiLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IlRSQVNIIiwiTmFtZSI6IlRSQVNIIiwiVHlwZSI6InN5c3RlbSJ9LHsiSWQiOiJEUkFGVCIsIk5hbWUiOiJEUkFGVCIsIlR5cGUiOiJzeXN0ZW0ifSx7IklkIjoiU1BBTSIsIk5hbWUiOiJTUEFNIiwiVHlwZSI6InN5c3RlbSJ9LHsiSWQiOiJDQVRFR09SWV9GT1JVTVMiLCJOYW1lIjoiQ0FURUdPUllfRk9SVU1TIiwiVHlwZSI6InN5c3RlbSJ9LHsiSWQiOiJDQVRFR09SWV9VUERBVEVTIiwiTmFtZSI6IkNBVEVHT1JZX1VQREFURVMiLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IkNBVEVHT1JZX1BFUlNPTkFMIiwiTmFtZSI6IkNBVEVHT1JZX1BFUlNPTkFMIiwiVHlwZSI6InN5c3RlbSJ9LHsiSWQiOiJDQVRFR09SWV9QUk9NT1RJT05TIiwiTmFtZSI6IkNBVEVHT1JZX1BST01PVElPTlMiLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IkNBVEVHT1JZX1NPQ0lBTCIsIk5hbWUiOiJDQVRFR09SWV9TT0NJQUwiLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IllFTExPV19TVEFSIiwiTmFtZSI6IllFTExPV19TVEFSIiwiVHlwZSI6InN5c3RlbSJ9LHsiSWQiOiJTVEFSUkVEIiwiTmFtZSI6IlNUQVJSRUQiLCJUeXBlIjoic3lzdGVtIn0seyJJZCI6IlVOUkVBRCIsIk5hbWUiOiJVTlJFQUQiLCJUeXBlIjoic3lzdGVtIn1d" AuthScopesInvalid="False" BrowserFolder="All Mail" BrowserFolderLabelId="All Mail" ConnectionId="a03a0f0a-762f-44c5-9d07-4d280413f2ed" DisplayName="Get All Recent Emails" EmailList="[lst_DeliveryEmails]" FilterSelectionMode="ConditionBuilder" FolderInputSelectionMode="Browse" sap:VirtualizedContainerService.HintSize="1248,236.8" sap2010:WorkflowViewState.IdRef="GetEmailListConnections_1" ImportantOnly="False" IncludeSubfolders="False" MarkAsRead="False" MaxResults="100" StarredOnly="False" UnreadOnly="False" UseConnectionService="True" WithAttachmentsOnly="False">
       <uga:GetEmailListConnections.Filter>
-        <ugagf:MailFilterCollection LogicalOperator="Or">
+        <ugagf:MailFilterCollection LogicalOperator="And">
           <ugagf:MailFilterCollection.Filters>
             <ugagf:MailFilterElement DateEqualsFilter="{x:Null}" Values="{x:Null}" CollectionFilterOperator="In" Criteria="From" DateOperator="NewerThan" StringOperator="Contains" Value="mailer-daemon" />
-            <ugagf:MailFilterElement DateEqualsFilter="{x:Null}" Values="{x:Null}" CollectionFilterOperator="In" Criteria="Subject" DateOperator="NewerThan" StringOperator="Contains" Value="Delivery Status Notification" />
-            <ugagf:MailFilterElement DateEqualsFilter="{x:Null}" Values="{x:Null}" CollectionFilterOperator="In" Criteria="Body" DateOperator="NewerThan" StringOperator="Contains" Value="550" />
-            <ugagf:MailFilterElement DateEqualsFilter="{x:Null}" Values="{x:Null}" CollectionFilterOperator="In" Criteria="Body" DateOperator="NewerThan" StringOperator="Contains" Value="does not exist" />
+            <ugagf:MailFilterElement Value="{x:Null}" Values="{x:Null}" CollectionFilterOperator="In" Criteria="DateAndTime" DateEqualsFilter="[If(File.Exists(Path.Combine(Environment.CurrentDirectory, &quot;Data\Temp\bot_start_time.txt&quot;)), DateTime.Parse(File.ReadAllText(Path.Combine(Environment.CurrentDirectory, &quot;Data\Temp\bot_start_time.txt&quot;))), Now.AddMinutes(-30))]" DateOperator="NewerThan" StringOperator="Contains" />
           </ugagf:MailFilterCollection.Filters>
         </ugagf:MailFilterCollection>
       </uga:GetEmailListConnections.Filter>
@@ -134,7 +140,7 @@
       </uga:GetEmailListConnections.Folder>
     </uga:GetEmailListConnections>
     <ui:LogMessage DisplayName="Log: Found DSN Emails" sap:VirtualizedContainerService.HintSize="1248,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;[DSN] Found &quot; + If(lst_DeliveryEmails Is Nothing, &quot;0&quot;, lst_DeliveryEmails.Count.ToString) + &quot; Delivery Status Notification emails (from Filter Builder)&quot;]" />
-    <ui:BuildDataTable DataTable="[dt_Report]" DisplayName="Build Report DataTable" sap:VirtualizedContainerService.HintSize="1248,92" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;RecipientEmail&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Reason&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ReceivedDate&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
+    <ui:BuildDataTable DataTable="[dt_Report]" DisplayName="Build Report DataTable" sap:VirtualizedContainerService.HintSize="1248,92" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&#xA;  &lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&#xA;    &lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&#xA;      &lt;xs:complexType&gt;&#xA;        &lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&#xA;          &lt;xs:element name=&quot;TableName&quot;&gt;&#xA;            &lt;xs:complexType&gt;&#xA;              &lt;xs:sequence&gt;&#xA;                &lt;xs:element name=&quot;RecipientEmail&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Status&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ErrorCode&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ErrorType&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Reason&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;Action&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;                &lt;xs:element name=&quot;ReceivedDate&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&#xA;              &lt;/xs:sequence&gt;&#xA;            &lt;/xs:complexType&gt;&#xA;          &lt;/xs:element&gt;&#xA;        &lt;/xs:choice&gt;&#xA;      &lt;/xs:complexType&gt;&#xA;    &lt;/xs:element&gt;&#xA;  &lt;/xs:schema&gt;&#xA;&lt;/NewDataSet&gt;" />
     <Assign DisplayName="Initialize Success List" sap:VirtualizedContainerService.HintSize="1248,113.6" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[str_SuccessList]</OutArgument>
@@ -164,6 +170,9 @@
               <Variable x:TypeArguments="x:String" Name="str_Status" />
               <Variable x:TypeArguments="x:String" Name="str_Reason" />
               <Variable x:TypeArguments="x:String" Name="str_ReceivedDate" />
+              <Variable x:TypeArguments="x:String" Name="str_ErrorCode" />
+              <Variable x:TypeArguments="x:String" Name="str_ErrorType" />
+              <Variable x:TypeArguments="x:String" Name="str_Action" />
             </Sequence.Variables>
             <sap:WorkflowViewStateService.ViewState>
               <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -218,6 +227,30 @@
                       <InArgument x:TypeArguments="x:String">Email đã được gửi thành công</InArgument>
                     </Assign.Value>
                   </Assign>
+                  <Assign DisplayName="Set Success ErrorCode" sap:VirtualizedContainerService.HintSize="544,113.6" sap2010:WorkflowViewState.IdRef="Assign_SuccessCode">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[str_ErrorCode]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[String.Empty]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Set Success ErrorType" sap:VirtualizedContainerService.HintSize="544,113.6" sap2010:WorkflowViewState.IdRef="Assign_SuccessType">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[str_ErrorType]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[String.Empty]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <Assign DisplayName="Set Success Action" sap:VirtualizedContainerService.HintSize="544,113.6" sap2010:WorkflowViewState.IdRef="Assign_SuccessAction">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[str_Action]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[String.Empty]</InArgument>
+                    </Assign.Value>
+                  </Assign>
                   <Assign DisplayName="Add to Success List" sap:VirtualizedContainerService.HintSize="544,113.6" sap2010:WorkflowViewState.IdRef="Assign_8">
                     <Assign.To>
                       <OutArgument x:TypeArguments="x:String">[str_SuccessList]</OutArgument>
@@ -259,10 +292,83 @@
                       <InArgument x:TypeArguments="x:String">[str_FailedList + "✗ " + str_RecipientEmail + " - " + str_Reason + " (" + str_ReceivedDate + ")" + vbCrLf]</InArgument>
                     </Assign.Value>
                   </Assign>
+                  <ui:InvokeCode ContinueOnError="{x:Null}" DisplayName="Parse SMTP Error Code" sap:VirtualizedContainerService.HintSize="544,166.4" sap2010:WorkflowViewState.IdRef="InvokeCode_SMTP">
+                    <ui:InvokeCode.Arguments>
+                      <InArgument x:TypeArguments="x:String" x:Key="in_Body">[str_EmailBody]</InArgument>
+                      <OutArgument x:TypeArguments="x:String" x:Key="out_Code">[str_ErrorCode]</OutArgument>
+                      <OutArgument x:TypeArguments="x:String" x:Key="out_Type">[str_ErrorType]</OutArgument>
+                      <OutArgument x:TypeArguments="x:String" x:Key="out_Action">[str_Action]</OutArgument>
+                      <OutArgument x:TypeArguments="x:String" x:Key="out_FullReason">[str_Reason]</OutArgument>
+                    </ui:InvokeCode.Arguments>
+                    <ui:InvokeCode.Code><![CDATA[' Parse SMTP error code (550, 421, 552, 554, 450...)
+Dim codeMatch = System.Text.RegularExpressions.Regex.Match(in_Body, "\b([45]\d{2})\s+[\d.]+")
+If codeMatch.Success Then
+    out_Code = codeMatch.Groups(1).Value
+Else
+    out_Code = ""
+End If
+
+' Extract full error reason
+Dim reasonMatch = System.Text.RegularExpressions.Regex.Match(in_Body, "([45]\d{2}\s+[\d.]+\s+.+?)(?:\r|\n|$)")
+If reasonMatch.Success Then
+    out_FullReason = reasonMatch.Value.Trim()
+End If
+
+' Classify error and recommend action
+Dim bodyLower As String = in_Body.ToLower()
+
+Select Case out_Code
+    Case "550"
+        If bodyLower.Contains("user") OrElse bodyLower.Contains("mailbox") OrElse bodyLower.Contains("does not exist") Then
+            out_Type = "Permanent - Mailbox Not Found"
+            out_Action = "Xóa khỏi danh sách"
+        ElseIf bodyLower.Contains("domain") Then
+            out_Type = "Permanent - Domain Invalid"
+            out_Action = "Kiểm tra lại tên miền"
+        ElseIf bodyLower.Contains("spam") OrElse bodyLower.Contains("blocked") Then
+            out_Type = "Permanent - Spam Filter"
+            out_Action = "Kiểm tra nội dung mail"
+        Else
+            out_Type = "Permanent - General Rejection"
+            out_Action = "Không gửi lại"
+        End If
+        
+    Case "552"
+        out_Type = "Temporary - Mailbox Full"
+        out_Action = "Thử lại sau 24 giờ"
+        
+    Case "421"
+        out_Type = "Temporary - Server Busy"
+        out_Action = "Thử lại sau vài giờ"
+        
+    Case "450"
+        out_Type = "Temporary - Mailbox Unavailable"
+        out_Action = "Thử lại sau"
+        
+    Case "554"
+        out_Type = "Permanent - Policy Rejection"
+        out_Action = "Kiểm tra nội dung & sender reputation"
+        
+    Case Else
+        If Not String.IsNullOrEmpty(out_Code) Then
+            If out_Code.StartsWith("5") Then
+                out_Type = "Permanent - Other"
+                out_Action = "Không gửi lại"
+            ElseIf out_Code.StartsWith("4") Then
+                out_Type = "Temporary - Other"
+                out_Action = "Thử lại sau"
+            End If
+        Else
+            out_Type = "Unknown"
+            out_Action = "Cần review thủ công"
+        End If
+End Select
+]]></ui:InvokeCode.Code>
+                  </ui:InvokeCode>
                 </Sequence>
               </If.Else>
             </If>
-            <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{str_RecipientEmail, str_Status, str_Reason, str_ReceivedDate}]" DataTable="[dt_Report]" DisplayName="Add to Report" sap:VirtualizedContainerService.HintSize="1184,111.2" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+            <ui:AddDataRow DataRow="{x:Null}" ArrayRow="[{str_RecipientEmail, str_Status, str_ErrorCode, str_ErrorType, str_Reason, str_Action, str_ReceivedDate}]" DataTable="[dt_Report]" DisplayName="Add to Report" sap:VirtualizedContainerService.HintSize="1184,111.2" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
           </Sequence>
         </ActivityAction>
       </ui:ForEach.Body>
@@ -275,15 +381,73 @@
         <InArgument x:TypeArguments="sd:DataTable">[dt_Report]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim jsContent As New System.Text.StringBuilder()&#xA;jsContent.AppendLine(&quot;var emailStatusData = [&quot;)&#xA;&#xA;For i As Integer = 0 To dt_Report.Rows.Count - 1&#xA;    Dim row = dt_Report.Rows(i)&#xA;    Dim email As String = row(&quot;RecipientEmail&quot;).ToString().Replace(&quot;\&quot;, &quot;\\&quot;).Replace(&quot;&quot;&quot;&quot;, &quot;\&quot;&quot;&quot;)&#xA;    Dim status As String = If(row(&quot;Status&quot;).ToString() = &quot;Thành công&quot;, &quot;success&quot;, &quot;failed&quot;)&#xA;    Dim reason As String = row(&quot;Reason&quot;).ToString().Replace(&quot;\&quot;, &quot;\\&quot;).Replace(&quot;&quot;&quot;&quot;, &quot;\&quot;&quot;&quot;)&#xA;    Dim time As String = row(&quot;ReceivedDate&quot;).ToString()&#xA;    &#xA;    jsContent.Append(&quot;  {&quot;)&#xA;    jsContent.Append(&quot;&quot;&quot;email&quot;&quot;: &quot;&quot;&quot; + email + &quot;&quot;&quot;, &quot;)&#xA;    jsContent.Append(&quot;&quot;&quot;status&quot;&quot;: &quot;&quot;&quot; + status + &quot;&quot;&quot;, &quot;)&#xA;    jsContent.Append(&quot;&quot;&quot;reason&quot;&quot;: &quot;&quot;&quot; + reason + &quot;&quot;&quot;, &quot;)&#xA;    jsContent.Append(&quot;&quot;&quot;time&quot;&quot;: &quot;&quot;&quot; + time + &quot;&quot;&quot;&quot;)&#xA;    jsContent.Append(&quot;}&quot;)&#xA;    &#xA;    If i &lt; dt_Report.Rows.Count - 1 Then&#xA;        jsContent.AppendLine(&quot;,&quot;)&#xA;    Else&#xA;        jsContent.AppendLine()&#xA;    End If&#xA;Next&#xA;&#xA;jsContent.AppendLine(&quot;];&quot;)&#xA;&#xA;Dim jsPath As String = Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\email_status_data.js&quot;)&#xA;File.WriteAllText(jsPath, jsContent.ToString())" DisplayName="Generate JS Data File" sap:VirtualizedContainerService.HintSize="1248,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_GenJS">
+        <ui:InvokeCode ContinueOnError="{x:Null}" DisplayName="Merge Bounce Data into JS" sap:VirtualizedContainerService.HintSize="1248,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_MergeJS">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="sd:DataTable" x:Key="dt_Report">[dt_Report]</InArgument>
       </ui:InvokeCode.Arguments>
-    </ui:InvokeCode>
-    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim htmlPath As String = Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\EmailStatusReport.html&quot;)&#xA;Dim startInfo As New System.Diagnostics.ProcessStartInfo()&#xA;startInfo.FileName = htmlPath&#xA;startInfo.UseShellExecute = True&#xA;System.Diagnostics.Process.Start(startInfo)" DisplayName="Open HTML Dashboard" sap:VirtualizedContainerService.HintSize="1248,166.4" sap2010:WorkflowViewState.IdRef="InvokeCode_OpenBrowser">
-      <ui:InvokeCode.Arguments>
-        <scg:Dictionary x:TypeArguments="x:String, Argument" />
-      </ui:InvokeCode.Arguments>
+      <ui:InvokeCode.Code><![CDATA[Dim q As String = Chr(34)
+Dim jsPath As String = System.IO.Path.Combine(Environment.CurrentDirectory, "Data\UI\email_status_data.js")
+
+Dim entries As New System.Collections.Generic.Dictionary(Of String, System.Collections.Generic.Dictionary(Of String, String))(StringComparer.OrdinalIgnoreCase)
+Dim orderList As New System.Collections.Generic.List(Of String)()
+
+If System.IO.File.Exists(jsPath) Then
+    Dim content As String = System.IO.File.ReadAllText(jsPath)
+    Dim entryRegex As New System.Text.RegularExpressions.Regex("\{([^}]+)\}")
+    Dim fieldRegex As New System.Text.RegularExpressions.Regex(q & "(\w+)" & q & "\s*:\s*" & q & "([^" & q & "]*)" & q)
+    For Each m As System.Text.RegularExpressions.Match In entryRegex.Matches(content)
+        Dim body As String = m.Groups(1).Value
+        Dim d As New System.Collections.Generic.Dictionary(Of String, String)
+        For Each fm As System.Text.RegularExpressions.Match In fieldRegex.Matches(body)
+            d(fm.Groups(1).Value) = fm.Groups(2).Value
+        Next
+        If d.ContainsKey("email") AndAlso Not String.IsNullOrEmpty(d("email")) Then
+            If Not entries.ContainsKey(d("email")) Then orderList.Add(d("email"))
+            entries(d("email")) = d
+        End If
+    Next
+End If
+
+For Each row As System.Data.DataRow In dt_Report.Rows
+    Dim email As String = row("RecipientEmail").ToString()
+    If String.IsNullOrEmpty(email) OrElse email = "Unknown" Then Continue For
+    Dim target As System.Collections.Generic.Dictionary(Of String, String) = Nothing
+    If entries.ContainsKey(email) Then
+        target = entries(email)
+    Else
+        target = New System.Collections.Generic.Dictionary(Of String, String)
+        target("email") = email
+        target("time") = row("ReceivedDate").ToString()
+        entries(email) = target
+        orderList.Add(email)
+    End If
+    target("status") = "failed"
+    target("errorCode") = row("ErrorCode").ToString()
+    target("errorType") = row("ErrorType").ToString()
+    target("reason") = row("Reason").ToString()
+    target("action") = row("Action").ToString()
+Next
+
+Dim sb As New System.Text.StringBuilder()
+sb.AppendLine("var emailStatusData = [")
+Dim fields() As String = {"email", "status", "errorCode", "errorType", "reason", "action", "time"}
+For i As Integer = 0 To orderList.Count - 1
+    Dim d = entries(orderList(i))
+    sb.Append("  {")
+    For j As Integer = 0 To fields.Length - 1
+        Dim k As String = fields(j)
+        Dim v As String = If(d.ContainsKey(k), d(k), "")
+        v = v.Replace("\", "\\").Replace(q, "\" & q)
+        sb.Append(q & k & q & ": " & q & v & q)
+        If j < fields.Length - 1 Then sb.Append(", ")
+    Next
+    sb.Append("}")
+    If i < orderList.Count - 1 Then sb.Append(",")
+    sb.AppendLine()
+Next
+sb.AppendLine("];")
+System.IO.File.WriteAllText(jsPath, sb.ToString())
+]]></ui:InvokeCode.Code>
     </ui:InvokeCode>
     <ui:LogMessage DisplayName="Log: Completed DSN Processing" sap:VirtualizedContainerService.HintSize="1248,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;[DSN] Completed processing. Total: &quot; + dt_Report.Rows.Count.ToString + &quot; | Success: &quot; + dt_Report.Select(&quot;Status = 'Thành công'&quot;).Length.ToString + &quot; | Failed: &quot; + dt_Report.Select(&quot;Status = 'Thất bại'&quot;).Length.ToString + &quot; | Dashboard opened in browser&quot;]" />
   </Sequence>

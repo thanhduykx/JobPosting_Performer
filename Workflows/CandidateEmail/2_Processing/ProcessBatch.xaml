@@ -16,40 +16,53 @@
   <sap2010:WorkflowViewState.IdRef>Exec_Dispatch_Loop_1</sap2010:WorkflowViewState.IdRef>
   <TextExpression.NamespacesForImplementation>
     <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
       <x:String>System</x:String>
       <x:String>System.Activities</x:String>
       <x:String>System.Collections</x:String>
       <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.ComponentModel</x:String>
       <x:String>System.Data</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
+      <x:String>System.Xml.Serialization</x:String>
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
-      <x:String>System.ComponentModel</x:String>
-      <x:String>System.Xml.Serialization</x:String>
       <x:String>UiPath.Excel.Activities</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
     <scg:List x:TypeArguments="AssemblyReference" Capacity="32">
       <AssemblyReference>System.Activities</AssemblyReference>
-      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
       <AssemblyReference>System.Data</AssemblyReference>
       <AssemblyReference>System.Data.Common</AssemblyReference>
-      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
       <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Exec_Dispatch_Loop" sap:VirtualizedContainerService.HintSize="800,2800" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="Exec_Dispatch_Loop" sap:VirtualizedContainerService.HintSize="722.8000000000001,2683.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="dt_ExecutionReport" />
       <Variable x:TypeArguments="x:String" Name="str_ItemStatus" />
       <Variable x:TypeArguments="x:String" Name="str_ItemError" />
       <Variable x:TypeArguments="x:String" Name="str_SharedPdfPath" />
     </Sequence.Variables>
-    <ui:BuildDataTable DataTable="[dt_ExecutionReport]" DisplayName="Build Report Schema" sap:VirtualizedContainerService.HintSize="720,92.8" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&lt;xs:complexType&gt;&lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&lt;xs:element name=&quot;TableName&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element name=&quot;Recipient&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Status&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Error&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Timestamp&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:choice&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;&lt;/NewDataSet&gt;" />
-    <ui:LogMessage DisplayName="Log: Generate PDF Once" sap:VirtualizedContainerService.HintSize="720,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_GenPDF" Level="Info" Message="[&quot;[BATCH] Generating PDF once for all emails in this batch...&quot;]" />
-    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Generate Shared PDF" sap:VirtualizedContainerService.HintSize="720,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_GenPDF" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\2_Processing\GeneratePDF.xaml">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:BuildDataTable DataTable="[dt_ExecutionReport]" DisplayName="Build Report Schema" sap:VirtualizedContainerService.HintSize="720,92" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&lt;xs:complexType&gt;&lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&lt;xs:element name=&quot;TableName&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element name=&quot;Recipient&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Status&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Error&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Timestamp&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:choice&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;&lt;/NewDataSet&gt;" />
+    <ui:LogMessage DisplayName="Log: Generate PDF Once" sap:VirtualizedContainerService.HintSize="720,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_GenPDF" Level="Info" Message="[&quot;[BATCH] Generating PDF once for all emails in this batch...&quot;]" />
+    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Generate Shared PDF" sap:VirtualizedContainerService.HintSize="720,175.2" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_GenPDF" Level="{x:Null}" LogEntry="{x:Null}" LogExit="{x:Null}" Timeout="{x:Null}" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\2_Processing\GeneratePDF.xaml">
       <ui:InvokeWorkflowFile.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_JobIds">[in_JobIds]</InArgument>
         <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[in_TemplateName]</InArgument>
@@ -59,16 +72,16 @@
         <OutArgument x:TypeArguments="x:String" x:Key="out_PdfPath">[str_SharedPdfPath]</OutArgument>
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
-    <If Condition="[in_Mode.Equals(&quot;Auto&quot;)]" DisplayName="Auto Loop vs Manual Loop" sap:VirtualizedContainerService.HintSize="720,2000" sap2010:WorkflowViewState.IdRef="If_LoopType">
+    <If Condition="[in_Mode.Equals(&quot;Auto&quot;)]" DisplayName="Auto Loop vs Manual Loop" sap:VirtualizedContainerService.HintSize="720,1783.2" sap2010:WorkflowViewState.IdRef="If_LoopType">
       <If.Then>
-        <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[in_dt_Emails]" DisplayName="Drive Recipients Loop" sap:VirtualizedContainerService.HintSize="449.6,800" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
-           <ui:ForEachRow.Body>
+        <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[in_dt_Emails]" DisplayName="Drive Recipients Loop" sap:VirtualizedContainerService.HintSize="449.6,800" sap2010:WorkflowViewState.IdRef="ForEachRow_1" MaxIterations="{x:Null}" Values="{x:Null}">
+          <ui:ForEachRow.Body>
             <ActivityAction x:TypeArguments="sd:DataRow">
               <ActivityAction.Argument>
                 <DelegateInArgument x:TypeArguments="sd:DataRow" Name="row" />
               </ActivityAction.Argument>
               <Sequence DisplayName="Dispatch Single Item" sap:VirtualizedContainerService.HintSize="416,612.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
-                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Process_SendEmail.xaml" sap:VirtualizedContainerService.HintSize="382.4,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" WorkflowFileName="Workflows\CandidateEmail\2_Processing\Process_SendEmail.xaml">
+                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Process_SendEmail.xaml" sap:VirtualizedContainerService.HintSize="382.4,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" Level="{x:Null}" LogEntry="{x:Null}" LogExit="{x:Null}" Timeout="{x:Null}" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\2_Processing\Process_SendEmail.xaml">
                   <ui:InvokeWorkflowFile.Arguments>
                     <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
                     <InArgument x:TypeArguments="x:String" x:Key="in_Email">[row(in_dt_Emails.Columns.Cast(Of DataColumn)().FirstOrDefault(Function(c) c.ColumnName.Trim.ToUpper.Contains("EMAIL")).ColumnName).ToString]</InArgument>
@@ -82,21 +95,21 @@
                     <OutArgument x:TypeArguments="x:String" x:Key="out_ErrorMessage">[str_ItemError]</OutArgument>
                   </ui:InvokeWorkflowFile.Arguments>
                 </ui:InvokeWorkflowFile>
-                <ui:AddDataRow ArrayRow="[{row(0).ToString, str_ItemStatus, str_ItemError, DateTime.Now.ToString}]" DataTable="[dt_ExecutionReport]" DisplayName="Log Result to Table" sap:VirtualizedContainerService.HintSize="382.4,220" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
+                <ui:AddDataRow ArrayRow="[{row(0).ToString, str_ItemStatus, str_ItemError, DateTime.Now.ToString}]" DataRow="{x:Null}" DataTable="[dt_ExecutionReport]" DisplayName="Log Result to Table" sap:VirtualizedContainerService.HintSize="382.4,220" sap2010:WorkflowViewState.IdRef="AddDataRow_1" />
               </Sequence>
             </ActivityAction>
           </ui:ForEachRow.Body>
         </ui:ForEachRow>
       </If.Then>
       <If.Else>
-        <ui:ForEach x:TypeArguments="x:String" DisplayName="Manual Recipients Loop" sap:VirtualizedContainerService.HintSize="449.6,800" sap2010:WorkflowViewState.IdRef="ForEach_1" Values="[in_ManualEmails.Split({&quot;;&quot;,&quot;,&quot;}, StringSplitOptions.RemoveEmptyEntries)]">
+        <ui:ForEach x:TypeArguments="x:String" CurrentIndex="{x:Null}" DisplayName="Manual Recipients Loop" sap:VirtualizedContainerService.HintSize="449.6,800" sap2010:WorkflowViewState.IdRef="ForEach_1" MaxIterations="{x:Null}" Values="[in_ManualEmails.Split({&quot;;&quot;,&quot;,&quot;}, StringSplitOptions.RemoveEmptyEntries)]">
           <ui:ForEach.Body>
-             <ActivityAction x:TypeArguments="x:String">
+            <ActivityAction x:TypeArguments="x:String">
               <ActivityAction.Argument>
                 <DelegateInArgument x:TypeArguments="x:String" Name="email" />
               </ActivityAction.Argument>
               <Sequence DisplayName="Dispatch Manual Item" sap:VirtualizedContainerService.HintSize="416,612.8" sap2010:WorkflowViewState.IdRef="Sequence_3">
-                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Process_SendEmail.xaml" sap:VirtualizedContainerService.HintSize="382.4,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" WorkflowFileName="Workflows\CandidateEmail\2_Processing\Process_SendEmail.xaml">
+                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="{x:Null}" DisplayName="Process_SendEmail.xaml" sap:VirtualizedContainerService.HintSize="382.4,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" Level="{x:Null}" LogEntry="{x:Null}" LogExit="{x:Null}" Timeout="{x:Null}" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\2_Processing\Process_SendEmail.xaml">
                   <ui:InvokeWorkflowFile.Arguments>
                     <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
                     <InArgument x:TypeArguments="x:String" x:Key="in_Email">[email.Trim]</InArgument>
@@ -110,7 +123,7 @@
                     <OutArgument x:TypeArguments="x:String" x:Key="out_ErrorMessage">[str_ItemError]</OutArgument>
                   </ui:InvokeWorkflowFile.Arguments>
                 </ui:InvokeWorkflowFile>
-                <ui:AddDataRow ArrayRow="[{email.Trim, str_ItemStatus, str_ItemError, DateTime.Now.ToString}]" DataTable="[dt_ExecutionReport]" DisplayName="Log Manual Result" sap:VirtualizedContainerService.HintSize="382.4,220" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
+                <ui:AddDataRow ArrayRow="[{email.Trim, str_ItemStatus, str_ItemError, DateTime.Now.ToString}]" DataRow="{x:Null}" DataTable="[dt_ExecutionReport]" DisplayName="Log Manual Result" sap:VirtualizedContainerService.HintSize="382.4,220" sap2010:WorkflowViewState.IdRef="AddDataRow_2" />
               </Sequence>
             </ActivityAction>
           </ui:ForEach.Body>
@@ -118,5 +131,10 @@
       </If.Else>
     </If>
     <ui:WriteRange DataTable="[dt_ExecutionReport]" DisplayName="Save Final Report" sap:VirtualizedContainerService.HintSize="720,139.2" sap2010:WorkflowViewState.IdRef="WriteRange_1" SheetName="Report" StartingCell="A1" WorkbookPath="[&quot;Data\Output\ExecutionReport_&quot; + DateTime.Now.ToString(&quot;yyyyMMdd_HHmm&quot;) + &quot;.xlsx&quot;]" />
+    <ui:InvokeCode Code="Dim jsPath As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\email_status_data.js&quot;)&#10;System.IO.File.WriteAllText(jsPath, &quot;var emailStatusData = [];&quot;)" ContinueOnError="True" DisplayName="Generate Initial Status Dashboard" sap:VirtualizedContainerService.HintSize="720,156.8" sap2010:WorkflowViewState.IdRef="InvokeCode_InitDashboard">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="dt_Report">[dt_ExecutionReport]</InArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
   </Sequence>
 </Activity>

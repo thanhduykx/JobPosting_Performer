@@ -237,6 +237,40 @@
             white-space: nowrap;
         }
         
+        .error-code {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .error-type {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .error-type.permanent {
+            color: var(--error);
+        }
+        
+        .error-type.temporary {
+            color: var(--warning);
+        }
+        
+        .action-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -279,6 +313,10 @@
                 <div class="stat-label">✗ Failed</div>
                 <div class="stat-value" id="failedCount">0</div>
             </div>
+            <div class="stat-card" style="border-left-color: var(--warning);">
+                <div class="stat-label">⚠ Temporary Errors</div>
+                <div class="stat-value" id="temporaryCount">0</div>
+            </div>
         </div>
         
         <div class="filters">
@@ -295,13 +333,16 @@
                     <tr>
                         <th>Recipient Email</th>
                         <th>Status</th>
+                        <th>Error Code</th>
+                        <th>Error Type</th>
                         <th>Reason / Details</th>
-                        <th>Received Time</th>
+                        <th>Recommended Action</th>
+                        <th>Time</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
                     <tr>
-                        <td colspan="4" class="empty-state">
+                        <td colspan="7" class="empty-state">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                             </svg>
@@ -342,12 +383,16 @@
         
         function updateStats() {
             var total = allData.length;
-            var success = allData.filter(function(item) { return item.status === 'success'; }).length;
+            var success = allData.filter(function(item) { return item.status === 'success' || item.status === 'Success'; }).length;
             var failed = total - success;
+            var temporary = allData.filter(function(item) { 
+                return item.errorType && item.errorType.toLowerCase().indexOf('temporary') !== -1; 
+            }).length;
             
             document.getElementById('totalCount').textContent = total;
             document.getElementById('successCount').textContent = success;
             document.getElementById('failedCount').textContent = failed;
+            document.getElementById('temporaryCount').textContent = temporary;
         }
         
         function filterStatus(status) {
@@ -391,21 +436,36 @@
             var tbody = document.getElementById('tableBody');
             
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="empty-state"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><div>No emails match your filter</div></td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg><div>No emails match your filter</div></td></tr>';
                 return;
             }
             
             var html = '';
             for (var i = 0; i < data.length; i++) {
                 var item = data[i];
-                var statusClass = item.status === 'success' ? 'status-success' : 'status-failed';
-                var statusText = item.status === 'success' ? '✓ Delivered' : '✗ Failed';
+                var statusClass = (item.status === 'success' || item.status === 'Success') ? 'status-success' : 'status-failed';
+                var statusText = (item.status === 'success' || item.status === 'Success') ? '✓ Delivered' : '✗ Failed';
+                
+                var errorCodeHtml = item.errorCode ? '<span class="error-code">' + item.errorCode + '</span>' : '-';
+                
+                var errorTypeClass = '';
+                if (item.errorType && item.errorType.toLowerCase().indexOf('permanent') !== -1) {
+                    errorTypeClass = 'permanent';
+                } else if (item.errorType && item.errorType.toLowerCase().indexOf('temporary') !== -1) {
+                    errorTypeClass = 'temporary';
+                }
+                var errorTypeHtml = item.errorType ? '<span class="error-type ' + errorTypeClass + '">' + item.errorType + '</span>' : '-';
+                
+                var actionHtml = (item.action && item.action !== 'N/A') ? '<span class="action-badge">' + item.action + '</span>' : '-';
                 
                 html += '<tr>' +
-                    '<td class="email-cell">' + item.email + '</td>' +
+                    '<td class="email-cell">' + (item.email || item.Email) + '</td>' +
                     '<td><span class="status-badge ' + statusClass + '">' + statusText + '</span></td>' +
-                    '<td class="reason-cell">' + (item.reason || '-') + '</td>' +
-                    '<td class="time-cell">' + item.time + '</td>' +
+                    '<td>' + errorCodeHtml + '</td>' +
+                    '<td>' + errorTypeHtml + '</td>' +
+                    '<td class="reason-cell">' + (item.reason || item.Reason || '-') + '</td>' +
+                    '<td>' + actionHtml + '</td>' +
+                    '<td class="time-cell">' + (item.time || item.Timestamp) + '</td>' +
                     '</tr>';
             }
             
@@ -414,6 +474,32 @@
         
         // Load data on page load
         window.onload = loadData;
+        
+        // Auto-refresh every 5 seconds to pick up real-time bounce updates
+        setInterval(function() {
+            var s = document.createElement('script');
+            s.src = 'email_status_data.js?t=' + Date.now();
+            s.onload = function() {
+                if (typeof emailStatusData !== 'undefined') {
+                    allData = emailStatusData;
+                    updateStats();
+                    var searchTerm = document.getElementById('searchBox').value.toLowerCase();
+                    var filtered = allData;
+                    if (currentFilter === 'success') {
+                        filtered = allData.filter(function(item) { return item.status === 'success' || item.status === 'Success'; });
+                    } else if (currentFilter === 'failed') {
+                        filtered = allData.filter(function(item) { return item.status === 'failed' || item.status === 'Failed'; });
+                    }
+                    if (searchTerm) {
+                        filtered = filtered.filter(function(item) { return (item.email || '').toLowerCase().indexOf(searchTerm) !== -1; });
+                    }
+                    renderTable(filtered);
+                }
+                document.body.removeChild(s);
+            };
+            s.onerror = function() { if (s.parentNode) document.body.removeChild(s); };
+            document.body.appendChild(s);
+        }, 5000);
     </script>
 </body>
 </html>

@@ -6,8 +6,8 @@
   "OriginalIconFileName": null,
   "Arguments": [
     {
-      "Name": "in_OrchestratorQueueName",
-      "DisplayName": "in_OrchestratorQueueName",
+      "Name": "in_QueueName",
+      "DisplayName": "in_QueueName",
       "Category": null,
       "Tooltip": null,
       "Placeholder": null,
@@ -18,8 +18,8 @@
       "DataSourceItems": null
     },
     {
-      "Name": "in_OrchestratorQueueFolder",
-      "DisplayName": "in_OrchestratorQueueFolder",
+      "Name": "in_QueueFolder",
+      "DisplayName": "in_QueueFolder",
       "Category": null,
       "Tooltip": null,
       "Placeholder": null,

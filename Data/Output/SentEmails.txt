@@ -1,0 +1,3 @@
+candidate1@example.com
+candidate2@example.com
+test@validomain.com

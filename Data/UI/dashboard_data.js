@@ -1,1 +1,1 @@
-var global_jobs = 'ALL;Japanese Comtor;Java Developer;Service Desk Support ;Project Manager;Software Test Engineer;Salesforce Engineer'; var global_templates = 'Group/AutumnTemplate;Group/SummerTemplate;Group/WinterTemplate;Individual/SummerTemplate';
+var global_jobs = 'ALL;Japanese Comtor;Java Developer;Service Desk Support ;Project Manager;Software Test Engineer;Salesforce Engineer'; var global_templates = 'Group/G_AutumnTemplate;Group/G_SummerTemplate;Group/G_WinterTemplate;Individual/I_SummerTemplate';

@@ -37,7 +37,7 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     
-    <ui:LogMessage DisplayName="Log: Check Status" sap:VirtualizedContainerService.HintSize="568,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Checking email delivery status...&quot;]" />
+    <ui:LogMessage DisplayName="Log: Check Status" sap:VirtualizedContainerService.HintSize="568,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Checking email delivery status with SMTP bounce analysis...&quot;]" />
     
     <Assign DisplayName="Get Gmail Connection ID" sap:VirtualizedContainerService.HintSize="568,113.6" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>

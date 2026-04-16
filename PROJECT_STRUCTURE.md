@@ -32,7 +32,10 @@ JobPosting_FINAL/
 │       │
 │       ├── 📂 4_Monitoring/               Status tracking
 │       │   ├── CheckEmailStatus.xaml      Entry point
-│       │   └── Process_DeliveryStatusNotifications.xaml
+│       │   ├── Process_DeliveryStatusNotifications.xaml
+│       │   ├── Process_BounceEmailAnalysis.xaml        NEW: Bounce analysis
+│       │   ├── CheckEmailStatus_WithDashboard.xaml     NEW: Main bounce workflow
+│       │   └── Demo_BounceAnalysis_Standalone.xaml     NEW: Demo with samples
 │       │
 │       ├── 📂 5_Modules/                  Reusable modules
 │       │   └── Module_SendGmail.xaml      Gmail sender
@@ -59,7 +62,10 @@ JobPosting_FINAL/
 │   │   └── Job_Description.pdf            Generated PDF
 │   │
 │   ├── 📂 Output/                         Execution reports
-│   │   └── ExecutionReport_*.xlsx
+│   │   ├── ExecutionReport_*.xlsx
+│   │   ├── BounceEmailDashboard.html      NEW: Bounce analysis dashboard
+│   │   ├── start_dashboard_server.py      NEW: HTTP server
+│   │   └── SentEmails.txt                 NEW: Sent emails list
 │   │
 │   ├── 📂 Temp/                           Temporary files
 │   │   └── temp_email.html
@@ -82,11 +88,14 @@ JobPosting_FINAL/
 │   └── (Test workflows)
 │
 ├── 📂 Documentation/                      [DOCS]
-│   └── (Project documentation)
+│   ├── BounceEmailAnalysis_README.md      NEW: Bounce analysis guide
+│   └── (Other documentation)
 │
 ├── Main.xaml                              Main entry point
 ├── project.json                           UiPath project config
-└── README.md                              Project README
+├── README.md                              Project README
+├── QUICKSTART_BounceAnalysis.md           NEW: Bounce analysis quick start
+└── SUMMARY_BounceAnalysis_Solution.md     NEW: Solution overview
 ```
 
 ---
@@ -156,6 +165,28 @@ Process_DeliveryStatusNotifications.xaml
 Browser displays interactive dashboard
 ```
 
+### 3. Bounce Analysis Flow (NEW)
+```
+CheckEmailStatus_WithDashboard.xaml
+    ↓
+Load SentEmails.txt
+    ↓
+Process_BounceEmailAnalysis.xaml
+├─ Get bounce emails from Gmail
+├─ Parse with Regex (SMTP codes)
+├─ Match with sent emails
+├─ Classify errors (Permanent/Temporary)
+└─ Build result DataTable
+    ↓
+Convert to JSON
+    ↓
+Update BounceEmailDashboard.html
+    ↓
+Start Python HTTP server (localhost:8080)
+    ↓
+Auto-open browser → Interactive dashboard
+```
+
 ---
 
 ## 🎯 Tính năng chính
@@ -172,6 +203,13 @@ Browser displays interactive dashboard
 - **Delivery Status**: Success/Failed với lý do chi tiết
 - **Real-time**: Tự động refresh khi có data mới
 - **Export**: Excel reports cho archiving
+- **Bounce Analysis** (NEW): 
+  - SMTP error code parsing (550, 421, 552, etc.)
+  - Regex-based email extraction
+  - Permanent vs Temporary classification
+  - Recommended actions
+  - Interactive dashboard with charts
+  - Localhost HTTP server (Python)
 
 ### 🎨 UI/UX
 - **BR Omega Font**: Consistent branding
@@ -198,6 +236,8 @@ GoogleDrive_EmailsFileId   → Emails spreadsheet ID
 - Microsoft Edge (for PDF generation)
 - Gmail API credentials
 - Google Drive access
+- Python 3.x (for bounce analysis dashboard server)
+- Newtonsoft.Json package
 
 ---
 
@@ -244,16 +284,25 @@ GoogleDrive_EmailsFileId   → Emails spreadsheet ID
    - View delivery status report
    - Export to Excel if needed
 
+4. **Bounce Analysis** (NEW)
+   - Run `Demo_BounceAnalysis_Standalone.xaml` for quick demo
+   - Or run `CheckEmailStatus_WithDashboard.xaml` for real analysis
+   - View dashboard at http://localhost:8080
+   - Review SMTP error codes and recommendations
+
 ---
 
 ## 📚 Documentation
 
 - **Workflows**: `Workflows/CandidateEmail/README.md`
 - **Data**: `Data/README.md`
+- **Bounce Analysis**: `Documentation/BounceEmailAnalysis_README.md` (NEW)
+- **Quick Start**: `QUICKSTART_BounceAnalysis.md` (NEW)
+- **Solution Summary**: `SUMMARY_BounceAnalysis_Solution.md` (NEW)
 - **This file**: Overall project structure
 
 ---
 
-**Version**: 2.0 - Optimized PDF Generation  
-**Last Updated**: 2026-04-17  
+**Version**: 3.0 - Added Bounce Email Analysis with Dashboard  
+**Last Updated**: 2026-04-17 03:27 AM  
 **Team**: FPT Software Recruitment Automation

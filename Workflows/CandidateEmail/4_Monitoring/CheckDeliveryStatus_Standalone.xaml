@@ -59,5 +59,6 @@
       </ui:InvokeWorkflowFile.Arguments>
     </ui:InvokeWorkflowFile>
     <ui:LogMessage DisplayName="Log: Completed" sap:VirtualizedContainerService.HintSize="568,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;[STATUS CHECK] Completed. Total emails processed: &quot; + If(dt_DeliveryReport Is Nothing, &quot;0&quot;, dt_DeliveryReport.Rows.Count.ToString)]" />
+    <ui:CustomInput DisplayName="Open Status Dashboard" Height="700" sap:VirtualizedContainerService.HintSize="568,120" sap2010:WorkflowViewState.IdRef="CustomInput_StatusDashboard" Result="{x:Null}" TopMost="True" URI="http://localhost:8000/Data/UI/EmailStatusReport.html" Width="1100" />
   </Sequence>
 </Activity>
