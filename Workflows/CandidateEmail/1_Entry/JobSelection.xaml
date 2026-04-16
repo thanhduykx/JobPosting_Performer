@@ -1,0 +1,150 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Show_Job_Selection_Screen" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_Config" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="out_dt_Jobs" Type="OutArgument(sd:DataTable)" />
+    <x:Property Name="out_str_DriveBasePath" Type="OutArgument(x:String)" />
+    <x:Property Name="out_str_Qualifications" Type="OutArgument(x:String)" />
+    <x:Property Name="out_Mode" Type="OutArgument(x:String)" />
+    <x:Property Name="out_JobIds" Type="OutArgument(x:String)" />
+    <x:Property Name="out_ManualEmails" Type="OutArgument(x:String)" />
+    <x:Property Name="out_TemplateSelection" Type="OutArgument(x:String)" />
+    <x:Property Name="out_UserExit" Type="OutArgument(x:Boolean)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap2010:WorkflowViewState.IdRef>Show_Job_Selection_Screen_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="64">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.ComponentModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>UiPath.Excel.Activities</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="64">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.Common</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Show_Job_Selection_Screen" sap:VirtualizedContainerService.HintSize="600,2800" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="str_FoundFile" />
+      <Variable x:TypeArguments="x:String" Name="str_JobsExcelPath" />
+      <Variable x:TypeArguments="x:String" Name="str_JobOptions" />
+      <Variable x:TypeArguments="x:String" Name="str_TemplateOptions" />
+      <Variable x:TypeArguments="x:String" Name="str_ResultJSON" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log: Fetching Jobs" sap:VirtualizedContainerService.HintSize="520,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Step 1: Fetching job data from Drive...&quot;]" />
+    <Assign DisplayName="Get Drive Path" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[out_str_DriveBasePath]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_Config IsNot Nothing AndAlso in_Config.ContainsKey("Drive_BasePath"), in_Config("Drive_BasePath").ToString, "G:\My Drive\Jobs &amp; Email")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Find Latest Jobs Excel" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(out_str_DriveBasePath, "Jobs"), "*Demand*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <If Condition="[String.IsNullOrEmpty(str_FoundFile)]" DisplayName="If Job File Missing" sap:VirtualizedContainerService.HintSize="520,300" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <TerminateWorkflow DisplayName="Abort Process" Exception="[New Exception(&quot;Error: Jobs file not found.&quot;)]" sap:VirtualizedContainerService.HintSize="334.4,90.4" sap2010:WorkflowViewState.IdRef="Terminate_1" />
+      </If.Then>
+    </If>
+    <Assign DisplayName="Local Destination" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_3">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_JobsExcelPath]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[Path.Combine(Environment.CurrentDirectory, "Data\Input\Jobs_Local.xlsx")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="If File.Exists(in_FilePath) Then&#xA;    File.Delete(in_FilePath)&#xA;End If" DisplayName="Delete Old Jobs File" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldJobs">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[str_JobsExcelPath]</InArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[str_JobsExcelPath]" DisplayName="Copy to Workspace" sap:VirtualizedContainerService.HintSize="520,222.4" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="[str_FoundFile]" />
+    <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_dt_Jobs]" DisplayName="Read Job Details" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" />
+    <ui:ReadCell Cell="G2" DisplayName="Read Global Quals" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="ReadCell_1" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]">
+      <ui:ReadCell.Result>
+        <OutArgument x:TypeArguments="x:String">[out_str_Qualifications]</OutArgument>
+      </ui:ReadCell.Result>
+    </ui:ReadCell>
+    <Assign DisplayName="Prepare Dropdown Content" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_4">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_JobOptions]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">["ALL;" + String.Join(";", out_dt_Jobs.AsEnumerable().Select(Function(r) If(out_dt_Jobs.Columns.Contains("JobID"), r("JobID").ToString, If(out_dt_Jobs.Columns.Contains("Role"), r("Role").ToString, r(0).ToString))).Distinct())]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:LogMessage DisplayName="Log: UI Start" sap:VirtualizedContainerService.HintSize="520,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_UI" Level="Info" Message="[&quot;Step 2: Launching HR Selection Dashboard...&quot;]" />
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim templatesPath As String = Path.Combine(Environment.CurrentDirectory, &quot;Templates&quot;)&#xA;Dim files = Directory.GetFiles(templatesPath, &quot;*.html&quot;, SearchOption.AllDirectories)&#xA;out_Options = String.Join(&quot;;&quot;, files.Select(Function(f) f.Replace(templatesPath + &quot;\&quot;, &quot;&quot;).Replace(&quot;.html&quot;, &quot;&quot;)))" DisplayName="Discover Templates" sap:VirtualizedContainerService.HintSize="520,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Discover">
+      <ui:InvokeCode.Arguments>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Options">[str_TemplateOptions]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <ui:WriteTextFile File="{x:Null}" Output="{x:Null}" FileName="Data\UI\dashboard_data.js" sap:VirtualizedContainerService.HintSize="520,166.4" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[&quot;var global_jobs = '&quot; + str_JobOptions.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;'; var global_templates = '&quot; + str_TemplateOptions.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;';&quot;]" />
+    <ui:CustomInput DisplayName="Job Selection Dashboard" Height="800" sap:VirtualizedContainerService.HintSize="520,120" sap2010:WorkflowViewState.IdRef="CustomInput_1" Result="[str_ResultJSON]" TopMost="True" URI="http://localhost:8000/Data/UI/Dashboard.html" Width="1000" />
+    <If Condition="[String.IsNullOrEmpty(str_ResultJSON)]" DisplayName="Handle Dashboard Closure" sap:VirtualizedContainerService.HintSize="520,474.4" sap2010:WorkflowViewState.IdRef="If_2">
+      <If.Then>
+        <Sequence sap:VirtualizedContainerService.HintSize="449.6,252.4" sap2010:WorkflowViewState.IdRef="Sequence_Cancel">
+          <ui:MessageBox Caption="{x:Null}" ChosenButton="{x:Null}" AutoCloseAfter="00:00:00" DisplayName="Abort Information" sap:VirtualizedContainerService.HintSize="416,117.6" sap2010:WorkflowViewState.IdRef="MessageBox_1" Text="[&quot;Dashboard closed. Stopping process.&quot;]" />
+          <Assign DisplayName="Set Exit Flag" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="Assign_Exit">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:Boolean">[out_UserExit]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:Boolean">True</InArgument>
+            </Assign.Value>
+          </Assign>
+        </Sequence>
+      </If.Then>
+    </If>
+    <If Condition="[Not out_UserExit]" DisplayName="Parse Selection Data" sap:VirtualizedContainerService.HintSize="520,342.4" sap2010:WorkflowViewState.IdRef="If_3">
+      <If.Then>
+        <ui:InvokeCode ContinueOnError="{x:Null}" Code="Try&#xA;    Dim json = Newtonsoft.Json.Linq.JObject.Parse(in_JSON)&#xA;    out_Mode = If(json(&quot;mode&quot;) IsNot Nothing, json(&quot;mode&quot;).ToString(), &quot;Auto&quot;)&#xA;    out_Jobs = If(json(&quot;jobs&quot;) IsNot Nothing, json(&quot;jobs&quot;).ToString(), &quot;&quot;)&#xA;    out_Emails = If(json(&quot;emails&quot;) IsNot Nothing, json(&quot;emails&quot;).ToString(), &quot;&quot;)&#xA;    out_Template = If(json(&quot;template&quot;) IsNot Nothing, json(&quot;template&quot;).ToString(), &quot;&quot;)&#xA;Catch ex As Exception&#xA;End Try" DisplayName="JSON Result Parser" sap:VirtualizedContainerService.HintSize="487.2,164.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Parse">
+          <ui:InvokeCode.Arguments>
+            <InArgument x:TypeArguments="x:String" x:Key="in_JSON">[str_ResultJSON]</InArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Mode">[out_Mode]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Jobs">[out_JobIds]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Emails">[out_ManualEmails]</OutArgument>
+            <OutArgument x:TypeArguments="x:String" x:Key="out_Template">[out_TemplateSelection]</OutArgument>
+          </ui:InvokeCode.Arguments>
+        </ui:InvokeCode>
+      </If.Then>
+    </If>
+  </Sequence>
+</Activity>

@@ -1,0 +1,1 @@
+var global_mode = 'Manual'; var global_jobs = 'ALL;Japanese Comtor;Java Developer;Service Desk Support ;Project Manager;Software Test Engineer;Salesforce Engineer'; var global_template = 'Group/SummerTemplate'; var global_employees = 'duongduy12318@gmail.com;ashj@gmail.com';
