@@ -1,0 +1,60 @@
+
+End-User License Agreement for Trial Fonts
+
+
+This End User License Agreement (EULA) governs your use of the trial fonts offered by Fontstore Ltd (“Fontstore”). By submitting the Trial Request Form and clicking "Submit Request," you accept the terms of this agreement. Before accessing or downloading any font software from Fontstore's website, we advise you to read this EULA in full. Using the font software from Fontstore's website signifies your agreement and binds you to this EULA. If you do not agree to the terms, do not download or use the font software.
+
+THIS LICENSE APPLIES TO YOUR USE AND DOWNLOAD OF THE FONT SOFTWARE AVAILABLE FOR TESTING THROUGH FONTSTORE'S 30-DAY FREE TRIAL, FOR CLIENT PITCHES OR OTHER NON-COMMERCIAL USE ONLY. YOU ARE NOT PERMITTED TO DISPLAY OR PUBLISH ANY WORKS USING THE FONT SOFTWARE UNDER THIS TRIAL LICENSE.
+
+This license grants you the right to use the Fontstore fonts and font software on a trial basis for thirty (30) days only. "Font software" includes the design of the fonts and the software that generates typeface and typographic designs and ornaments. The font software also includes any upgrades, updates, related files, permitted modifications, permitted copies, and related documentation.
+
+
+You may electronically distribute the font software solely for testing and evaluating purposes. "Trial use" means internal testing and "pitching" purposes only, and no other distribution is allowed. Hardware vendors and manufacturers must obtain a trial license if the testing software must be distributed for installation and testing.
+
+
+Fontstore or the font software owner retains all rights and title in the font software and its associated trademarks. You agree not to copy the font software or create derivatives based on it. Unauthorized use of the font software is an infringement of Fontstore's or the owner's exclusive rights and causes significant monetary harm.
+
+
+If during testing, you alter the font software, all such alterations will be considered "works made for hire" and become the exclusive property of Fontstore or the font software owner. The font software may not be used to create or distribute electronic documents or products outside of testing purposes.
+
+
+You may make one (1) backup copy of the original font software for archival purposes only and must retain control of the copy. Upon termination of this agreement or if you do not purchase a license, you must destroy all copies of the font software. If there is no separate written agreement, you must also destroy any backup copies of altered or derived works. Unauthorized sharing, lending, renting, sale, or misuse of the backup copy is a material breach and will result in immediate termination of the license.
+
+
+The font software is protected by copyright and intellectual property laws of the seller's country and other nations. You may not copy the font software except for testing purposes. All copies must contain the same copyright, trademark, and proprietary notices. In the event of any breach, Fontstore or the font software owner may seek injunctive relief and all available legal remedies as the harm caused is irreparable and impossible to ascertain.
+
+
+Except as may be required for Testing or temporary Purposes, You further agree not to modify, adapt, translate, reverse engineer, decompile, disassemble, alter, or otherwise attempt to discover the source code of the Font Software. All trademarks shall be used in accepted trademark practice, including identification of the trademark owner’s name. Use of the trademarks associated with the Font Software inures solely to the benefit of Fontstore or the owner of the Font Software. You may not change any trademark or trade name used with the Font Software.
+
+
+You expressly agree that you shall not use, distribute, or otherwise implement the use of any version of the Font Software You create. You further agree that any amending of the Font Software or other development of the Font Software for use in a commercially distributed product, software, or hardware, shall be performed by Fontstore or the owner and shall be subject to a reasonable, separate written license agreement with Fontstore.
+
+
+If You are a design consultancy, advertising agency, or using the Font Software for use by or on behalf of such an entity, the ultimate end user must purchase a License appropriate for their use. Specifically, if your client will use copies of the Font Software, your client must also purchase a suitable license. The license granted herein does not extend to unlicensed uses by temporary employees, freelancers or independent contractors using the Font Software in professional environments or for other professional uses in excess of the License.
+
+
+If the Font Software is found to be defective within sixty (60) days of the date of delivery to the Licensee, Fontstore will, upon proof of license, provide suitable replacements at no charge to the Licensee. The entire risk of performance and quality of the work or end product created by the Licensee lies with You. Fontstore does not warrant that this product will operate with any software or hardware products, or that it will satisfy your requirements. Fontstore’s entire liability to the Licensee will not extend beyond replacement of defective media or refund of the purchase price, if any. You expressly acknowledge and agree that use of the Font Software is at your sole risk. The Font Software and related documentation are provided "AS IS" and, except as noted herein, is without warranty of any kind and Fontstore and its affiliated companies (together, "Foundry") hereby EXPRESSLY DISCLAIM ALL WARRANTIES, EXPRESS AND IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. FONTSTORE DOES NOT WARRANT THAT THE OPERATION OF THE FONT SOFTWARE WILL BE UNINTERRUPTED OR ERROR-FREE, OR THAT THE FONT SOFTWARE IS WITHOUT DEFECTS. THE FONT SOFTWARE MAY NOT BE USED IN ANY CIRCUMSTANCES WHERE THE FAILURE OF THE FONT SOFTWARE COULD LEAD TO DEATH, PERSONAL INJURY, PROPERTY DAMAGE OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE. UNDER NO CIRCUMSTANCES SHALL FONTSTORE BE LIABLE TO YOU OR ANY OTHER PARTY FOR ANY SPECIAL, CONSEQUENTIAL, OR INCIDENTAL DAMAGES, INCLUDING LOST PROFITS, SAVINGS OR BUSINESS INTERRUPTION AS A RESULT OF THE USE OF THE FONT SOFTWARE EVEN IF NOTIFIED IN ADVANCE OF SUCH POSSIBILITY. FONTSTORE's sole liability to You shall in no event exceed the replacement of the Font Software.
+
+
+Some jurisdictions do not allow the exclusion or limitation of incidental, consequential or special damages, implied warranties, or implied warranties. ANY IMPLIED WARRANTY OR CONDITION CREATED BY LAW IS ONLY EFFECTIVE FOR THE THIRTY-DAY (30-DAY) WARRANTY PERIOD. THERE ARE NO WARRANTIES OR CONDITIONS OF ANY KIND AFTER THE THIRTY-DAY (30-DAY) WARRANTY PERIOD. The exclusions noted above may not apply to You. Otherwise, and to the extent permissible by law, You agree that all implied warranties are not effective for more than thirty (30) days.
+
+
+This Agreement represents the entire Agreement between Fontstore and You. This Agreement supersedes any other License Agreement which may have been included with the Font Software or previously displayed on the Fontstore or its Authorized Distributors’ web sites. This Agreement may only be modified by Fontstore in writing. If You have any questions concerning this Agreement or any matters regarding our products, please email: info@fontstore.com.
+
+
+Compliance with Law and Export Restrictions. You agree to be responsible for your compliance with all laws and regulations relating to the control of exports or the transfer of technology.
+
+
+Severability. If any provision of this Agreement is declared by a court of competent jurisdiction to be invalid, void, or unenforceable, the remaining provisions of this Agreement shall continue in full force and effect, and the invalid provision shall be replaced by Fontstore.
+
+
+Waiver. Waiver of any right(s) at any time shall not constitute an ongoing or permanent waiver of any right(s).
+
+
+Choice of Law. This Agreement, all Exhibits and amendments hereto shall be governed by the law of the United Kingdom as they apply to contracts entered into and wholly performed therein and without giving effect to its conflict of law rules or the conflict of law rules of any other jurisdiction.
+
+
+Entire Agreement. This Agreement constitutes the entire understanding between the parties and supersedes all previous agreements, promises, representations and negotiations between the parties.
+
+
+Headings. The captions of the sections of this License Agreement are for convenience only and shall not control or affect the meaning or construction of any of the terms or provisions of this Agreement.

@@ -167,6 +167,7 @@
         </If.Else>
       </If>
     </Sequence>
+    <ui:LogMessage DisplayName="Log Reading Jobs" sap:VirtualizedContainerService.HintSize="513.6,92.8" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Reading jobs from Excel...&quot;]" />
     <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[dt_Jobs]" DisplayName="Read Jobs" sap:VirtualizedContainerService.HintSize="513.6,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_Jobs" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" />
     <Assign DisplayName="Extract Job IDs for Dropdown" sap:VirtualizedContainerService.HintSize="513.6,174.4" sap2010:WorkflowViewState.IdRef="Assign_JobOptions">
       <Assign.To>
@@ -181,6 +182,8 @@
         <OutArgument x:TypeArguments="x:String">[str_Qualifications]</OutArgument>
       </ui:ReadCell.Result>
     </ui:ReadCell>
+    <ui:LogMessage DisplayName="Log Jobs Ready" sap:VirtualizedContainerService.HintSize="513.6,92.8" sap2010:WorkflowViewState.IdRef="LogMessage_JobsReady" Level="Info" Message="[&quot;Job data loaded. Ready for selection.&quot;]" />
+    <ui:LogMessage DisplayName="Log Start Phase" sap:VirtualizedContainerService.HintSize="520,92.8" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Starting user input &amp; selection phase...&quot;]" />
     <ui:InterruptibleWhile CurrentIndex="{x:Null}" Condition="[(String.IsNullOrEmpty(str_Confirmed) OrElse str_Confirmed.Equals(&quot;No&quot;)) AndAlso Not bool_UserExit]" DisplayName="Selection &amp; Confirmation Loop" sap:VirtualizedContainerService.HintSize="520,3940" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_1">
       <ui:InterruptibleWhile.Body>
         <Sequence DisplayName="Input Phase" sap:VirtualizedContainerService.HintSize="518.4,3809.6" sap2010:WorkflowViewState.IdRef="Seq_InputPhase">
@@ -329,13 +332,25 @@
                 <InArgument x:TypeArguments="x:String">[If(If(str_JobIds.ToUpper.Contains("ALL"), dt_Jobs.Rows.Count, str_JobIds.Split(";"c, StringSplitOptions.RemoveEmptyEntries).Length) &gt;= 2, "Templates\Group", "Templates\Individual")]</InArgument>
               </Assign.Value>
             </Assign>
-            <ui:InvokeCode Code="Dim files = Directory.GetFiles(in_Folder, &quot;*.html&quot;)&#xA;If files.Length = 0 Then files = Directory.GetFiles(&quot;Templates&quot;, &quot;*.html&quot;)&#xA;out_Options = String.Join(&quot;;&quot;, files.Select(Function(f) Path.GetFileNameWithoutExtension(f)))" ContinueOnError="True" DisplayName="Invoke Code - Discovery Sub" sap2010:WorkflowViewState.IdRef="InvokeCode_SubDisc">
+            <ui:InvokeCode Code="Dim files = Directory.GetFiles(in_Folder, &quot;*.html&quot;)&#xA;out_Options = String.Join(&quot;;&quot;, files.Select(Function(f) Path.GetFileNameWithoutExtension(f)))" ContinueOnError="True" DisplayName="Invoke Code - Discovery Sub" sap2010:WorkflowViewState.IdRef="InvokeCode_SubDisc">
               <ui:InvokeCode.Arguments>
                 <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[str_TemplateFolder]</InArgument>
                 <OutArgument x:TypeArguments="x:String" x:Key="out_Options">[str_TemplateOptions]</OutArgument>
               </ui:InvokeCode.Arguments>
             </ui:InvokeCode>
-            <ui:InputDialog Options="{x:Null}" DisplayName="3. Template Selection" sap2010:WorkflowViewState.IdRef="ID_Template" IsPassword="False" Label="[&quot;Mode: &quot; + If(If(str_JobIds.ToUpper.Contains(&quot;ALL&quot;), dt_Jobs.Rows.Count, str_JobIds.Split(&quot;;&quot;c, StringSplitOptions.RemoveEmptyEntries).Length) &gt;= 2, &quot;GROUP (2+ Jobs)&quot;, &quot;INDIVIDUAL (1 Job)&quot;) + Environment.NewLine + &quot;Please choose a template from the relevant folder:&quot;]" OptionsString="[str_TemplateOptions]" Title="3. Template Selection" TopMost="False">
+            <If Condition="[String.IsNullOrWhiteSpace(str_TemplateOptions)]" DisplayName="Check If folder has templates" sap2010:WorkflowViewState.IdRef="If_EmptyTemplates">
+              <If.Then>
+                <Sequence DisplayName="Notification" sap2010:WorkflowViewState.IdRef="Seq_NoTemplates">
+                  <ui:MessageBox Caption="Notice" DisplayName="No Templates Found Case" sap2010:WorkflowViewState.IdRef="MessageBox_NoTemplates" Text="[&quot;Notice: No templates found in '&quot; + str_TemplateFolder + &quot;'. Falling back to all templates.&quot;]" />
+                  <ui:InvokeCode Code="Dim files = Directory.GetFiles(&quot;Templates&quot;, &quot;*.html&quot;)&#xA;out_Options = String.Join(&quot;;&quot;, files.Select(Function(f) Path.GetFileNameWithoutExtension(f)))" ContinueOnError="True" DisplayName="Invoke Code - Fallback All" sap2010:WorkflowViewState.IdRef="InvokeCode_FallbackAll">
+                    <ui:InvokeCode.Arguments>
+                      <OutArgument x:TypeArguments="x:String" x:Key="out_Options">[str_TemplateOptions]</OutArgument>
+                    </ui:InvokeCode.Arguments>
+                  </ui:InvokeCode>
+                </Sequence>
+              </If.Then>
+            </If>
+            <ui:InputDialog Options="{x:Null}" DisplayName="3. Template Selection" sap2010:WorkflowViewState.IdRef="ID_Template" IsPassword="False" Label="[&quot;Selection Mode: &quot; + If(If(str_JobIds.ToUpper.Contains(&quot;ALL&quot;), dt_Jobs.Rows.Count, str_JobIds.Split(&quot;;&quot;c, StringSplitOptions.RemoveEmptyEntries).Length) &gt;= 2, &quot;GROUP (2+ Jobs)&quot;, &quot;INDIVIDUAL (1 Job)&quot;) + Environment.NewLine + &quot;Please choose a template:&quot;]" OptionsString="[str_TemplateOptions]" Title="3. Template Selection" TopMost="False">
               <ui:InputDialog.Result>
                 <OutArgument x:TypeArguments="x:String">[str_TemplateSelection]</OutArgument>
               </ui:InputDialog.Result>
@@ -391,7 +406,7 @@
                 <OutArgument x:TypeArguments="x:Boolean">[bool_GroupMode]</OutArgument>
               </Assign.To>
               <Assign.Value>
-                <InArgument x:TypeArguments="x:Boolean">[If(str_JobIds.ToUpper.Contains("ALL"), dt_Jobs.Rows.Count, str_JobIds.Split(";"c, StringSplitOptions.RemoveEmptyEntries).Length) &gt; 1]</InArgument>
+                <InArgument x:TypeArguments="x:Boolean">[If(str_JobIds.ToUpper.Contains("ALL"), dt_Jobs.Rows.Count, str_JobIds.Split(";"c, StringSplitOptions.RemoveEmptyEntries).Length) &gt;= 2]</InArgument>
               </Assign.Value>
             </Assign>
             <If Condition="[str_Mode.Equals(&quot;Auto&quot;)]" DisplayName="Fetch Emails early for Review" sap:VirtualizedContainerService.HintSize="451.2,1212.8" sap2010:WorkflowViewState.IdRef="If_ReviewFetch">
