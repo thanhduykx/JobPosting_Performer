@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @font-face {
+      font-family: 'BR Omega';
+      src: url('../../Data/Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
+      font-weight: 400; font-style: normal;
+    }
+    @font-face {
+      font-family: 'BR Omega';
+      src: url('../../Data/Fonts/BROmega-Medium-BF6556cee4bc2e2.otf') format('opentype');
+      font-weight: 500; font-style: normal;
+    }
+    @font-face {
+      font-family: 'BR Omega';
+      src: url('../../Data/Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
+      font-weight: 700; font-style: normal;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'BR Omega', 'Segoe UI', Arial, sans-serif;
+    }
+
+    .poster {
+      width: 1000px;
+      height: 562px;
+      /* Đường dẫn hình ảnh đã chuyển đổi theo cấu trúc bạn yêu cầu */
+      background: url('https://lh3.googleusercontent.com/u/0/d/1_boNR6XqYqK1ECzzx1mm0Nys42EwgEkI') no-repeat center;
+      background-size: cover;
+      position: relative;
+      color: #000000;
+      overflow: hidden;
+    }
+
+    /* Container Tiêu đề WINTER SEASON */
+    .title-container {
+      position: absolute;
+      top: 25px;
+      left: 45px;
+    }
+
+    h1.winter {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 70px;
+      font-weight: 900;
+      margin: 0;
+      line-height: 0.9;
+    }
+
+    .sub-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 10px;
+      margin-left: 30px;
+    }
+
+    .season {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 80px;
+      font-weight: 900;
+      margin-left: 280px;
+      margin-top: -10px;
+      letter-spacing: 5px;
+    }
+
+    /* Phần INTERNS */
+    .intern-section {
+      position: absolute;
+      padding-top: 10px;
+      padding-left: 30px;
+      top: 145px;
+      left: 45px;
+      width: 580px;
+    }
+
+    .intern-section h2 {
+      font-size: 32px;
+      font-weight: bold;
+      margin: 30px;
+      text-transform: uppercase;
+    }
+
+    .intern-list {
+      list-style: none;
+      padding-left: 35px;
+      margin: 2px 0 10px 50px;
+      column-count: 2;
+      column-gap: 15px;
+    }
+
+    .intern-list li {
+      font-size: 18px;
+      margin-bottom: 3px;
+      position: relative;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    /* Removed bullet point for formal look */
+
+    /* Phần Work Set-up */
+    .work-setup {
+      position: absolute;
+      padding-top: 5px;
+      padding-left: 30px;
+      top: 350px;
+      left: 45px;
+    }
+
+    .work-setup h2 {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .setup-list {
+      list-style: none;
+      padding-left: 35px;
+      margin: 5px 0 0 0;
+    }
+
+    .setup-list li {
+      font-size: 16px;
+      margin-bottom: 5px;
+      position: relative;
+      line-height: 1.5;
+    }
+
+    .setup-list li::before {
+      content: "•";
+      position: absolute;
+      left: -25px;
+      font-size: 20px;
+    }
+
+    /* PHẦN EMAIL ĐÃ ĐƯỢC CHỈNH MÀU TRẮNG VÀ CĂN ĐỐI HƠN */
+    .footer-email {
+      position: absolute;
+      bottom: 45px;
+      /* Đẩy lên cao hơn một chút để không bị dính mép dưới */
+      right: 40px;
+      text-align: center;
+      /* Căn giữa text trong khối email */
+      color: #ffffff;
+      /* Đặt toàn bộ chữ trong footer là màu trắng */
+    }
+
+    .email-label {
+      margin: 0;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 3.5px;
+    }
+
+    .email-address {
+      font-size: 26px;
+      font-weight: bold;
+      font-style: italic;
+      font-family: 'Georgia', serif;
+      color: #ffffff;
+      /* Đảm bảo địa chỉ email luôn là màu trắng */
+      text-decoration: none;
+    }
+  </style>
+<style>@page { size: 1000px 565px; margin: 0mm !important; } body, html { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; }</style>
+</head>
+
+<body>
+
+  <div class="poster">
+    <div class="title-container">
+      <h1 class="winter">WINTER</h1>
+      <div class="sub-title">We are looking for several positions</div>
+      <div class="season">SEASON</div>
+    </div>
+
+    <div class="intern-section">
+      <h2 style="margin: 10px 0 5px 30px;">POSITIONS:</h2>
+      <ul class="intern-list">
+        <li>Service Desk Support<br/>Project Manager</li>
+      </ul>
+      <div style="width: 580px; text-align: center; margin-top: 10px;">
+        <span style="color: #1a2a40; font-size: 15px; font-weight: 700; background: rgba(255,255,255,0.4); padding: 4px 12px; border-radius: 15px;">
+           Level: L2, Junior
+        </span>
+      </div>
+    </div>
+
+    <div class="work-setup">
+      <h2>Work Set-Up:</h2>
+      <ul class="setup-list">
+        <li>Work location: CEBU, CEBU/MANILA</li>
+        <li>Work schedule: Shifting, Nightshift</li>
+        <li>Work set-up: Remote, Hybrid</li>
+      </ul>
+    </div>
+
+    <div class="footer-email">
+      <p class="email-label">Send your resume to:</p>
+      <div class="email-address">fptphrecruitment@gmail.com</div>
+    </div>
+  </div>
+
+</body>
+
+</html>

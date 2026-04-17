@@ -57,29 +57,17 @@
     <ui:LogMessage DisplayName="Log Prep" sap:VirtualizedContainerService.HintSize="720,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Step 3: Preparing candidate list for review...&quot;]" />
     <If Condition="[in_Mode.Equals(&quot;Auto&quot;)]" DisplayName="Lọc danh sách người nhận" sap:VirtualizedContainerService.HintSize="720,950" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
-        <Sequence DisplayName="Auto Prep" sap:VirtualizedContainerService.HintSize="449.6,750" sap2010:WorkflowViewState.IdRef="Sequence_2">
-          <If Condition="[Directory.Exists(in_DriveBasePath)]" DisplayName="Sync from Drive if Available" sap:VirtualizedContainerService.HintSize="416,550" sap2010:WorkflowViewState.IdRef="If_SyncDrive">
-            <If.Then>
-              <Sequence sap:VirtualizedContainerService.HintSize="376,400" sap2010:WorkflowViewState.IdRef="Sequence_Sync">
-                <Assign DisplayName="Find latest Email Excel" sap:VirtualizedContainerService.HintSize="334.4,113.6" sap2010:WorkflowViewState.IdRef="Assign_1">
-                  <Assign.To>
-                    <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
-                  </Assign.To>
-                  <Assign.Value>
-                    <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(in_DriveBasePath, "Mail"), "*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
-                  </Assign.Value>
-                </Assign>
-                <If Condition="[Not String.IsNullOrEmpty(str_FoundFile)]" DisplayName="Copy if File Found" sap:VirtualizedContainerService.HintSize="334.4,260" sap2010:WorkflowViewState.IdRef="If_Copy">
-                  <If.Then>
-                    <Sequence sap:VirtualizedContainerService.HintSize="242,150" sap2010:WorkflowViewState.IdRef="Sequence_DoCopy">
-                      <ui:InvokeCode Code="Dim localPath As String = Path.Combine(Environment.CurrentDirectory, &quot;Data\Input\Emails_Local.xlsx&quot;)&#xA;If File.Exists(localPath) Then&#xA;    File.Delete(localPath)&#xA;End If" DisplayName="Delete Old Email File" sap:VirtualizedContainerService.HintSize="200,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldEmail" />
-                      <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="Data\Input\Emails_Local.xlsx" DisplayName="Copy Locally" sap:VirtualizedContainerService.HintSize="200,222.4" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="[str_FoundFile]" />
-                    </Sequence>
-                  </If.Then>
-                </If>
-              </Sequence>
-            </If.Then>
-          </If>
+        <Sequence DisplayName="Auto Prep" sap:VirtualizedContainerService.HintSize="449.6,650" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Assign DisplayName="Find latest Email Excel" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(in_DriveBasePath, "Mail"), "*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <ui:InvokeCode Code="Dim localPath As String = Path.Combine(Environment.CurrentDirectory, &quot;Data\Input\Emails_Local.xlsx&quot;)&#xA;If File.Exists(localPath) Then&#xA;    File.Delete(localPath)&#xA;End If" DisplayName="Delete Old Email File" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldEmail" />
+          <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="Data\Input\Emails_Local.xlsx" DisplayName="Copy Locally" sap:VirtualizedContainerService.HintSize="416,222.4" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="[str_FoundFile]" />
           <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_dt_Emails]" DisplayName="Read Emails" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="Sheet1" WorkbookPath="Data\Input\Emails_Local.xlsx" />
         </Sequence>
       </If.Then>
@@ -94,7 +82,7 @@
     </Assign>
     <ui:LogMessage DisplayName="Log Review UI" sap:VirtualizedContainerService.HintSize="720,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_Review" Level="Info" Message="[&quot;Step 4: Launching Final Confirmation Screen...&quot;]" />
     <ui:WriteTextFile File="{x:Null}" Output="{x:Null}" FileName="Data\UI\review_data.js" sap:VirtualizedContainerService.HintSize="720,166.4" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[&quot;var global_mode = '&quot; + in_Mode + &quot;'; var global_jobs = '&quot; + in_JobIds.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;'; var global_template = '&quot; + in_TemplateSelection.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;'; var global_employees = '&quot; + str_CandidatesParam.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;';&quot;]" />
-    <ui:CustomInput DisplayName="Final Confirmation Review" Height="700" sap:VirtualizedContainerService.HintSize="720,120" sap2010:WorkflowViewState.IdRef="CustomInput_Review" Result="[out_Confirmed]" TopMost="True" URI="[Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\Review.html&quot;)]" Width="900" />
+    <ui:CustomInput DisplayName="Final Confirmation Review" Height="700" sap:VirtualizedContainerService.HintSize="720,120" sap2010:WorkflowViewState.IdRef="CustomInput_Review" Result="[out_Confirmed]" TopMost="True" URI="http://localhost:8000/Data/UI/Review.html" Width="900" />
     <If Condition="[String.IsNullOrEmpty(out_Confirmed) OrElse out_Confirmed.Equals(&quot;No&quot;) OrElse out_Confirmed.Equals(&quot;undefined&quot;)]" DisplayName="Handle Review Cancellation" sap:VirtualizedContainerService.HintSize="720,474.4" sap2010:WorkflowViewState.IdRef="If_Cancel">
       <If.Then>
         <Sequence sap:VirtualizedContainerService.HintSize="449.6,252.4" sap2010:WorkflowViewState.IdRef="Sequence_Cancel">
