@@ -124,7 +124,7 @@
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
     <ui:WriteTextFile File="{x:Null}" Output="{x:Null}" FileName="Data\UI\dashboard_data.js" sap:VirtualizedContainerService.HintSize="520,166.4" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[&quot;var global_jobs = '&quot; + str_JobOptions.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;'; var global_templates = '&quot; + str_TemplateOptions.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;';&quot;]" />
-    <ui:CustomInput DisplayName="Job Selection Dashboard" Height="800" sap:VirtualizedContainerService.HintSize="520,120" sap2010:WorkflowViewState.IdRef="CustomInput_1" Result="[str_ResultJSON]" TopMost="True" URI="[Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\Dashboard.html&quot;)]" Width="1000" />
+    <ui:CustomInput DisplayName="Job Selection Dashboard" Height="800" sap:VirtualizedContainerService.HintSize="520,120" sap2010:WorkflowViewState.IdRef="CustomInput_1" Result="[str_ResultJSON]" TopMost="True" URI="http://localhost:8000/Data/UI/Dashboard.html" Width="1000" />
     <If Condition="[String.IsNullOrEmpty(str_ResultJSON)]" DisplayName="Handle Dashboard Closure" sap:VirtualizedContainerService.HintSize="520,474.4" sap2010:WorkflowViewState.IdRef="If_2">
       <If.Then>
         <Sequence sap:VirtualizedContainerService.HintSize="449.6,252.4" sap2010:WorkflowViewState.IdRef="Sequence_Cancel">
