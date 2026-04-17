@@ -56,12 +56,7 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log: Process Launch" sap:VirtualizedContainerService.HintSize="520,111.2" sap2010:WorkflowViewState.IdRef="Log_Start" Level="Info" Message="[&quot;Launching Recruit Dispatcher System...&quot;]" />
-    <ui:InvokeCode ContinueOnError="True" Code="Try&#xA;    Dim si As New System.Diagnostics.ProcessStartInfo()&#xA;    si.FileName = &quot;powershell.exe&quot;&#xA;    si.Arguments = &quot;-ExecutionPolicy Bypass -NoProfile -WindowStyle Hidden -Command &quot;&quot;$p=8000; $l=[System.Net.HttpListener]::new(); $l.Prefixes.Add('http://127.0.0.1:$p/'); $l.Start(); while($l.IsListening){$c=$l.GetContext(); $r=$c.Request; $s=$c.Response; $f=Join-Path $pwd $r.Url.LocalPath.TrimStart('/'); if(Test-Path $f){$b=[System.IO.File]::ReadAllBytes($f); $s.ContentLength64=$b.Length; $s.OutputStream.Write($b, 0, $b.Length)}else{$s.StatusCode=404}; $s.OutputStream.Close()}&quot;&quot;&quot;&#xA;    si.CreateNoWindow = True&#xA;    si.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden&#xA;    System.Diagnostics.Process.Start(si)&#xA;Catch&#xA;End Try" DisplayName="Start Hidden PowerShell Server" sap:VirtualizedContainerService.HintSize="520,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_SilentServer">
-      <ui:InvokeCode.Arguments>
-        <scg:Dictionary x:TypeArguments="x:String, Argument" />
-      </ui:InvokeCode.Arguments>
-    </ui:InvokeCode>
-    <Delay DisplayName="Wait for Server initialization" Duration="00:00:02" sap:VirtualizedContainerService.HintSize="520,120" sap2010:WorkflowViewState.IdRef="Delay_ServerReady" />
+
     <ui:InterruptibleWhile CurrentIndex="{x:Null}" Condition="[(String.IsNullOrEmpty(str_Confirmed) OrElse str_Confirmed.Equals(&quot;No&quot;)) AndAlso Not bool_UserExit]" DisplayName="Selection &amp; Feedback Loop" sap:VirtualizedContainerService.HintSize="520,1600" sap2010:WorkflowViewState.IdRef="InterruptibleWhile_1">
       <ui:InterruptibleWhile.Body>
         <Sequence DisplayName="Input &amp; Review Phasing" sap:VirtualizedContainerService.HintSize="484.8,1400" sap2010:WorkflowViewState.IdRef="Seq_Phasing">

@@ -31,6 +31,7 @@
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
       <x:String>UiPath.Excel.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -45,9 +46,10 @@
       <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
       <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Show_Job_Selection_Screen" sap:VirtualizedContainerService.HintSize="600,2800" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="Show_Job_Selection_Screen" sap:VirtualizedContainerService.HintSize="723.6,3106.4" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="str_FoundFile" />
       <Variable x:TypeArguments="x:String" Name="str_JobsExcelPath" />
@@ -60,8 +62,8 @@
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <ui:LogMessage DisplayName="Log: Fetching Jobs" sap:VirtualizedContainerService.HintSize="520,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Step 1: Fetching job data from Drive...&quot;]" />
-    <Assign DisplayName="Get Drive Path" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+    <ui:LogMessage DisplayName="Log: Fetching Jobs" sap:VirtualizedContainerService.HintSize="520,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Step 1: Fetching job data from Drive...&quot;]" />
+    <Assign DisplayName="Get Drive Path" sap:VirtualizedContainerService.HintSize="520,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[out_str_DriveBasePath]</OutArgument>
       </Assign.To>
@@ -69,7 +71,7 @@
         <InArgument x:TypeArguments="x:String">[If(in_Config IsNot Nothing AndAlso in_Config.ContainsKey("Drive_BasePath"), in_Config("Drive_BasePath").ToString, "G:\My Drive\Jobs &amp; Email")]</InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Local Destination" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_3">
+    <Assign DisplayName="Local Destination" sap:VirtualizedContainerService.HintSize="520,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[str_JobsExcelPath]</OutArgument>
       </Assign.To>
@@ -77,9 +79,9 @@
         <InArgument x:TypeArguments="x:String">[Path.Combine(Environment.CurrentDirectory, "Data\Input\Jobs_Local.xlsx")]</InArgument>
       </Assign.Value>
     </Assign>
-    <If Condition="[Directory.Exists(out_str_DriveBasePath)]" DisplayName="Sync from Drive if Available" sap:VirtualizedContainerService.HintSize="520,800" sap2010:WorkflowViewState.IdRef="If_SyncDrive">
+    <If Condition="[Directory.Exists(out_str_DriveBasePath)]" DisplayName="Sync from Drive if Available" sap:VirtualizedContainerService.HintSize="520,808" sap2010:WorkflowViewState.IdRef="If_SyncDrive">
       <If.Then>
-        <Sequence sap:VirtualizedContainerService.HintSize="449.6,650" sap2010:WorkflowViewState.IdRef="Sequence_Sync">
+        <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="449.6,650" sap2010:WorkflowViewState.IdRef="Sequence_Sync">
           <Assign DisplayName="Find Latest Jobs Excel" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="Assign_2">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
@@ -91,7 +93,7 @@
           <If Condition="[Not String.IsNullOrEmpty(str_FoundFile)]" DisplayName="Copy if File Found" sap:VirtualizedContainerService.HintSize="416,500" sap2010:WorkflowViewState.IdRef="If_1">
             <If.Then>
               <Sequence sap:VirtualizedContainerService.HintSize="376,300" sap2010:WorkflowViewState.IdRef="Sequence_Copy">
-                <ui:InvokeCode ContinueOnError="{x:Null}" Code="If File.Exists(in_FilePath) Then&#xD;&#xA;    File.Delete(in_FilePath)&#xD;&#xA;End If" DisplayName="Delete Old Jobs File" sap:VirtualizedContainerService.HintSize="334.4,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldJobs">
+                <ui:InvokeCode ContinueOnError="{x:Null}" Code="If File.Exists(in_FilePath) Then&#xA;    File.Delete(in_FilePath)&#xA;End If" DisplayName="Delete Old Jobs File" sap:VirtualizedContainerService.HintSize="334.4,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldJobs">
                   <ui:InvokeCode.Arguments>
                     <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[str_JobsExcelPath]</InArgument>
                   </ui:InvokeCode.Arguments>
@@ -102,6 +104,9 @@
           </If>
         </Sequence>
       </If.Then>
+      <If.Else>
+        <Sequence DisplayName="Else" sap2010:WorkflowViewState.IdRef="Sequence_2" />
+      </If.Else>
     </If>
     <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_dt_Jobs]" DisplayName="Read Job Details" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" />
     <ui:ReadCell Cell="G2" DisplayName="Read Global Quals" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="ReadCell_1" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]">
