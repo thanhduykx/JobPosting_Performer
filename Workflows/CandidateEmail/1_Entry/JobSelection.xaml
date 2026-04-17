@@ -69,19 +69,6 @@
         <InArgument x:TypeArguments="x:String">[If(in_Config IsNot Nothing AndAlso in_Config.ContainsKey("Drive_BasePath"), in_Config("Drive_BasePath").ToString, "G:\My Drive\Jobs &amp; Email")]</InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Find Latest Jobs Excel" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_2">
-      <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
-      </Assign.To>
-      <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(out_str_DriveBasePath, "Jobs"), "*Demand*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
-      </Assign.Value>
-    </Assign>
-    <If Condition="[String.IsNullOrEmpty(str_FoundFile)]" DisplayName="If Job File Missing" sap:VirtualizedContainerService.HintSize="520,300" sap2010:WorkflowViewState.IdRef="If_1">
-      <If.Then>
-        <TerminateWorkflow DisplayName="Abort Process" Exception="[New Exception(&quot;Error: Jobs file not found.&quot;)]" sap:VirtualizedContainerService.HintSize="334.4,90.4" sap2010:WorkflowViewState.IdRef="Terminate_1" />
-      </If.Then>
-    </If>
     <Assign DisplayName="Local Destination" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="Assign_3">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[str_JobsExcelPath]</OutArgument>
@@ -90,12 +77,32 @@
         <InArgument x:TypeArguments="x:String">[Path.Combine(Environment.CurrentDirectory, "Data\Input\Jobs_Local.xlsx")]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:InvokeCode ContinueOnError="{x:Null}" Code="If File.Exists(in_FilePath) Then&#xA;    File.Delete(in_FilePath)&#xA;End If" DisplayName="Delete Old Jobs File" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldJobs">
-      <ui:InvokeCode.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[str_JobsExcelPath]</InArgument>
-      </ui:InvokeCode.Arguments>
-    </ui:InvokeCode>
-    <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[str_JobsExcelPath]" DisplayName="Copy to Workspace" sap:VirtualizedContainerService.HintSize="520,222.4" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="[str_FoundFile]" />
+    <If Condition="[Directory.Exists(out_str_DriveBasePath)]" DisplayName="Sync from Drive if Available" sap:VirtualizedContainerService.HintSize="520,800" sap2010:WorkflowViewState.IdRef="If_SyncDrive">
+      <If.Then>
+        <Sequence sap:VirtualizedContainerService.HintSize="449.6,650" sap2010:WorkflowViewState.IdRef="Sequence_Sync">
+          <Assign DisplayName="Find Latest Jobs Excel" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[str_FoundFile]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[Directory.GetFiles(Path.Combine(out_str_DriveBasePath, "Jobs"), "*Demand*.xlsx").OrderByDescending(Function(f) New FileInfo(f).LastWriteTime).FirstOrDefault()]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <If Condition="[Not String.IsNullOrEmpty(str_FoundFile)]" DisplayName="Copy if File Found" sap:VirtualizedContainerService.HintSize="416,500" sap2010:WorkflowViewState.IdRef="If_1">
+            <If.Then>
+              <Sequence sap:VirtualizedContainerService.HintSize="376,300" sap2010:WorkflowViewState.IdRef="Sequence_Copy">
+                <ui:InvokeCode ContinueOnError="{x:Null}" Code="If File.Exists(in_FilePath) Then&#xD;&#xA;    File.Delete(in_FilePath)&#xD;&#xA;End If" DisplayName="Delete Old Jobs File" sap:VirtualizedContainerService.HintSize="334.4,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_DeleteOldJobs">
+                  <ui:InvokeCode.Arguments>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[str_JobsExcelPath]</InArgument>
+                  </ui:InvokeCode.Arguments>
+                </ui:InvokeCode>
+                <ui:CopyFile ContinueOnError="{x:Null}" DestinationResource="{x:Null}" PathResource="{x:Null}" Destination="[str_JobsExcelPath]" DisplayName="Copy to Workspace" sap:VirtualizedContainerService.HintSize="334.4,222.4" sap2010:WorkflowViewState.IdRef="CopyFile_1" Overwrite="True" Path="[str_FoundFile]" />
+              </Sequence>
+            </If.Then>
+          </If>
+        </Sequence>
+      </If.Then>
+    </If>
     <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_dt_Jobs]" DisplayName="Read Job Details" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]" />
     <ui:ReadCell Cell="G2" DisplayName="Read Global Quals" sap:VirtualizedContainerService.HintSize="520,113.6" sap2010:WorkflowViewState.IdRef="ReadCell_1" SheetName="Open Demands" WorkbookPath="[str_JobsExcelPath]">
       <ui:ReadCell.Result>
@@ -117,7 +124,7 @@
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
     <ui:WriteTextFile File="{x:Null}" Output="{x:Null}" FileName="Data\UI\dashboard_data.js" sap:VirtualizedContainerService.HintSize="520,166.4" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="[&quot;var global_jobs = '&quot; + str_JobOptions.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;'; var global_templates = '&quot; + str_TemplateOptions.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;';&quot;]" />
-    <ui:CustomInput DisplayName="Job Selection Dashboard" Height="800" sap:VirtualizedContainerService.HintSize="520,120" sap2010:WorkflowViewState.IdRef="CustomInput_1" Result="[str_ResultJSON]" TopMost="True" URI="http://localhost:8000/Data/UI/Dashboard.html" Width="1000" />
+    <ui:CustomInput DisplayName="Job Selection Dashboard" Height="800" sap:VirtualizedContainerService.HintSize="520,120" sap2010:WorkflowViewState.IdRef="CustomInput_1" Result="[str_ResultJSON]" TopMost="True" URI="[Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\Dashboard.html&quot;)]" Width="1000" />
     <If Condition="[String.IsNullOrEmpty(str_ResultJSON)]" DisplayName="Handle Dashboard Closure" sap:VirtualizedContainerService.HintSize="520,474.4" sap2010:WorkflowViewState.IdRef="If_2">
       <If.Then>
         <Sequence sap:VirtualizedContainerService.HintSize="449.6,252.4" sap2010:WorkflowViewState.IdRef="Sequence_Cancel">
