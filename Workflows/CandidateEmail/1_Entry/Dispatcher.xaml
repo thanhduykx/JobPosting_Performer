@@ -147,23 +147,6 @@
         </ui:InvokeWorkflowFile>
       </If.Then>
     </If>
-    <If Condition="[Not bool_UserExit]" DisplayName="Check Delivery Status" sap:VirtualizedContainerService.HintSize="520,700" sap2010:WorkflowViewState.IdRef="If_CheckStatus">
-      <If.Then>
-        <Sequence DisplayName="Show Delivery Status" sap:VirtualizedContainerService.HintSize="449.6,500" sap2010:WorkflowViewState.IdRef="Sequence_CheckStatus">
-          <ui:LogMessage DisplayName="Log: Wait for DSN" sap:VirtualizedContainerService.HintSize="416,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_WaitDSN" Level="Info" Message="[&quot;Waiting 10 seconds for Gmail to process Delivery Status Notifications...&quot;]" />
-          <ui:InvokeCode Code="System.Threading.Thread.Sleep(10000)" DisplayName="Wait 10 seconds" sap:VirtualizedContainerService.HintSize="416,113.6" sap2010:WorkflowViewState.IdRef="InvokeCode_Wait">
-            <ui:InvokeCode.Arguments>
-              <scg:Dictionary x:TypeArguments="x:String, Argument" />
-            </ui:InvokeCode.Arguments>
-          </ui:InvokeCode>
-          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="True" DisplayName="Check Email Delivery Status" sap:VirtualizedContainerService.HintSize="416,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_CheckStatus" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\4_Monitoring\CheckDeliveryStatus_Standalone.xaml">
-            <ui:InvokeWorkflowFile.Arguments>
-              <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_Config]</InArgument>
-            </ui:InvokeWorkflowFile.Arguments>
-          </ui:InvokeWorkflowFile>
-        </Sequence>
-      </If.Then>
-    </If>
-    <ui:KillProcess AppliesTo="{x:Null}" Process="{x:Null}" ContinueOnError="True" DisplayName="Stop Local Server" sap:VirtualizedContainerService.HintSize="520,166.4" sap2010:WorkflowViewState.IdRef="KillProcess_End" ProcessName="python" />
+    <ui:LogMessage DisplayName="Log: Process Ended" sap:VirtualizedContainerService.HintSize="520,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_End" Level="Info" Message="[&quot;Process ended.&quot;]" />
   </Sequence>
 </Activity>

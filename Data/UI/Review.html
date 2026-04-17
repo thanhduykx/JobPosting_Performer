@@ -205,7 +205,7 @@
 
         <div class="actions">
             <button class="btn-cancel" onclick="finish(false)">Cancel</button>
-            <button class="btn-cancel" style="color: #2563eb; font-weight: 700;" onclick="document.getElementById('pdfModal').style.display='flex'; document.getElementById('pdfFrame').src='/Data/Input/Job_Description.pdf';">📄 Preview PDF</button>
+            <button class="btn-cancel" style="color: #2563eb; font-weight: 700;" onclick="var p = typeof global_pdf_path !== 'undefined' ? 'file:///' + global_pdf_path : '../Input/Job_Description.pdf'; document.getElementById('pdfModal').style.display='flex'; document.getElementById('pdfFrame').src=p;">📄 Preview PDF</button>
             <button class="btn-send" onclick="finish(true)">Confirm & Send Emails Now</button>
         </div>
     </div>
