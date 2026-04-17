@@ -48,17 +48,15 @@
       <Variable x:TypeArguments="x:String" Name="str_SharedPdfPath" />
     </Sequence.Variables>
     <ui:BuildDataTable DataTable="[dt_ExecutionReport]" DisplayName="Build Report Schema" sap:VirtualizedContainerService.HintSize="720,92.8" sap2010:WorkflowViewState.IdRef="BuildDataTable_1" TableInfo="&lt;NewDataSet&gt;&lt;xs:schema id=&quot;NewDataSet&quot; xmlns=&quot;&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:msdata=&quot;urn:schemas-microsoft-com:xml-msdata&quot;&gt;&lt;xs:element name=&quot;NewDataSet&quot; msdata:IsDataSet=&quot;true&quot; msdata:MainDataTable=&quot;TableName&quot; msdata:UseCurrentLocale=&quot;true&quot;&gt;&lt;xs:complexType&gt;&lt;xs:choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;&lt;xs:element name=&quot;TableName&quot;&gt;&lt;xs:complexType&gt;&lt;xs:sequence&gt;&lt;xs:element name=&quot;Recipient&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Status&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Error&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;xs:element name=&quot;Timestamp&quot; msdata:Caption=&quot;&quot; type=&quot;xs:string&quot; minOccurs=&quot;0&quot; /&gt;&lt;/xs:sequence&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:choice&gt;&lt;/xs:complexType&gt;&lt;/xs:element&gt;&lt;/xs:schema&gt;&lt;/NewDataSet&gt;" />
-    <ui:LogMessage DisplayName="Log: Generate PDF Once" sap:VirtualizedContainerService.HintSize="720,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_GenPDF" Level="Info" Message="[&quot;[BATCH] Generating PDF once for all emails in this batch...&quot;]" />
-    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Generate Shared PDF" sap:VirtualizedContainerService.HintSize="720,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_GenPDF" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\2_Processing\GeneratePDF.xaml">
-      <ui:InvokeWorkflowFile.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_JobIds">[in_JobIds]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[in_TemplateName]</InArgument>
-        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Jobs">[in_dt_Jobs]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Qualifications">[in_Qualifications]</InArgument>
-        <InArgument x:TypeArguments="x:Boolean" x:Key="in_IsGroupMode">[in_IsGroupMode]</InArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_PdfPath">[str_SharedPdfPath]</OutArgument>
-      </ui:InvokeWorkflowFile.Arguments>
-    </ui:InvokeWorkflowFile>
+    <ui:LogMessage DisplayName="Log: PDF Already Generated" sap:VirtualizedContainerService.HintSize="720,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_GenPDF" Level="Info" Message="[&quot;[BATCH] Using already generated shared PDF...&quot;]" />
+    <Assign DisplayName="Use previously generated PDF" sap:VirtualizedContainerService.HintSize="720,113.6" sap2010:WorkflowViewState.IdRef="Assign_PdfPath">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_SharedPdfPath]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[Path.Combine(Environment.CurrentDirectory, "Data\Input\Job_Description.pdf")]</InArgument>
+      </Assign.Value>
+    </Assign>
     <If Condition="[in_Mode.Equals(&quot;Auto&quot;)]" DisplayName="Auto Loop vs Manual Loop" sap:VirtualizedContainerService.HintSize="720,2000" sap2010:WorkflowViewState.IdRef="If_LoopType">
       <If.Then>
         <ui:ForEachRow ColumnNames="{x:Null}" CurrentIndex="{x:Null}" DataTable="[in_dt_Emails]" DisplayName="Drive Recipients Loop" sap:VirtualizedContainerService.HintSize="449.6,800" sap2010:WorkflowViewState.IdRef="ForEachRow_1">

@@ -42,50 +42,7 @@
     "processOptions": {
       "ignoredFiles": []
     },
-    "fileInfoCollection": [
-      {
-        "editingStatus": "InProgress",
-        "testCaseId": "abef6548-163a-4168-af96-1b6c27f85db4",
-        "testCaseType": "TestCase",
-        "executionTemplateType": "Local",
-        "fileName": "Tests\\GetTransactionDataTestCase.xaml"
-      },
-      {
-        "editingStatus": "InProgress",
-        "testCaseId": "669a0804-7f0e-41e6-bc5b-de8c1a2f225e",
-        "testCaseType": "TestCase",
-        "executionTemplateType": "Local",
-        "fileName": "Tests\\InitAllApplicationsTestCase.xaml"
-      },
-      {
-        "editingStatus": "InProgress",
-        "testCaseId": "3a12acf1-c745-4cb4-ba47-81c8dc609d6c",
-        "testCaseType": "TestCase",
-        "executionTemplateType": "Local",
-        "fileName": "Tests\\InitAllSettingsTestCase.xaml"
-      },
-      {
-        "editingStatus": "InProgress",
-        "testCaseId": "a3ba0539-10d2-4d32-8cd0-de186ffd40a7",
-        "testCaseType": "TestCase",
-        "executionTemplateType": "Local",
-        "fileName": "Tests\\MainTestCase.xaml"
-      },
-      {
-        "editingStatus": "InProgress",
-        "testCaseId": "a081af40-c5e3-409a-9c86-c2020716b72f",
-        "testCaseType": "TestCase",
-        "executionTemplateType": "Local",
-        "fileName": "Tests\\ProcessTestCase.xaml"
-      },
-      {
-        "editingStatus": "InProgress",
-        "testCaseId": "526a24a0-cc1a-4373-bd37-b40eeb1b9e63",
-        "testCaseType": "TestCase",
-        "executionTemplateType": "Local",
-        "fileName": "Tests\\WorkflowTestCaseTemplate.xaml"
-      }
-    ],
+    "fileInfoCollection": [],
     "saveToCloud": false
   },
   "expressionLanguage": "VisualBasic",
@@ -97,7 +54,7 @@
       "output": []
     },
     {
-      "filePath": "Workflows\\CandidateEmail\\Module_SendGmail.xaml",
+      "filePath": "Workflows\\CandidateEmail\\5_Modules\\Module_SendGmail.xaml",
       "uniqueId": "58cf54d9-0da7-4186-a26e-1a0b37314e66",
       "input": [],
       "output": []

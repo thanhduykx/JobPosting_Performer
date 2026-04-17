@@ -48,6 +48,7 @@
       <Variable x:TypeArguments="x:String" Name="str_Confirmed" />
       <Variable x:TypeArguments="x:Boolean" Name="bool_GroupMode" />
       <Variable x:TypeArguments="x:Boolean" Name="bool_UserExit" />
+      <Variable x:TypeArguments="x:String" Name="str_SharedPdfPath" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -103,6 +104,17 @@
               <InArgument x:TypeArguments="x:Boolean">[If(String.IsNullOrEmpty(str_JobIds), False, If(str_JobIds.ToUpper.Contains("ALL"), dt_Jobs.Rows.Count, str_JobIds.Split(";"c, StringSplitOptions.RemoveEmptyEntries).Length) &gt;= 2)]</InArgument>
             </Assign.Value>
           </Assign>
+          <ui:LogMessage DisplayName="Log Gen PDF Pre-Review" sap:VirtualizedContainerService.HintSize="451.2,111.2" sap2010:WorkflowViewState.IdRef="LogMessage_GenPDF_Disp" Level="Info" Message="[&quot;Generating PDF before Review...&quot;]" />
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Generate Shared PDF" sap:VirtualizedContainerService.HintSize="451.2,145.6" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_GenPDF_Disp" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\2_Processing\GeneratePDF.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_JobIds">[str_JobIds]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_TemplateName">[str_TemplateName]</InArgument>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_dt_Jobs">[dt_Jobs]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Qualifications">[str_Qualifications]</InArgument>
+              <InArgument x:TypeArguments="x:Boolean" x:Key="in_IsGroupMode">[bool_GroupMode]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_PdfPath">[str_SharedPdfPath]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
           <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Review Phase" sap:VirtualizedContainerService.HintSize="451.2,145.6" sap2010:WorkflowViewState.IdRef="Invoke_Final" UnSafe="False" WorkflowFileName="Workflows\CandidateEmail\3_Review\ReviewPhase.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Mode">[str_Mode]</InArgument>

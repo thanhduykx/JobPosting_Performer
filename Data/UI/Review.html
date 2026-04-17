@@ -53,7 +53,6 @@
             max-width: 800px;
             background: var(--card);
             border-radius: 32px;
-            box-shadow: 0 40px 100px -20px rgba(0,0,0,0.2);
             padding: 40px;
             border: 8px solid white;
             animation: fadeIn 0.4s ease-out;
@@ -81,8 +80,6 @@
                 -3px 3px 0 #fff,
                 0px 6px 10px rgba(0,0,0,0.2);
         }
-        h1 .badge { background: white; color: #1e40af; font-size: 13px; padding: 6px 14px; border-radius: 20px; font-weight: 700; border: 2px solid var(--border); -webkit-text-fill-color: initial; }
-
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -96,7 +93,7 @@
             border: 1px solid var(--border);
         }
         .summary-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
-        .summary-value { font-weight: 600; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .summary-value { font-weight: 600; font-size: 15px; word-break: break-word; line-height: 1.4; }
 
         .recipient-list-header {
             display: flex;
@@ -170,7 +167,6 @@
     <div class="container">
         <h1>
             <span>Final Employee Review</span>
-            <span class="badge" id="modeBadge">Auto Mode</span>
         </h1>
 
         <div class="summary-grid">
@@ -209,7 +205,19 @@
 
         <div class="actions">
             <button class="btn-cancel" onclick="finish(false)">Cancel</button>
+            <button class="btn-cancel" style="color: #2563eb; font-weight: 700;" onclick="document.getElementById('pdfModal').style.display='flex'; document.getElementById('pdfFrame').src='/Data/Input/Job_Description.pdf';">📄 Preview PDF</button>
             <button class="btn-send" onclick="finish(true)">Confirm & Send Emails Now</button>
+        </div>
+    </div>
+
+    <!-- PDF Modal -->
+    <div id="pdfModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:white; width:90%; height:90%; max-width:1200px; border-radius: 12px; overflow:hidden; display:flex; flex-direction:column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div style="padding:15px 20px; background:#f8fafc; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border);">
+                <strong style="font-size:18px; color: #334155;">📄 PDF Preview</strong>
+                <button class="btn-cancel" onclick="document.getElementById('pdfModal').style.display='none'; document.getElementById('pdfFrame').src='about:blank';" style="padding:8px 16px; border:none; background:#ef4444; color:white; border-radius:6px; cursor:pointer; font-weight: bold;">Close Preview</button>
+            </div>
+            <iframe id="pdfFrame" style="flex-grow:1; border:none; width:100%; height:100%; display:block; margin:0;" src="about:blank"></iframe>
         </div>
     </div>
 
@@ -238,8 +246,8 @@
         var employeesRaw = typeof global_employees !== 'undefined' ? global_employees : (getQueryParam('employees') || getQueryParam('candidates') || "");
 
         // Update Summary
-        document.getElementById('modeBadge').innerText = mode + " Mode";
-        document.getElementById('summaryJobs').innerText = jobs;
+        var jobsDisplay = jobs.replace(/;/g, ', ');
+        document.getElementById('summaryJobs').innerText = jobsDisplay;
         document.getElementById('summaryJobs').title = jobs.replace(/;/g, ', ');
         document.getElementById('summaryTemplate').innerText = template;
         document.getElementById('summaryTemplate').title = template;
@@ -276,6 +284,7 @@
         }
 
         function finish(confirmed) {
+            document.getElementById('pdfFrame').src='about:blank';
             var result = confirmed ? "Yes" : "No";
             try {
                 if (window.external && typeof window.external.setResult !== 'undefined') window.external.setResult(result);
