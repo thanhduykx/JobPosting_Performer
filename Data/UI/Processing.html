@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Processing</title>
+  <style>
+    :root { --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --muted:#94a3b8; --accent:#38bdf8; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Segoe UI, Arial, sans-serif; background:radial-gradient(circle at 20% 20%, #1f2937 0%, #0f172a 60%); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+    .card { width:min(620px, 92vw); background:rgba(17,24,39,.85); border:1px solid #334155; border-radius:16px; padding:28px; box-shadow:0 20px 50px rgba(0,0,0,.45); text-align:center; }
+    h1 { margin:0 0 8px; font-size:28px; letter-spacing:.02em; }
+    p { margin:0; color:var(--muted); font-size:15px; }
+    .row { margin:22px auto 0; display:flex; align-items:center; justify-content:center; gap:12px; }
+    .spinner { width:22px; height:22px; border:3px solid #334155; border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; }
+    .status { font-weight:700; color:#dbeafe; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Please wait</h1>
+    <p>Your PDF is being generated. The workflow is still running.</p>
+    <div class="row">
+      <div class="spinner"></div>
+      <div class="status">Generating PDF...</div>
+    </div>
+  </div>
+  <script>
+    function getQueryParam(name){
+      var m = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if(!m) return 'default';
+      return decodeURIComponent((m[1]||'').replace(/\+/g,' '));
+    }
+    var session = getQueryParam('session');
+    document.title = 'Processing | PP::' + session;
+    try {
+      window.moveTo(0, 0);
+      window.resizeTo(screen.availWidth, screen.availHeight);
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+      }
+    } catch(e) {}
+  </script>
+</body>
+</html>

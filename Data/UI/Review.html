@@ -1,296 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dispatch Review</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: 'BR Omega';
-            src: url('Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'BR Omega';
-            src: url('Fonts/BROmega-Medium-BF6556cee4bc2e2.otf') format('opentype');
-            font-weight: 500;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'BR Omega';
-            src: url('Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
-            font-weight: 700;
-            font-style: normal;
-        }
-        :root {
-            --primary: #ffd700;
-            --primary-hover: #ffc400;
-            --primary-text: #000;
-            --success: #10b981;
-            --bg: #90c2d1;
-            --card: #ffffff;
-            --text: #000;
-            --text-muted: #334155;
-            --border: #cbd5e1;
-        }
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'BR Omega', sans-serif; 
-            background: var(--bg); 
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            background: var(--card);
-            border-radius: 32px;
-            padding: 40px;
-            border: 8px solid white;
-            animation: fadeIn 0.4s ease-out;
-        }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        h1 { 
-            font-family: 'BR Omega', sans-serif;
-            font-size: 44px; 
-            font-weight: 900;
-            margin-top: 0; 
-            margin-bottom: 24px; 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            background: linear-gradient(to bottom, #ffd700 0%, #ff8c00 50%, #f44336 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 
-                3px 3px 0 #fff, 
-                -3px -3px 0 #fff, 
-                3px -3px 0 #fff, 
-                -3px 3px 0 #fff,
-                0px 6px 10px rgba(0,0,0,0.2);
-        }
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        .summary-item {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-        .summary-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 5px; font-weight: 600; }
-        .summary-value { font-weight: 600; font-size: 15px; word-break: break-word; line-height: 1.4; }
-
-        .recipient-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--bg);
-        }
-        .recipient-list-header h2 { font-size: 16px; margin: 0; color: var(--text-muted); }
-
-        .list-container {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            max-height: 350px;
-            overflow-y: auto;
-            margin-bottom: 30px;
-        }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px 15px; background: #f8fafc; font-size: 12px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); position: sticky; top: 0; }
-        td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background: #f8fafc; }
-
-        .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: flex-end;
-        }
-        button {
-            padding: 12px 28px;
-            border-radius: 100px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-cancel { 
-            background: #f1f5f9; 
-            color: var(--text); 
-        }
-        .btn-cancel:hover { 
-            background: #e2e8f0; 
-            transform: scale(1.02);
-        }
-        .btn-send { 
-            background: var(--primary); 
-            color: var(--primary-text); 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            flex-grow: 1; 
-        }
-        .btn-send:hover { 
-            background: var(--primary-hover); 
-            transform: scale(1.02);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Custom Scrollbar */
-        .list-container::-webkit-scrollbar { width: 8px; }
-        .list-container::-webkit-scrollbar-track { background: transparent; }
-        .list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid white; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Review</title>
+  <style>
+    :root { --primary:#ffd700; --primary-hover:#ffc400; --bg:#90c2d1; --card:#fff; --text:#111827; --muted:#334155; --border:#cbd5e1; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:20px; font-family:Segoe UI, Arial, sans-serif; background:var(--bg); color:var(--text); display:flex; justify-content:center; }
+    .container { width:100%; max-width:820px; background:#fff; border:8px solid #fff; border-radius:24px; padding:30px; }
+    h1 { margin:0 0 20px; font-size:40px; font-weight:900; letter-spacing:-1px; text-transform:uppercase; color:#0f172a; }
+    .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+    .summary-item { background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:12px; }
+    .summary-label { font-size:11px; text-transform:uppercase; font-weight:700; color:var(--muted); margin-bottom:4px; }
+    .summary-value { font-size:14px; font-weight:600; word-break:break-word; }
+    .recipient-title { margin:0 0 10px; font-size:16px; font-weight:700; color:var(--muted); }
+    .list-container { border:1px solid var(--border); border-radius:10px; overflow:auto; max-height:340px; margin-bottom:18px; background:#fff; }
+    table { width:100%; border-collapse:collapse; }
+    th { text-align:left; padding:10px 12px; background:#f8fafc; border-bottom:1px solid var(--border); color:var(--muted); font-size:12px; position:sticky; top:0; }
+    td { padding:10px 12px; border-bottom:1px solid #f1f5f9; font-size:14px; }
+    tr:last-child td { border-bottom:none; }
+    .actions { display:flex; gap:10px; justify-content:flex-end; }
+    button { border:none; border-radius:999px; padding:11px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+    .btn-cancel { background:#e2e8f0; color:#334155; }
+    .btn-preview { background:#dbeafe; color:#1d4ed8; }
+    .btn-send { background:var(--primary); color:#000; flex-grow:1; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>
-            <span>Final Employee Review</span>
-        </h1>
+  <div class="container">
+    <h1>Review</h1>
 
-        <div class="summary-grid">
-            <div class="summary-item">
-                <div class="summary-label">Jobs Selected</div>
-                <div class="summary-value" id="summaryJobs" title="">-</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-label">Template</div>
-                <div class="summary-value" id="summaryTemplate" title="">-</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-label">Recipients</div>
-                <div class="summary-value" id="summaryCount">-</div>
-            </div>
-        </div>
-
-        <div class="recipient-list-header">
-            <h2>Employee Mailing List</h2>
-        </div>
-        
-        <div class="list-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="40">#</th>
-                        <th>Name</th>
-                        <th>Email Address</th>
-                    </tr>
-                </thead>
-                <tbody id="recipientBody">
-                    <!-- Rows injected here -->
-                </tbody>
-            </table>
-        </div>
-
-        <div class="actions">
-            <button class="btn-cancel" onclick="finish(false)">Cancel</button>
-            <button class="btn-cancel" style="color: #2563eb; font-weight: 700;" onclick="var p = typeof global_pdf_path !== 'undefined' ? 'file:///' + global_pdf_path : '../Input/Job_Description.pdf'; document.getElementById('pdfModal').style.display='flex'; document.getElementById('pdfFrame').src=p;">📄 Preview PDF</button>
-            <button class="btn-send" onclick="finish(true)">Confirm & Send Emails Now</button>
-        </div>
+    <div class="summary-grid">
+      <div class="summary-item"><div class="summary-label">Jobs Selected</div><div class="summary-value" id="summaryJobs">-</div></div>
+      <div class="summary-item"><div class="summary-label">Template</div><div class="summary-value" id="summaryTemplate">-</div></div>
+      <div class="summary-item"><div class="summary-label">Recipients</div><div class="summary-value" id="summaryCount">0</div></div>
     </div>
 
-    <!-- PDF Modal -->
-    <div id="pdfModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:white; width:90%; height:90%; max-width:1200px; border-radius: 12px; overflow:hidden; display:flex; flex-direction:column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
-            <div style="padding:15px 20px; background:#f8fafc; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid var(--border);">
-                <strong style="font-size:18px; color: #334155;">📄 PDF Preview</strong>
-                <button class="btn-cancel" onclick="document.getElementById('pdfModal').style.display='none'; document.getElementById('pdfFrame').src='about:blank';" style="padding:8px 16px; border:none; background:#ef4444; color:white; border-radius:6px; cursor:pointer; font-weight: bold;">Close Preview</button>
-            </div>
-            <iframe id="pdfFrame" style="flex-grow:1; border:none; width:100%; height:100%; display:block; margin:0;" src="about:blank"></iframe>
-        </div>
+    <div class="recipient-title">Mailing List</div>
+    <div class="list-container">
+      <table>
+        <thead><tr><th width="40">#</th><th>Name</th><th>Email Address</th></tr></thead>
+        <tbody id="recipientBody"></tbody>
+      </table>
     </div>
 
-    <script src="review_data.js"></script>
-    <script>
-        function getQueryParam(name) {
-            var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-            if (results == null) return null;
-            return decodeURIComponent(results[1].replace(/\+/g, ' ')) || "";
+    <div class="actions">
+      <button class="btn-cancel" onclick="finish(false)">Cancel</button>
+      <button class="btn-preview" onclick="openPdfPreview()">Preview PDF</button>
+      <button class="btn-send" onclick="finish(true)">Confirm & Send</button>
+    </div>
+  </div>
+
+  <div id="pdfModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;justify-content:center;align-items:center;">
+    <div style="background:#fff;width:90%;height:90%;max-width:1200px;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;">
+      <div style="padding:12px 16px;background:#f8fafc;border-bottom:1px solid #cbd5e1;display:flex;justify-content:space-between;align-items:center;">
+        <strong>PDF Preview</strong>
+        <button class="btn-cancel" style="background:#ef4444;color:#fff;padding:8px 12px;border-radius:6px;" onclick="closePdfPreview()">Close Preview</button>
+      </div>
+      <iframe id="pdfFrame" src="about:blank" style="width:100%;height:100%;border:none;"></iframe>
+    </div>
+  </div>
+
+  <script src="review_data.js"></script>
+  <script>
+    function getQueryParam(name) {
+      var m = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (!m) return null;
+      return decodeURIComponent((m[1] || '').replace(/\+/g, ' '));
+    }
+
+    var SESSION_TOKEN = getQueryParam('session') || 'default';
+    var TITLE_MARKER = 'PR::' + SESSION_TOKEN;
+    document.title = 'Portal Review | ' + TITLE_MARKER;
+    try {
+      window.moveTo(0, 0);
+      window.resizeTo(screen.availWidth, screen.availHeight);
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, 'Portal Review', window.location.pathname + window.location.search);
+      }
+    } catch (e) {}
+
+    var jobs = (typeof global_jobs !== 'undefined' ? global_jobs : (getQueryParam('jobs') || 'None'));
+    var template = (typeof global_template !== 'undefined' ? global_template : (getQueryParam('template') || 'None'));
+    var employeesRaw = (typeof global_employees !== 'undefined' ? global_employees : (getQueryParam('employees') || getQueryParam('candidates') || ''));
+
+    document.getElementById('summaryJobs').innerText = jobs.replace(/;/g, ', ');
+    document.getElementById('summaryTemplate').innerText = template;
+
+    var rows = employeesRaw ? employeesRaw.split(';') : [];
+    document.getElementById('summaryCount').innerText = rows.filter(function(x){ return x && x.trim(); }).length;
+
+    var tbody = document.getElementById('recipientBody');
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;padding:30px;color:#64748b;">No recipients found.</td></tr>';
+    } else {
+      for (var i = 0; i < rows.length; i++) {
+        var entry = (rows[i] || '').trim();
+        if (!entry) continue;
+        var name = entry;
+        var email = '';
+        if (entry.indexOf('<') !== -1) {
+          var parts = entry.split('<');
+          name = (parts[0] || '').replace('•', '').trim();
+          email = (parts[1] || '').replace('>', '').trim();
         }
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + (i + 1) + '</td><td><strong>' + name + '</strong></td><td><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;">' + email + '</code></td>';
+        tbody.appendChild(tr);
+      }
+    }
 
-        // Maximize Window & Professional Title 
-        document.title = "Dispatch Final Review";
-        try {
-            window.moveTo(0, 0);
-            window.resizeTo(screen.availWidth, screen.availHeight);
-            if (window.history && window.history.replaceState) {
-                window.history.replaceState({}, "Dispatch Final Review", window.location.pathname);
-            }
-        } catch(e) {}
+    function openPdfPreview() {
+      var p = (typeof global_pdf_path !== 'undefined' ? 'file:///' + global_pdf_path : '../Input/Job_Description.pdf');
+      document.getElementById('pdfModal').style.display = 'flex';
+      document.getElementById('pdfFrame').src = p;
+    }
 
-        // Data from URL or Global File
-        var mode = typeof global_mode !== 'undefined' ? global_mode : (getQueryParam('mode') || "Auto");
-        var jobs = typeof global_jobs !== 'undefined' ? global_jobs : (getQueryParam('jobs') || "None");
-        var template = typeof global_template !== 'undefined' ? global_template : (getQueryParam('template') || "None");
-        var employeesRaw = typeof global_employees !== 'undefined' ? global_employees : (getQueryParam('employees') || getQueryParam('candidates') || "");
+    function closePdfPreview() {
+      document.getElementById('pdfModal').style.display = 'none';
+      document.getElementById('pdfFrame').src = 'about:blank';
+    }
 
-        // Update Summary
-        var jobsDisplay = jobs.replace(/;/g, ', ');
-        document.getElementById('summaryJobs').innerText = jobsDisplay;
-        document.getElementById('summaryJobs').title = jobs.replace(/;/g, ', ');
-        document.getElementById('summaryTemplate').innerText = template;
-        document.getElementById('summaryTemplate').title = template;
+    function emitResult(value) {
+      document.title = 'RESULT::' + SESSION_TOKEN + '::' + value;
+    }
 
-        // Parse and Render Employees
-        var employeeList = [];
-        if (employeesRaw) {
-            employeeList = employeesRaw.split(';');
-        }
-        document.getElementById('summaryCount').innerText = employeeList.length;
-
-        var tableBody = document.getElementById('recipientBody');
-        if (employeeList.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center; padding: 40px; color: #94a3b8;">No recipients found.</td></tr>';
-        } else {
-            for (var i = 0; i < employeeList.length; i++) {
-                var entry = employeeList[i].trim();
-                var name = entry;
-                var email = "";
-                
-                // Try to split "Name <email>"
-                if (entry.indexOf('<') !== -1) {
-                    var parts = entry.split('<');
-                    name = parts[0].replace('•', '').trim();
-                    email = parts[1].replace('>', '').trim();
-                }
-
-                var row = document.createElement('tr');
-                row.innerHTML = '<td>' + (i+1) + '</td>' +
-                                '<td><strong>' + name + '</strong></td>' +
-                                '<td><code style="background:#f1f5f9; padding: 2px 6px; border-radius:4px; font-family: monospace;">' + email + '</code></td>';
-                tableBody.appendChild(row);
-            }
-        }
-
-        function finish(confirmed) {
-            document.getElementById('pdfFrame').src='about:blank';
-            var result = confirmed ? "Yes" : "No";
-            try {
-                if (window.external && typeof window.external.setResult !== 'undefined') window.external.setResult(result);
-                else if (window.uipath && typeof window.uipath.setResult !== 'undefined') window.uipath.setResult(result);
-            } catch (e) {}
-        }
-    </script>
+    function finish(confirmed) {
+      closePdfPreview();
+      var result = confirmed ? 'Yes' : 'No';
+      try {
+        if (window.external && typeof window.external.setResult !== 'undefined') return window.external.setResult(result);
+        if (window.uipath && typeof window.uipath.setResult !== 'undefined') return window.uipath.setResult(result);
+      } catch (e) {}
+      emitResult(result);
+    }
+  </script>
 </body>
 </html>

@@ -1,483 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HR Employee Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: 'BR Omega';
-            src: url('Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
-            font-weight: 400;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'BR Omega';
-            src: url('Fonts/BROmega-Medium-BF6556cee4bc2e2.otf') format('opentype');
-            font-weight: 500;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'BR Omega';
-            src: url('Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
-            font-weight: 700;
-            font-style: normal;
-        }
-        :root {
-            --primary: #ffd700;
-            --primary-hover: #ffc400;
-            --primary-text: #000;
-            --bg: #90c2d1;
-            --card: #ffffff;
-            --text: #000;
-            --text-muted: #334155;
-            --border: #cbd5e1;
-            --success: #10b981;
-        }
-        body {
-            font-family: 'BR Omega', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background: var(--card);
-            width: 100%;
-            max-width: 800px;
-            padding: 40px;
-            border-radius: 32px;
-            border: 8px solid white;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 20px 0;
-        }
-        .header h1 {
-            font-family: 'BR Omega', sans-serif;
-            font-size: 52px;
-            font-weight: 900;
-            margin: 0;
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            background: linear-gradient(to bottom, #ffd700 0%, #ff8c00 50%, #f44336 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 
-                4px 4px 0 #fff, 
-                -4px -4px 0 #fff, 
-                4px -4px 0 #fff, 
-                -4px 4px 0 #fff,
-                0px 8px 15px rgba(0,0,0,0.3);
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
-        }
-        
-        .section { margin-bottom: 35px; }
-        .section-title {
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 20px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            white-space: nowrap;
-        }
-        .section-title span {
-            background: #e2e8f0;
-            color: var(--text);
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            font-size: 12px;
-        }
-
-        /* Horizontal Mode Options */
-        .mode-options {
-            display: flex;
-            gap: 20px;
-            border: 2px solid var(--border);
-            padding: 20px;
-            border-radius: 20px;
-            background-color: #f8fafc;
-        }
-        .mode-card {
-            flex: 1;
-            border: 2px solid var(--border);
-            padding: 25px;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            background: white;
-        }
-        .mode-card:hover { border-color: #cbd5e1; background: #f1f5f9; }
-        .mode-card.active {
-            border-color: var(--primary);
-            background-color: #eff6ff;
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-        }
-        .mode-card strong { font-size: 18px; display: block; margin-bottom: 8px; color: var(--text); }
-        .mode-card span { font-size: 13px; color: var(--text-muted); }
-
-        /* Dynamic Content Area */
-        #dynamicContent {
-            background: #f1f5f9;
-            border-radius: 16px;
-            padding: 20px;
-            min-height: 250px;
-            border: 1px solid var(--border);
-        }
-
-        /* Large Checkboxes */
-        .job-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
-        }
-        .job-item {
-            background: white;
-            padding: 16px 20px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-            user-select: none;
-        }
-        .job-item:hover { border-color: var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .job-item.selected { border-color: var(--primary); background: #eff6ff; }
-        
-        .job-item input[type="checkbox"] {
-            width: 24px;
-            height: 24px;
-            margin-right: 15px;
-            cursor: pointer;
-            accent-color: var(--primary);
-        }
-        .job-item label {
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        textarea {
-            width: 100%;
-            height: 180px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            font-family: inherit;
-            font-size: 16px;
-            resize: none;
-            box-sizing: border-box;
-        }
-        textarea:focus { outline: none; border-color: var(--primary); }
-
-        .template-select {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            font-family: inherit;
-            font-size: 16px;
-            background-color: white;
-            font-weight: 500;
-        }
-
-        /* Footer Buttons */
-        .footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border);
-        }
-        .btn {
-            padding: 16px 24px;
-            border-radius: 100px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-continue {
-            background: var(--primary);
-            color: var(--primary-text);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .btn-continue:hover { 
-            background: var(--primary-hover); 
-            transform: scale(1.02);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .btn-cancel { 
-            background: #f1f5f9; 
-            color: #475569; 
-        }
-        .btn-cancel:hover { 
-            background: #e2e8f0; 
-            transform: scale(1.02);
-        }
-
-        .empty-state {
-            text-align: center;
-            color: var(--text-muted);
-            padding-top: 80px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Dashboard</title>
+  <style>
+    :root { --primary:#ffd700; --primary-hover:#ffc400; --bg:#90c2d1; --card:#fff; --text:#111827; --muted:#334155; --border:#cbd5e1; }
+    * { box-sizing:border-box; }
+    body { margin:0; padding:20px; font-family:Segoe UI, Arial, sans-serif; background:var(--bg); color:var(--text); display:flex; justify-content:center; }
+    .container { width:100%; max-width:820px; background:var(--card); border:8px solid #fff; border-radius:24px; padding:32px; }
+    .header { text-align:center; margin-bottom:24px; }
+    .header h1 { margin:0; font-size:44px; font-weight:900; letter-spacing:-1px; text-transform:uppercase; color:#0f172a; }
+    .section { margin-bottom:22px; }
+    .section-title { font-size:13px; text-transform:uppercase; letter-spacing:.08em; font-weight:700; color:var(--muted); margin-bottom:10px; display:flex; gap:8px; align-items:center; }
+    .section-title span { width:22px; height:22px; border-radius:6px; background:#e2e8f0; display:inline-flex; align-items:center; justify-content:center; color:#0f172a; font-size:12px; }
+    .mode-options { display:flex; gap:12px; border:1px solid var(--border); border-radius:12px; padding:12px; background:#f8fafc; }
+    .mode-card { flex:1; border:1px solid var(--border); border-radius:10px; padding:16px; background:#fff; text-align:center; cursor:pointer; }
+    .mode-card.active { border-color:var(--primary); background:#eff6ff; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
+    .mode-card strong { display:block; font-size:20px; margin-bottom:4px; }
+    .mode-card small { color:var(--muted); }
+    #dynamicContent { border:1px solid var(--border); border-radius:12px; padding:16px; background:#f1f5f9; min-height:200px; }
+    .empty-state { text-align:center; color:#64748b; padding-top:56px; }
+    .job-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:10px; }
+    .job-item { border:1px solid var(--border); border-radius:10px; background:#fff; padding:12px 14px; display:flex; gap:10px; align-items:center; cursor:pointer; }
+    .job-item.selected { border-color:var(--primary); background:#eff6ff; }
+    .job-item input { width:20px; height:20px; accent-color:var(--primary); }
+    textarea, select { width:100%; border:1px solid var(--border); border-radius:10px; padding:12px; font-size:15px; font-family:inherit; background:#fff; }
+    textarea { min-height:140px; resize:vertical; }
+    .footer { margin-top:24px; border-top:1px solid var(--border); padding-top:18px; display:flex; justify-content:space-between; gap:10px; }
+    .btn { border:none; border-radius:999px; padding:12px 18px; font-size:15px; font-weight:700; cursor:pointer; }
+    .btn-cancel { background:#e2e8f0; color:#334155; }
+    .btn-continue { background:var(--primary); color:#000; }
+    .btn-continue:hover { background:var(--primary-hover); }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Employee Dashboard</h1>
-        </div>
+  <div class="container">
+    <div class="header"><h1>Dashboard</h1></div>
 
-        <div class="section">
-            <div class="section-title"><span>1</span> Operational Mode</div>
-            <div class="mode-options">
-                <div class="mode-card" id="modeAuto" onclick="setMode('Auto')">
-                    <strong>Automatic</strong>
-                    <span>Use Google Drive Data</span>
-                </div>
-                <div class="mode-card" id="modeManual" onclick="setMode('Manual')">
-                    <strong>Manual</strong>
-                    <span>Input Custom Emails</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title"><span>2</span> <span id="dynamicTitle">Configuration</span></div>
-            <div id="dynamicContent">
-                <div class="empty-state">Select a mode to continue configuration...</div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title"><span>3</span> Email Template</div>
-            <select id="templateSelect" class="template-select">
-                <option value="">-- Choose Campaign Template --</option>
-            </select>
-        </div>
-
-        <div class="footer">
-            <button class="btn btn-cancel" onclick="if(window.external && window.external.setResult) window.external.setResult('')">Cancel & Exit</button>
-            <button class="btn btn-continue" onclick="submit()">Continue to Dispatch →</button>
-        </div>
+    <div class="section">
+      <div class="section-title"><span>1</span>Operational Mode</div>
+      <div class="mode-options">
+        <div class="mode-card" id="modeAuto" onclick="setMode('Auto')"><strong>Automatic</strong><small>Use Google Drive Data</small></div>
+        <div class="mode-card" id="modeManual" onclick="setMode('Manual')"><strong>Manual</strong><small>Input Custom Emails</small></div>
+      </div>
     </div>
 
-    <script src="dashboard_data.js"></script>
-    <script>
-        var currentMode = '';
-        var jobOptions = [];
-        var templateOptions = [];
+    <div class="section">
+      <div class="section-title"><span>2</span><span id="dynamicTitle">Configuration</span></div>
+      <div id="dynamicContent"><div class="empty-state">Select a mode to continue configuration...</div></div>
+    </div>
 
-        if (!String.prototype.trim) {
-            String.prototype.trim = function () {
-                return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
-            };
+    <div class="section">
+      <div class="section-title"><span>3</span>Email Template</div>
+      <select id="templateSelect"><option value="">-- Choose Campaign Template --</option></select>
+    </div>
+
+    <div class="footer">
+      <button class="btn btn-cancel" onclick="cancelAction()">Cancel & Exit</button>
+      <button class="btn btn-continue" onclick="submit()">Continue</button>
+    </div>
+  </div>
+
+  <script src="dashboard_data.js"></script>
+  <script>
+    var currentMode = '';
+    var jobOptions = [];
+    var templateOptions = [];
+
+    function getQueryParam(name) {
+      var m = new RegExp('[?&]' + name + '=([^&#]*)').exec(window.location.href);
+      if (!m) return null;
+      return decodeURIComponent((m[1] || '').replace(/\+/g, ' '));
+    }
+
+    var SESSION_TOKEN = getQueryParam('session') || 'default';
+    var TITLE_MARKER = 'PD::' + SESSION_TOKEN;
+    document.title = 'Portal Dashboard | ' + TITLE_MARKER;
+    try {
+      window.moveTo(0, 0);
+      window.resizeTo(screen.availWidth, screen.availHeight);
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState({}, 'Portal Dashboard', window.location.pathname + window.location.search);
+      }
+    } catch (e) {}
+
+    var jobsRaw = (typeof global_jobs !== 'undefined' ? global_jobs : getQueryParam('jobs')) || '';
+    var templatesRaw = (typeof global_templates !== 'undefined' ? global_templates : getQueryParam('templates')) || '';
+    jobsRaw.split(';').forEach(function (x) { if (x && x.trim()) jobOptions.push(x.trim()); });
+    templatesRaw.split(';').forEach(function (fullPath) {
+      if (!fullPath || !fullPath.trim()) return;
+      var parts = fullPath.split(/[\\/]/);
+      templateOptions.push({ path: fullPath, name: parts[parts.length - 1], category: parts.length > 1 ? parts[0] : 'Other' });
+    });
+
+    function renderJobsHtml() {
+      if (!jobOptions.length) return '<div class="empty-state">No job data found.</div>';
+      var html = '<div class="job-grid">';
+      for (var i = 0; i < jobOptions.length; i++) {
+        var job = jobOptions[i];
+        var label = (job.toUpperCase() === 'ALL') ? '<strong>' + job + '</strong>' : job;
+        html += '<div class="job-item" onclick="toggleCheckbox(' + i + ', event)">' +
+          '<input type="checkbox" name="jobId" value="' + job + '" id="job_' + i + '" onchange="onJobChange(event, this)" onclick="event.stopPropagation()">' +
+          '<label>' + label + '</label></div>';
+      }
+      html += '</div>';
+      return html;
+    }
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeAuto').className = mode === 'Auto' ? 'mode-card active' : 'mode-card';
+      document.getElementById('modeManual').className = mode === 'Manual' ? 'mode-card active' : 'mode-card';
+      var box = document.getElementById('dynamicContent');
+      var title = document.getElementById('dynamicTitle');
+      var jobsHtml = renderJobsHtml();
+      if (mode === 'Auto') {
+        title.innerText = 'Select Job Vacancies';
+        box.innerHTML = jobsHtml;
+      } else {
+        title.innerText = 'Configure Manual Dispatch';
+        box.innerHTML = '<div style="display:flex;flex-direction:column;gap:16px;">' +
+          '<div><div style="font-weight:700;color:#334155;margin-bottom:8px;">Step A: Select Jobs</div>' + jobsHtml + '</div>' +
+          '<div><div style="font-weight:700;color:#334155;margin-bottom:8px;">Step B: Recipient Emails (separated by ;)</div>' +
+          '<textarea id="emailList" placeholder="example1@gmail.com; Name <example2@gmail.com>"></textarea></div></div>';
+      }
+      updateTemplateDropdown();
+    }
+
+    function toggleCheckbox(idx, event) {
+      var cb = document.getElementById('job_' + idx);
+      cb.checked = !cb.checked;
+      onJobChange(event, cb);
+    }
+
+    function onJobChange(event, cb) {
+      cb.parentNode.className = cb.checked ? 'job-item selected' : 'job-item';
+      if (cb.value.toUpperCase() === 'ALL' && cb.checked) {
+        var all = document.getElementsByName('jobId');
+        for (var i = 0; i < all.length; i++) {
+          if (all[i].value.toUpperCase() !== 'ALL') {
+            all[i].checked = true;
+            all[i].parentNode.className = 'job-item selected';
+          }
         }
+      }
+      updateTemplateDropdown();
+    }
 
-        function getQueryParam(name) {
-            var regex = new RegExp('[?&]' + name + '=([^&#]*)');
-            var results = regex.exec(window.location.href);
-            if (results == null) return null;
-            return decodeURIComponent(results[1].replace(/\+/g, ' ')) || "";
+    function updateTemplateDropdown() {
+      var checks = document.getElementsByName('jobId');
+      var count = 0, hasAll = false;
+      for (var i = 0; i < checks.length; i++) {
+        if (checks[i].checked && checks[i].value.toUpperCase() !== 'ALL') count++;
+        if (checks[i].checked && checks[i].value.toUpperCase() === 'ALL') hasAll = true;
+      }
+      if (hasAll && count === 0) count = 2;
+      var target = count >= 2 ? 'Group' : 'Individual';
+      var ddl = document.getElementById('templateSelect');
+      var first = ddl.options[0];
+      ddl.innerHTML = '';
+      ddl.appendChild(first);
+      for (var j = 0; j < templateOptions.length; j++) {
+        if ((templateOptions[j].category || '').toLowerCase() === target.toLowerCase()) {
+          var opt = document.createElement('option');
+          opt.value = templateOptions[j].path;
+          opt.innerText = templateOptions[j].name;
+          ddl.appendChild(opt);
         }
+      }
+    }
 
-        // Maximize Window & Professional Title
-        document.title = "HR Employee Dashboard";
-        try {
-            window.moveTo(0, 0);
-            window.resizeTo(screen.availWidth, screen.availHeight);
-            if (window.history && window.history.replaceState) {
-                window.history.replaceState({}, "HR Employee Dashboard", window.location.pathname);
-            }
-        } catch(e) {}
+    function emitResult(value) {
+      document.title = 'RESULT::' + SESSION_TOKEN + '::' + encodeURIComponent(value);
+    }
 
-        var jobsRaw = typeof global_jobs !== 'undefined' ? global_jobs : getQueryParam('jobs');
-        var templatesRaw = typeof global_templates !== 'undefined' ? global_templates : getQueryParam('templates');
+    function cancelAction() {
+      try {
+        if (window.external && typeof window.external.setResult !== 'undefined') return window.external.setResult('');
+        if (window.uipath && typeof window.uipath.setResult !== 'undefined') return window.uipath.setResult('');
+      } catch (e) {}
+      emitResult('');
+    }
 
-
-        if (jobsRaw) {
-            var rawList = jobsRaw.split(';');
-            for (var i = 0; i < rawList.length; i++) {
-                if (rawList[i] && rawList[i].trim() !== '') jobOptions.push(rawList[i]);
-            }
-        }
-        
-        if (templatesRaw) {
-            var tRawList = templatesRaw.split(';');
-            for (var j = 0; j < tRawList.length; j++) {
-                var fullPath = tRawList[j];
-                if (!fullPath) continue;
-                var parts = fullPath.split(/[\\\/]/);
-                templateOptions.push({
-                    path: fullPath,
-                    name: parts[parts.length - 1],
-                    category: parts.length > 1 ? parts[0] : "Other"
-                });
-            }
-        }
-
-        function setMode(mode) {
-            if (currentMode === mode) return; // Prevent losing data if clicking the same mode again
-
-            currentMode = mode;
-            document.getElementById('modeAuto').className = (mode === 'Auto' ? 'mode-card active' : 'mode-card');
-            document.getElementById('modeManual').className = (mode === 'Manual' ? 'mode-card active' : 'mode-card');
-            
-            var container = document.getElementById('dynamicContent');
-            var title = document.getElementById('dynamicTitle');
-            
-            // Helper to render job list
-            var getJobsHtml = function() {
-                if (jobOptions.length === 0) return '<div class="empty-state">⚠️ No Job Data Found.</div>';
-                var html = '<div class="job-grid" style="margin-bottom: 25px;">';
-                for(var k=0; k < jobOptions.length; k++) {
-                    var job = jobOptions[k];
-                    var isAll = (job.toUpperCase() === 'ALL');
-                    html += '<div class="job-item" onclick="toggleCheckbox(' + k + ', event)">' +
-                            '<input type="checkbox" name="jobId" value="' + job + '" id="job_' + k + '" onchange="onJobChange(event, this)" onclick="event.stopPropagation()">' +
-                            '<label>' + (isAll ? '<strong>' + job + '</strong>' : job) + '</label>' +
-                            '</div>';
-                }
-                html += '</div>';
-                return html;
-            };
-
-            if (mode === 'Auto') {
-                title.innerText = 'Select Job Vacancies';
-                container.innerHTML = getJobsHtml();
-            } else {
-                title.innerText = 'Configure Manual Dispatch';
-                var manualHtml = '<div style="display: flex; flex-direction: column; gap: 20px;">' +
-                                 '  <div><label style="font-weight: 700; font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 10px;">STEP A: SELECT JOBS</label>' + getJobsHtml() + '</div>' +
-                                 '  <div><label style="font-weight: 700; font-size: 13px; color: var(--text-muted); display: block; margin-bottom: 10px;">STEP B: RECIPIENT EMAILS (Separated by ; )</label>' +
-                                 '  <textarea id="emailList" placeholder="example1@gmail.com; Name <example2@gmail.com>"></textarea></div>' +
-                                 '</div>';
-                container.innerHTML = manualHtml;
-            }
-            updateTemplateDropdown();
-        }
-
-        function toggleCheckbox(index, event) {
-            var cb = document.getElementById('job_' + index);
-            cb.checked = !cb.checked;
-            onJobChange(event, cb);
-        }
-
-        function onJobChange(event, cb) {
-            var parent = cb.parentNode;
-            if(cb.checked) {
-                parent.className = 'job-item selected';
-            } else {
-                parent.className = 'job-item';
-            }
-
-            if (cb.value.toUpperCase() === 'ALL' && cb.checked) {
-                var checks = document.getElementsByName('jobId');
-                for(var i=0; i<checks.length; i++) {
-                    if (checks[i].value.toUpperCase() !== 'ALL') {
-                        checks[i].checked = true;
-                        checks[i].parentNode.className = 'job-item selected';
-                    }
-                }
-            }
-            updateTemplateDropdown();
-        }
-
-        function updateTemplateDropdown() {
-            var count = 0;
-            var checks = document.getElementsByName('jobId');
-            for(var i=0; i<checks.length; i++) {
-                if (checks[i].checked && checks[i].value.toUpperCase() !== 'ALL') count++;
-            }
-            var allChecked = false;
-            for(var j=0; j<checks.length; j++) {
-                if (checks[j].checked && checks[j].value.toUpperCase() === 'ALL') allChecked = true;
-            }
-            if (allChecked && count === 0) count = 2; // Treat "ALL" as multiple
-
-            var targetCategory = (count >= 2) ? "Group" : "Individual";
-            var tSelect = document.getElementById('templateSelect');
-            var firstOption = tSelect.options[0];
-            tSelect.innerHTML = '';
-            tSelect.appendChild(firstOption);
-
-            for (var k = 0; k < templateOptions.length; k++) {
-                var t = templateOptions[k];
-                if (t.category.toLowerCase() === targetCategory.toLowerCase()) {
-                    var opt = document.createElement('option');
-                    opt.value = t.path;
-                    opt.innerText = t.name;
-                    tSelect.appendChild(opt);
-                }
-            }
-        }
-
-        function submit() {
-            if (!currentMode) { alert("Please select a mode."); return; }
-            var selectedJobs = [];
-            var emails = "";
-
-            // Always get selected jobs regardless of mode
-            var checkboxes = document.getElementsByName('jobId');
-            for(var k=0; k < checkboxes.length; k++) {
-                if (checkboxes[k].checked) selectedJobs.push(checkboxes[k].value);
-            }
-            
-            if (selectedJobs.length === 0) { alert("Please select at least one Job vacancy."); return; }
-
-            if (currentMode === 'Manual') {
-                var area = document.getElementById('emailList');
-                emails = area ? area.value : "";
-                if (!emails || emails.trim() === '') { alert("Please enter recipient emails."); return; }
-            }
-
-            var template = document.getElementById('templateSelect').value;
-            if (!template) { alert("Please select a template."); return; }
-
-            var result = JSON.stringify({ "mode": currentMode, "jobs": selectedJobs.join(";"), "emails": emails, "template": template });
-            
-            try {
-                if (window.external && typeof window.external.setResult !== 'undefined') {
-                    window.external.setResult(result);
-                } else if (window.uipath && typeof window.uipath.setResult !== 'undefined') {
-                    window.uipath.setResult(result);
-                } else {
-                    alert("Unable to communicate with UiPath. Please close and try again.");
-                }
-            } catch (err) {
-                // Fallback attempt if check failed
-                try {
-                    window.external.setResult(result);
-                } catch (e2) {
-                    alert("Critical Error: " + err.message);
-                }
-            }
-        }
-
-    </script>
+    function submit() {
+      if (!currentMode) return alert('Please select a mode.');
+      var selected = [];
+      var checks = document.getElementsByName('jobId');
+      for (var i = 0; i < checks.length; i++) if (checks[i].checked) selected.push(checks[i].value);
+      if (!selected.length) return alert('Please select at least one job vacancy.');
+      var emails = '';
+      if (currentMode === 'Manual') {
+        var area = document.getElementById('emailList');
+        emails = area ? area.value : '';
+        if (!emails || !emails.trim()) return alert('Please enter recipient emails.');
+      }
+      var template = document.getElementById('templateSelect').value;
+      if (!template) return alert('Please select a template.');
+      var result = JSON.stringify({ mode: currentMode, jobs: selected.join(';'), emails: emails, template: template });
+      try {
+        if (window.external && typeof window.external.setResult !== 'undefined') return window.external.setResult(result);
+        if (window.uipath && typeof window.uipath.setResult !== 'undefined') return window.uipath.setResult(result);
+      } catch (e) {}
+      emitResult(result);
+    }
+  </script>
 </body>
 </html>

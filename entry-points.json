@@ -54,6 +54,41 @@
           }
         }
       }
+    },
+    {
+      "filePath": "Workflows\\CanvaPoster\\0_CanvaPoster_Main.xaml",
+      "uniqueId": "bcc25a44-4227-4635-8834-9569e1b46da8",
+      "type": "process",
+      "input": {
+        "type": "object",
+        "properties": {
+          "in_ConfigPath": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "out_IsSuccess": {
+            "type": "boolean"
+          },
+          "out_ErrorMessage": {
+            "type": "string"
+          },
+          "out_TotalCreated": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "out_TotalFailed": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          }
+        }
+      }
     }
   ]
 }
