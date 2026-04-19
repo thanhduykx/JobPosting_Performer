@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canva Poster Preview</title>
+    <style>
+        :root { 
+            --primary: #ffd700; 
+            --primary-hover: #ffc400; 
+            --bg: #90c2d1; 
+            --card: #fff; 
+            --text: #111827; 
+            --muted: #334155; 
+            --border: #cbd5e1; 
+        }
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 900px; 
+            background: var(--card); 
+            border: 8px solid #fff; 
+            border-radius: 24px; 
+            padding: 30px; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { 
+            margin: 0; 
+            font-size: 40px; 
+            font-weight: 900; 
+            letter-spacing: -1px; 
+            text-transform: uppercase; 
+            color: #0f172a; 
+        }
+        
+        .summary-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .summary-card {
+            flex: 1;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .summary-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
+        .summary-value { font-size: 16px; font-weight: 700; color: #0f172a; }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title { font-size: 14px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+
+        .image-gallery {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #f1f5f9;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .image-item {
+            background: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+        .image-item:hover { transform: scale(1.05); z-index: 10; }
+        .image-item img { width: 100%; height: auto; display: block; }
+        .image-wrapper { position: relative; }
+        .preview-btn {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.6); 
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; transition: opacity 0.2s; color: #fff; font-weight: 800;
+            font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+            backdrop-filter: blur(2px);
+        }
+        .image-item:hover .preview-btn { opacity: 1; }
+        .image-label { padding: 8px; font-size: 11px; font-weight: 600; text-align: center; background: #fff; position: relative; z-index: 2; }
+
+        .email-list {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #fff;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .email-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            flex-direction: column;
+        }
+        .email-item:last-child { border-bottom: none; }
+        .email-item span { font-weight: 700; font-size: 13px; }
+        .email-item small { color: #64748b; font-size: 12px; }
+
+        .footer { display: flex; gap: 15px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
+        .btn { flex: 1; padding: 16px; border: none; border-radius: 999px; font-size: 15px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .btn-cancel { background: #e2e8f0; color: var(--muted); }
+        .btn-confirm { background: var(--primary); color: #000; }
+        .btn-confirm:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 196, 0, 0.4); }
+
+        #modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            justify-content: center; align-items: center; z-index: 100; padding: 40px; cursor: pointer;
+        }
+        #modal img { max-width: 100%; max-height: 100%; border: 5px solid #fff; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Poster Preview</h1>
+        </div>
+
+        <div class="summary-row">
+            <div class="summary-card">
+                <div class="summary-label">Success Rate</div>
+                <div class="summary-value" id="stat-rate">0 / 0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Recipients</div>
+                <div class="summary-value" id="stat-emails">0 Recipients</div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="posters-section">
+                <div class="section-title">Generated Posters</div>
+                <div class="image-gallery" id="gallery">
+                    <!-- Posters will be here -->
+                </div>
+            </div>
+            <div class="emails-section">
+                <div class="section-title">Mailing List</div>
+                <div class="email-list" id="emailList">
+                    <!-- Emails will be here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn btn-cancel" onclick="finish(false)">Cancel</button>
+            <button class="btn btn-confirm" onclick="finish(true)">Confirm & Send All</button>
+        </div>
+    </div>
+
+    <div id="modal" onclick="this.style.display='none'">
+        <img id="modalImg" src="">
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const SESSION_ID = urlParams.get('session') || 'default';
+        document.title = "CANVA_PREVIEW::" + SESSION_ID;
+
+        // Data injection point
+        // var global_poster_data = [...];
+        // var global_email_data = [...];
+
+        function init() {
+            if (typeof global_poster_data === 'undefined') return;
+
+            const gall = document.getElementById('gallery');
+            let successCount = 0;
+            global_poster_data.forEach(p => {
+                if (p.success) successCount++;
+                const item = document.createElement('div');
+                item.className = 'image-item';
+                item.onclick = () => {
+                    document.getElementById('modalImg').src = p.path;
+                    document.getElementById('modal').style.display = 'flex';
+                };
+                item.innerHTML = `
+                    <div class="image-wrapper">
+                        <img src="${p.path}" onerror="this.src='https://via.placeholder.com/200x280?text=Error'">
+                        <div class="preview-btn">View Poster</div>
+                    </div>
+                    <div class="image-label">${p.role}</div>
+                `;
+                gall.appendChild(item);
+            });
+            document.getElementById('stat-rate').innerText = `${successCount} / ${global_poster_data.length} Success`;
+
+            const emailBox = document.getElementById('emailList');
+            if (typeof global_email_data !== 'undefined') {
+                global_email_data.forEach(e => {
+                    const div = document.createElement('div');
+                    div.className = 'email-item';
+                    div.innerHTML = `<span>${e.name || "N/A"}</span><small>${e.email}</small>`;
+                    emailBox.appendChild(div);
+                });
+                document.getElementById('stat-emails').innerText = global_email_data.length + " Recipients";
+            }
+        }
+
+        function finish(success) {
+            const result = success ? "CONFIRM" : "CANCEL";
+            document.title = "RESULT::" + SESSION_ID + "::" + result;
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

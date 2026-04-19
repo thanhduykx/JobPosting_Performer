@@ -1,0 +1,495 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="_0_CanvaPoster_Main" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sdiag="clr-namespace:System.Diagnostics;assembly=System.Diagnostics.Process" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_ConfigPath" Type="InArgument(x:String)" />
+    <x:Property Name="out_IsSuccess" Type="OutArgument(x:Boolean)" />
+    <x:Property Name="out_ErrorMessage" Type="OutArgument(x:String)" />
+    <x:Property Name="out_TotalCreated" Type="OutArgument(x:Int32)" />
+    <x:Property Name="out_TotalFailed" Type="OutArgument(x:Int32)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>866,2000</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>_0_CanvaPoster_Main_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>Newtonsoft.Json</x:String>
+      <x:String>Newtonsoft.Json.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Security</x:String>
+      <x:String>UiPath.Excel</x:String>
+      <x:String>UiPath.Excel.Model</x:String>
+      <x:String>UiPath.Excel.Activities.Business</x:String>
+      <x:String>System.ComponentModel</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+      <x:String>UiPath.Shared.Activities</x:String>
+      <x:String>OfficeOpenXml</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="48">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>Newtonsoft.Json</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.IO</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.Runtime.InteropServices</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.EventBasedAsync</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>System.ComponentModel</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.Primitives</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+      <AssemblyReference>System.Private.Xml</AssemblyReference>
+      <AssemblyReference>UiPath.GSuite.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Testing.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.OCR.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UIAutomationCore</AssemblyReference>
+      <AssemblyReference>EPPlus</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="0_CanvaPoster_Main.xaml&#xA;Purpose: Main entry point for Canva Poster creation flow&#xA;Flow: ReadInput -&gt; CanvaAuth -&gt; Loop(CreateDesign -&gt; ExportDesign) -&gt; Report&#xA;Author: RPA Framework Team&#xA;Version: 1.0" DisplayName="0_CanvaPoster_Main" sap:VirtualizedContainerService.HintSize="723.6,4892" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:Dictionary(x:String, x:Object)" Name="dic_Config" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_Jobs" />
+      <Variable x:TypeArguments="x:String" Name="str_AccessToken" />
+      <Variable x:TypeArguments="x:String" Name="str_DesignId" />
+      <Variable x:TypeArguments="x:String" Name="str_OutputFilePath" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_Report" />
+      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="int_SuccessCount" />
+      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="int_FailCount" />
+      <Variable x:TypeArguments="x:Boolean" Name="bol_DesignSuccess" />
+      <Variable x:TypeArguments="x:Boolean" Name="bol_ExportSuccess" />
+      <Variable x:TypeArguments="x:String" Name="str_CurrentError" />
+      <Variable x:TypeArguments="x:Boolean" Name="bol_EmailSent" />
+      <Variable x:TypeArguments="x:String" Name="str_EmailError" />
+      <Variable x:TypeArguments="x:String" Name="str_ToEmail" />
+      <Variable x:TypeArguments="x:String" Name="str_UIResultJSON" />
+      <Variable x:TypeArguments="x:String" Name="str_GlobalEmail" />
+      <Variable x:TypeArguments="x:String" Name="str_GlobalTemplateId" />
+      <Variable x:TypeArguments="x:String" Name="str_SelectedJobs" />
+      <Variable x:TypeArguments="x:String" Name="str_PreviewResult" />
+      <Variable x:TypeArguments="x:String" Name="str_EmailListFull" />
+      <Variable x:TypeArguments="x:String" Name="str_CurrentRole" />
+      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="int_EmailTotal" />
+      <Variable x:TypeArguments="x:String" Name="str_PosterBase64" />
+      <Variable x:TypeArguments="sdiag:Process" Name="prc_Loading" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_EmailList" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+        <x:Boolean x:Key="IsAnnotationDocked">False</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log Canva Poster Start" sap:VirtualizedContainerService.HintSize="603.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;=== Canva Poster Framework Started ===&quot;]" />
+    <TryCatch DisplayName="Main TryCatch" sap:VirtualizedContainerService.HintSize="603.2,4694.4" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <Sequence DisplayName="Main Flow" sap:VirtualizedContainerService.HintSize="601.6,4132.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:LogMessage DisplayName="STATE: READ INPUT" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;STATE: READ INPUT - Reading Excel and Config&quot;]" />
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke ReadInput" sap:VirtualizedContainerService.HintSize="568,176" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_1" UnSafe="False" WorkflowFileName="Workflows\CanvaPoster\1_CanvaPoster_ReadInput.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_ConfigPath">[in_ConfigPath]</InArgument>
+              <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="out_ConfigDictionary">[dic_Config]</OutArgument>
+              <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_Jobs">[dt_Jobs]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:LogMessage DisplayName="STATE: CANVA AUTH" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;STATE: CANVA AUTH - Validating access token&quot;]" />
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke CanvaAuth" sap:VirtualizedContainerService.HintSize="568,176" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_2" UnSafe="False" WorkflowFileName="Workflows\CanvaPoster\2_CanvaPoster_CanvaAuth.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_ConfigDictionary">[dic_Config]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_AccessToken">[str_AccessToken]</OutArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <ui:LogMessage DisplayName="Log UI Start" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_UI" Level="Info" Message="[&quot;Fetching templates and launching Dashboard...&quot;]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim templatesList As New List(Of String)()&#xA;Dim cachePath As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\canvadashboard_tpl.cache&quot;)&#xA;Dim cached As Boolean = False&#xA;If System.IO.File.Exists(cachePath) Then&#xA;    If (DateTime.Now - System.IO.File.GetLastWriteTime(cachePath)).TotalHours &lt; 24 Then&#xA;        templatesList = System.IO.File.ReadAllLines(cachePath).ToList()&#xA;        cached = True&#xA;    End If&#xA;End If&#xA;If Not cached Then&#xA;    Try&#xA;        Dim client As New System.Net.Http.HttpClient()&#xA;        client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;        Dim response = client.GetAsync(&quot;https://api.canva.com/rest/v1/brand-templates&quot;).Result&#xA;        If response.IsSuccessStatusCode Then&#xA;            Dim bodyStr = response.Content.ReadAsStringAsync().Result&#xA;            Dim items = Newtonsoft.Json.Linq.JObject.Parse(bodyStr)(&quot;items&quot;)&#xA;            If items IsNot Nothing Then&#xA;                For Each item In items&#xA;                    Dim id = If(item(&quot;id&quot;) IsNot Nothing, item(&quot;id&quot;).ToString(), &quot;&quot;)&#xA;                    Dim title = If(item(&quot;title&quot;) IsNot Nothing, item(&quot;title&quot;).ToString(), &quot;Untitled&quot;)&#xA;                    If Not String.IsNullOrEmpty(id) Then&#xA;                        templatesList.Add(id + &quot;|&quot; + title)&#xA;                    End If&#xA;                    If templatesList.Count &gt;= 20 Then Exit For&#xA;                Next&#xA;            End If&#xA;            System.IO.File.WriteAllLines(cachePath, templatesList)&#xA;        End If&#xA;    Catch ex As Exception&#xA;    End Try&#xA;End If&#xA;&#xA;Dim global_templates = String.Join(&quot;;&quot;, templatesList)&#xA;Dim jobsList As New List(Of String)()&#xA;jobsList.Add(&quot;ALL&quot;)&#xA;If in_Jobs IsNot Nothing Then&#xA;    For Each row As System.Data.DataRow In in_Jobs.Rows&#xA;        If in_Jobs.Columns.Contains(&quot;Role&quot;) Then&#xA;            jobsList.Add(row(&quot;Role&quot;).ToString().Trim())&#xA;        End If&#xA;    Next&#xA;End If&#xA;Dim global_jobs = String.Join(&quot;;&quot;, jobsList)&#xA;&#xA;Dim htmlContent As String = System.IO.File.ReadAllText(in_File)&#xA;Dim jsInject As String = &quot;&lt;script&gt;var global_jobs = &quot; + Newtonsoft.Json.JsonConvert.SerializeObject(global_jobs) + &quot;;&quot; &amp; vbCrLf &amp; &quot;var global_templates = &quot; + Newtonsoft.Json.JsonConvert.SerializeObject(global_templates) + &quot;;&lt;/script&gt;&quot;&#xA;htmlContent = htmlContent.Replace(&quot;&lt;/head&gt;&quot;, jsInject &amp; vbCrLf &amp; &quot;&lt;/head&gt;&quot;)&#xA;Dim runFile As String = in_File.Replace(&quot;.html&quot;, &quot;_Run.html&quot;)&#xA;System.IO.File.WriteAllText(runFile, htmlContent, System.Text.Encoding.UTF8)&#xA;&#xA;Dim sessionId As String = System.Guid.NewGuid().ToString(&quot;N&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + runFile.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?session=&quot; + sessionId&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window&quot;&#xA;psi.UseShellExecute = True&#xA;System.Diagnostics.Process.Start(psi)&#xA;&#xA;Dim prefix As String = &quot;RESULT::&quot; + sessionId + &quot;::&quot;&#xA;Dim result As String = &quot;&quot;&#xA;Dim timeoutAt As DateTime = DateTime.Now.AddMinutes(20)&#xA;Do While DateTime.Now &lt; timeoutAt AndAlso String.IsNullOrEmpty(result)&#xA;    System.Threading.Thread.Sleep(200)&#xA;    For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcesses()&#xA;        Dim title As String = &quot;&quot;&#xA;        Try&#xA;            title = p.MainWindowTitle&#xA;        Catch&#xA;        End Try&#xA;        If Not String.IsNullOrWhiteSpace(title) AndAlso title.Contains(prefix) Then&#xA;            Dim idx As Integer = title.IndexOf(prefix)&#xA;            If idx &gt;= 0 Then&#xA;                result = title.Substring(idx + prefix.Length)&#xA;            End If&#xA;            Try&#xA;                result = System.Uri.UnescapeDataString(result)&#xA;            Catch&#xA;            End Try&#xA;            Try&#xA;                p.CloseMainWindow()&#xA;            Catch&#xA;            End Try&#xA;            Exit For&#xA;        End If&#xA;    Next&#xA;Loop&#xA;out_Result = result" DisplayName="Launch Setup Dashboard" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_UI">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_File">[Path.Combine(Environment.CurrentDirectory, "Data\UI\CanvaDashboard.html")]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Token">[str_AccessToken]</InArgument>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Jobs">[dt_Jobs]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[str_UIResultJSON]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <If Condition="[Not String.IsNullOrWhiteSpace(str_UIResultJSON)]" DisplayName="Parse Config Overrides" sap:VirtualizedContainerService.HintSize="568,400" sap2010:WorkflowViewState.IdRef="If_JSONParse">
+            <If.Then>
+              <ui:InvokeCode ContinueOnError="{x:Null}" Code="Try&#xA;    Dim json = Newtonsoft.Json.Linq.JObject.Parse(in_JSON)&#xA;    out_Emails = If(json(&quot;targetEmails&quot;) IsNot Nothing, json(&quot;targetEmails&quot;).ToString(), &quot;&quot;)&#xA;    out_TemplateId = If(json(&quot;templateId&quot;) IsNot Nothing, json(&quot;templateId&quot;).ToString(), &quot;&quot;)&#xA;    out_Jobs = If(json(&quot;jobs&quot;) IsNot Nothing, json(&quot;jobs&quot;).ToString(), &quot;&quot;)&#xA;Catch ex As Exception&#xA;End Try" DisplayName="Parse Output JSON" sap:VirtualizedContainerService.HintSize="487.2,164.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ParseMap">
+                <ui:InvokeCode.Arguments>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_JSON">[str_UIResultJSON]</InArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Emails">[str_GlobalEmail]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_TemplateId">[str_GlobalTemplateId]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Jobs">[str_SelectedJobs]</OutArgument>
+                </ui:InvokeCode.Arguments>
+              </ui:InvokeCode>
+            </If.Then>
+          </If>
+          <If Condition="[Not String.IsNullOrWhiteSpace(str_GlobalTemplateId)]" DisplayName="Override Template ID" sap:VirtualizedContainerService.HintSize="568,360" sap2010:WorkflowViewState.IdRef="If_TemplateOverride">
+            <If.Then>
+              <Assign DisplayName="Update Dic Config" sap:VirtualizedContainerService.HintSize="253.6,81.6" sap2010:WorkflowViewState.IdRef="Assign_TemplateId">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:Object">[dic_Config("Canva_BrandTemplateId")]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:Object">[If(str_GlobalTemplateId = "MODE_Individual", If(dic_Config.ContainsKey("Canva_Template_Individual"), dic_Config("Canva_Template_Individual").ToString, dic_Config("Canva_BrandTemplateId").ToString), If(str_GlobalTemplateId = "MODE_Group", If(dic_Config.ContainsKey("Canva_Template_Group"), dic_Config("Canva_Template_Group").ToString, dic_Config("Canva_BrandTemplateId").ToString), str_GlobalTemplateId))]</InArgument>
+                </Assign.Value>
+              </Assign>
+            </If.Then>
+          </If>
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim selectedJobs As String() = in_SelectedStr.Split(&quot;;&quot;c)&#xA;If Not selectedJobs.Contains(&quot;ALL&quot;) AndAlso Not String.IsNullOrWhiteSpace(in_SelectedStr) AndAlso io_Jobs IsNot Nothing Then&#xA;    Dim rows = io_Jobs.AsEnumerable().Where(Function(r) selectedJobs.Contains(r(&quot;Role&quot;).ToString().Trim())).ToArray()&#xA;    If rows.Length &gt; 0 Then&#xA;        io_Jobs = rows.CopyToDataTable()&#xA;    Else&#xA;        io_Jobs = io_Jobs.Clone()&#xA;    End If&#xA;End If" DisplayName="Filter Selected Jobs" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_FilterJobs">
+            <ui:InvokeCode.Arguments>
+              <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_Jobs">[dt_Jobs]</InOutArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_SelectedStr">[str_SelectedJobs]</InArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ui:LogMessage DisplayName="Log Filter Request" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Canva processing list initialized with &quot; + If(dt_Jobs IsNot Nothing, dt_Jobs.Rows.Count.ToString, &quot;0&quot;) + &quot; jobs...&quot;]" />
+          <ui:LogMessage DisplayName="Log Auth Success" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;Canva authentication successful. Processing &quot; + If(dt_Jobs IsNot Nothing, dt_Jobs.Rows.Count.ToString, &quot;0&quot;) + &quot; jobs...&quot;]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="out_DT = New DataTable()&#xA;out_DT.Columns.Add(&quot;Role&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;Status&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;DesignId&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;FilePath&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;EmailSent&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;Error&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;Timestamp&quot;, GetType(String))" DisplayName="Init Report Table" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+            <ui:InvokeCode.Arguments>
+              <OutArgument x:TypeArguments="sd:DataTable" x:Key="out_DT">[dt_Report]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ui:LogMessage DisplayName="STATE: CREATE &amp; EXPORT" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;STATE: CREATE &amp; EXPORT - Processing each job row&quot;]" />
+          <ui:InvokeCode ContinueOnError="True" Code="Dim runFile As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\CanvaProcessing.html&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + runFile.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?task=Creating+Posters&quot;&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window&quot;&#xA;psi.UseShellExecute = True&#xA;out_Process = System.Diagnostics.Process.Start(psi)" DisplayName="Launch Loading Screen" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_LaunchLoad">
+            <ui:InvokeCode.Arguments>
+              <OutArgument x:TypeArguments="sdiag:Process" x:Key="out_Process">[prc_Loading]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ForEach x:TypeArguments="sd:DataRow" DisplayName="For Each Job Row" sap:VirtualizedContainerService.HintSize="568,2138.4" sap2010:WorkflowViewState.IdRef="ForEach_1" Values="[dt_Jobs.AsEnumerable()]">
+            <ActivityAction x:TypeArguments="sd:DataRow">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="sd:DataRow" Name="dr_CurrentJob" />
+              </ActivityAction.Argument>
+              <TryCatch DisplayName="TryCatch Per Job" sap:VirtualizedContainerService.HintSize="518.4,1957.6" sap2010:WorkflowViewState.IdRef="TryCatch_2">
+                <TryCatch.Try>
+                  <Sequence DisplayName="Process One Job" sap:VirtualizedContainerService.HintSize="516.8,1596" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                    <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke CreateDesign" sap:VirtualizedContainerService.HintSize="483.2,176" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_3" UnSafe="False" WorkflowFileName="Workflows\CanvaPoster\3_CanvaPoster_CreateDesign.xaml">
+                      <ui:InvokeWorkflowFile.Arguments>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_AccessToken">[str_AccessToken]</InArgument>
+                        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_ConfigDictionary">[dic_Config]</InArgument>
+                        <InArgument x:TypeArguments="sd:DataRow" x:Key="in_JobRow">[dr_CurrentJob]</InArgument>
+                        <OutArgument x:TypeArguments="x:String" x:Key="out_DesignId">[str_DesignId]</OutArgument>
+                        <OutArgument x:TypeArguments="x:Boolean" x:Key="out_IsSuccess">[bol_DesignSuccess]</OutArgument>
+                      </ui:InvokeWorkflowFile.Arguments>
+                    </ui:InvokeWorkflowFile>
+                    <Assign DisplayName="Resolve To Email" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_10">
+                      <Assign.To>
+                        <OutArgument x:TypeArguments="x:String">[str_ToEmail]</OutArgument>
+                      </Assign.To>
+                      <Assign.Value>
+                        <InArgument x:TypeArguments="x:String">[If(Not String.IsNullOrWhiteSpace(str_GlobalEmail), str_GlobalEmail, If(dr_CurrentJob.Table.Columns.Contains("Email"), Convert.ToString(dr_CurrentJob("Email")).Trim(), ""))]</InArgument>
+                      </Assign.Value>
+                    </Assign>
+                    <If Condition="[bol_DesignSuccess]" DisplayName="If Design Created" sap:VirtualizedContainerService.HintSize="483.2,394.4" sap2010:WorkflowViewState.IdRef="If_1">
+                      <If.Then>
+                        <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke ExportDesign" sap:VirtualizedContainerService.HintSize="449.6,144" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_4" UnSafe="False" WorkflowFileName="Workflows\CanvaPoster\4_CanvaPoster_ExportDesign.xaml">
+                          <ui:InvokeWorkflowFile.Arguments>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_AccessToken">[str_AccessToken]</InArgument>
+                            <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_ConfigDictionary">[dic_Config]</InArgument>
+                            <InArgument x:TypeArguments="x:String" x:Key="in_DesignId">[str_DesignId]</InArgument>
+                            <InArgument x:TypeArguments="sd:DataRow" x:Key="in_JobRow">[dr_CurrentJob]</InArgument>
+                            <OutArgument x:TypeArguments="x:String" x:Key="out_OutputFilePath">[str_OutputFilePath]</OutArgument>
+                            <OutArgument x:TypeArguments="x:Boolean" x:Key="out_IsSuccess">[bol_ExportSuccess]</OutArgument>
+                          </ui:InvokeWorkflowFile.Arguments>
+                        </ui:InvokeWorkflowFile>
+                      </If.Then>
+                    </If>
+                    <If Condition="[bol_DesignSuccess AndAlso bol_ExportSuccess]" DisplayName="If Poster OK" sap:VirtualizedContainerService.HintSize="483.2,300" sap2010:WorkflowViewState.IdRef="If_2">
+                      <If.Then>
+                        <Assign DisplayName="Increment Success" sap:VirtualizedContainerService.HintSize="449.6,81.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:Int32">[int_SuccessCount]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:Int32">[int_SuccessCount + 1]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                      </If.Then>
+                      <If.Else>
+                        <Assign DisplayName="Increment Fail" sap:VirtualizedContainerService.HintSize="250,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:Int32">[int_FailCount]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:Int32">[int_FailCount + 1]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                      </If.Else>
+                    </If>
+                    <ui:InvokeCode ContinueOnError="{x:Null}" Code="in_DT.Rows.Add(in_Role, in_Status, in_DesignId, in_FilePath, in_Email, in_Error, DateTime.Now.ToString())" DisplayName="Add to Report" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
+                      <ui:InvokeCode.Arguments>
+                        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_DT">[dt_Report]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_Role">[dr_CurrentJob("Role").ToString]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_Status">[If(bol_DesignSuccess AndAlso bol_ExportSuccess, "Success", "Failed")]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_DesignId">[If(str_DesignId IsNot Nothing, str_DesignId, "")]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_FilePath">[If(str_OutputFilePath IsNot Nothing, str_OutputFilePath, "")]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_Email">[If(bol_EmailSent, "Sent", If(str_EmailError IsNot Nothing, str_EmailError, "Not Sent"))]</InArgument>
+                        <InArgument x:TypeArguments="x:String" x:Key="in_Error">[If(str_CurrentError IsNot Nothing, str_CurrentError, "")]</InArgument>
+                      </ui:InvokeCode.Arguments>
+                    </ui:InvokeCode>
+                  </Sequence>
+                </TryCatch.Try>
+                <TryCatch.Catches>
+                  <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="350,200" sap2010:WorkflowViewState.IdRef="Catch_3">
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                    <ActivityAction x:TypeArguments="s:Exception">
+                      <ActivityAction.Argument>
+                        <DelegateInArgument x:TypeArguments="s:Exception" Name="jobEx" />
+                      </ActivityAction.Argument>
+                      <Sequence DisplayName="Handle Job Error" sap:VirtualizedContainerService.HintSize="316,200" sap2010:WorkflowViewState.IdRef="Sequence_6">
+                        <sap:WorkflowViewStateService.ViewState>
+                          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                          </scg:Dictionary>
+                        </sap:WorkflowViewStateService.ViewState>
+                        <ui:LogMessage DisplayName="Log Job Error" sap:VirtualizedContainerService.HintSize="253.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_10" Level="Error" Message="[&quot;Error processing job: &quot; + jobEx.Message]" />
+                        <Assign DisplayName="Increment Fail on Error" sap:VirtualizedContainerService.HintSize="253.6,81.6" sap2010:WorkflowViewState.IdRef="Assign_6">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:Int32">[int_FailCount]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:Int32">[int_FailCount + 1]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                      </Sequence>
+                    </ActivityAction>
+                  </Catch>
+                </TryCatch.Catches>
+              </TryCatch>
+            </ActivityAction>
+          </ForEach>
+          <ui:InvokeCode ContinueOnError="True" Code="If in_Process IsNot Nothing Then&#xA;    Try&#xA;        in_Process.CloseMainWindow()&#xA;        in_Process.WaitForExit(2000)&#xA;        If Not in_Process.HasExited Then in_Process.Kill()&#xA;    Catch: End Try&#xA;End If&#xA;For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;    Try&#xA;        Dim title As String = p.MainWindowTitle.ToUpper()&#xA;        If title.Contains(&quot;PROCESSING::&quot;) Then&#xA;            p.CloseMainWindow()&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;Next" DisplayName="Close Loading Screen" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_CloseLoad">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="sdiag:Process" x:Key="in_Process">[prc_Loading]</InArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ui:LogMessage DisplayName="STATE: PREVIEW &amp; EMAIL" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Preview" Level="Info" Message="[&quot;STATE: PREVIEW - Building preview with &quot; + int_SuccessCount.ToString + &quot; posters&quot;]" />
+          <TryCatch DisplayName="Try Read Emails List" sap:VirtualizedContainerService.HintSize="568,300" sap2010:WorkflowViewState.IdRef="TryCatch_Emails">
+            <TryCatch.Try>
+              <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[dt_EmailList]" DisplayName="Read Emails Excel" sap:VirtualizedContainerService.HintSize="334.4,88" sap2010:WorkflowViewState.IdRef="ReadRange_Preview" SheetName="Sheet1" WorkbookPath="Data\Input\Emails_Local.xlsx" />
+            </TryCatch.Try>
+            <TryCatch.Catches>
+              <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="400,104" sap2010:WorkflowViewState.IdRef="Catch_Emails">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                    <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <ActivityAction x:TypeArguments="s:Exception">
+                  <ActivityAction.Argument>
+                    <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+                  </ActivityAction.Argument>
+                  <Assign DisplayName="Set Null Emails" sap:VirtualizedContainerService.HintSize="253.6,81.6" sap2010:WorkflowViewState.IdRef="Assign_EmailsNull">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="sd:DataTable">[dt_EmailList]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="sd:DataTable">[Nothing]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                </ActivityAction>
+              </Catch>
+            </TryCatch.Catches>
+          </TryCatch>
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim emailList As New List(Of String)()&#xA;If Not String.IsNullOrWhiteSpace(in_GlobalEmail) Then&#xA;    For Each em As String In in_GlobalEmail.Split(New Char(){&quot;;&quot;c, &quot;,&quot;c}, StringSplitOptions.RemoveEmptyEntries)&#xA;        emailList.Add(&quot;|&quot; + em.Trim())&#xA;    Next&#xA;Else&#xA;    If in_EmailDT IsNot Nothing Then&#xA;        Dim emailCol As String = &quot;&quot;&#xA;        Dim nameCol As String = &quot;&quot;&#xA;        For Each col As System.Data.DataColumn In in_EmailDT.Columns&#xA;            Dim h As String = col.ColumnName.ToUpper()&#xA;            If h.Contains(&quot;EMAIL&quot;) Then emailCol = col.ColumnName&#xA;            If h.Contains(&quot;EMPLOYEE&quot;) OrElse h.Contains(&quot;NAME&quot;) OrElse h.Contains(&quot;CANDIDATE&quot;) Then nameCol = col.ColumnName&#xA;        Next&#xA;        If Not String.IsNullOrEmpty(emailCol) Then&#xA;            For Each r As System.Data.DataRow In in_EmailDT.Rows&#xA;                Dim email As String = If(r(emailCol) IsNot DBNull.Value AndAlso r(emailCol) IsNot Nothing, r(emailCol).ToString().Trim(), &quot;&quot;)&#xA;                Dim name As String = If(Not String.IsNullOrEmpty(nameCol) AndAlso r(nameCol) IsNot DBNull.Value AndAlso r(nameCol) IsNot Nothing, r(nameCol).ToString().Trim(), &quot;&quot;)&#xA;                If Not String.IsNullOrWhiteSpace(email) Then&#xA;                    emailList.Add(name + &quot;|&quot; + email)&#xA;                End If&#xA;            Next&#xA;        End If&#xA;    End If&#xA;End If&#xA;&#xA;Dim posterArr As New Newtonsoft.Json.Linq.JArray()&#xA;If in_Report IsNot Nothing Then&#xA;    For Each row As System.Data.DataRow In in_Report.Rows&#xA;        Dim obj As New Newtonsoft.Json.Linq.JObject()&#xA;        obj(&quot;role&quot;) = Convert.ToString(row(&quot;Role&quot;))&#xA;        Dim fPath As String = Convert.ToString(row(&quot;FilePath&quot;))&#xA;        Dim b64 As String = &quot;&quot;&#xA;        Try&#xA;            If System.IO.File.Exists(fPath) Then&#xA;                b64 = &quot;data:image/png;base64,&quot; + Convert.ToBase64String(System.IO.File.ReadAllBytes(fPath))&#xA;            End If&#xA;        Catch&#xA;        End Try&#xA;        obj(&quot;path&quot;) = b64&#xA;        obj(&quot;success&quot;) = Convert.ToString(row(&quot;Status&quot;)).Equals(&quot;Success&quot;)&#xA;        posterArr.Add(obj)&#xA;    Next&#xA;End If&#xA;&#xA;Dim emailArr As New Newtonsoft.Json.Linq.JArray()&#xA;For Each entry As String In emailList&#xA;    Dim parts = entry.Split(&quot;|&quot;c)&#xA;    Dim obj As New Newtonsoft.Json.Linq.JObject()&#xA;    obj(&quot;name&quot;) = If(parts.Length &gt; 1, parts(0).Trim(), &quot;&quot;)&#xA;    obj(&quot;email&quot;) = parts(parts.Length - 1).Trim()&#xA;    emailArr.Add(obj)&#xA;Next&#xA;&#xA;Dim htmlContent As String = System.IO.File.ReadAllText(in_PreviewFile)&#xA;Dim jsInject As String = &quot;&lt;script&gt;var global_poster_data = &quot; + posterArr.ToString() + &quot;; var global_email_data = &quot; + emailArr.ToString() + &quot;;&lt;/script&gt;&quot;&#xA;htmlContent = htmlContent.Replace(&quot;&lt;/head&gt;&quot;, jsInject + vbCrLf + &quot;&lt;/head&gt;&quot;)&#xA;Dim runFile As String = in_PreviewFile.Replace(&quot;.html&quot;, &quot;_Run.html&quot;)&#xA;System.IO.File.WriteAllText(runFile, htmlContent, System.Text.Encoding.UTF8)&#xA;&#xA;Dim sessionId As String = System.Guid.NewGuid().ToString(&quot;N&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + runFile.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?session=&quot; + sessionId&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window&quot;&#xA;psi.UseShellExecute = True&#xA;System.Diagnostics.Process.Start(psi)&#xA;&#xA;Dim prefix As String = &quot;RESULT::&quot; + sessionId + &quot;::&quot;&#xA;Dim result As String = &quot;&quot;&#xA;Dim timeoutAt As DateTime = DateTime.Now.AddMinutes(30)&#xA;Do While DateTime.Now &lt; timeoutAt AndAlso String.IsNullOrEmpty(result)&#xA;    System.Threading.Thread.Sleep(300)&#xA;    For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcesses()&#xA;        Dim title As String = &quot;&quot;&#xA;        Try : title = p.MainWindowTitle : Catch : End Try&#xA;        If Not String.IsNullOrWhiteSpace(title) AndAlso title.Contains(prefix) Then&#xA;            result = title.Substring(title.IndexOf(prefix) + prefix.Length)&#xA;            Try : result = System.Uri.UnescapeDataString(result) : Catch : End Try&#xA;            Try : p.CloseMainWindow() : Catch : End Try&#xA;            Exit For&#xA;        End If&#xA;    Next&#xA;Loop&#xA;out_PreviewResult = result&#xA;out_EmailListStr = String.Join(&quot;;&quot;, emailList)" DisplayName="Build Preview &amp; Wait for Confirmation" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Preview">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_GlobalEmail">[str_GlobalEmail]</InArgument>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Report">[dt_Report]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_PreviewFile">[Path.Combine(Environment.CurrentDirectory, "Data\UI\CanvaPosterPreview.html")]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_PreviewResult">[str_PreviewResult]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_EmailListStr">[str_EmailListFull]</OutArgument>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_EmailDT">[dt_EmailList]</InArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <If Condition="[str_PreviewResult = &quot;CONFIRM&quot;]" DisplayName="If User Confirmed Send" sap:VirtualizedContainerService.HintSize="568,600" sap2010:WorkflowViewState.IdRef="If_PreviewConfirm">
+            <If.Then>
+              <Sequence DisplayName="Send Emails to All Recipients" sap:VirtualizedContainerService.HintSize="534.4,1200" sap2010:WorkflowViewState.IdRef="Seq_SendEmails">
+                <ui:LogMessage DisplayName="Log Send Start" sap:VirtualizedContainerService.HintSize="500,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_SendStart" Level="Info" Message="[&quot;Sending posters to &quot; + str_EmailListFull.Split(&quot;;&quot;c).Length.ToString + &quot; recipients...&quot;]" />
+                <ForEach x:TypeArguments="sd:DataRow" DisplayName="For Each Successful Poster" sap:VirtualizedContainerService.HintSize="500,900" sap2010:WorkflowViewState.IdRef="ForEach_Poster" Values="[dt_Report.AsEnumerable().Where(Function(r) Convert.ToString(r(&quot;Status&quot;)).Equals(&quot;Success&quot;))]">
+                  <ActivityAction x:TypeArguments="sd:DataRow">
+                    <ActivityAction.Argument>
+                      <DelegateInArgument x:TypeArguments="sd:DataRow" Name="dr_Poster" />
+                    </ActivityAction.Argument>
+                    <Sequence DisplayName="Poster to Base64 &amp; Send" sap:VirtualizedContainerService.HintSize="466.4,800">
+                      <Assign DisplayName="Convert to Base64" sap:VirtualizedContainerService.HintSize="432.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_B64">
+                        <Assign.To>
+                          <OutArgument x:TypeArguments="x:String">[str_PosterBase64]</OutArgument>
+                        </Assign.To>
+                        <Assign.Value>
+                          <InArgument x:TypeArguments="x:String">[Convert.ToBase64String(System.IO.File.ReadAllBytes(dr_Poster("FilePath").ToString))]</InArgument>
+                        </Assign.Value>
+                      </Assign>
+                      <ForEach x:TypeArguments="x:String" DisplayName="For Each Recipient" sap:VirtualizedContainerService.HintSize="432.8,700" sap2010:WorkflowViewState.IdRef="ForEach_Email" Values="[str_EmailListFull.Split(&quot;;&quot;c)]">
+                        <ActivityAction x:TypeArguments="x:String">
+                          <ActivityAction.Argument>
+                            <DelegateInArgument x:TypeArguments="x:String" Name="str_PersonData" />
+                          </ActivityAction.Argument>
+                          <Sequence DisplayName="Process Send" sap:VirtualizedContainerService.HintSize="432.8,500">
+                            <Assign DisplayName="Extract Email" sap:VirtualizedContainerService.HintSize="400,81.6" sap2010:WorkflowViewState.IdRef="Assign_ExtractEmail">
+                              <Assign.To>
+                                <OutArgument x:TypeArguments="x:String">[str_ToEmail]</OutArgument>
+                              </Assign.To>
+                              <Assign.Value>
+                                <InArgument x:TypeArguments="x:String">[str_PersonData.Split("|"c).Last().Trim()]</InArgument>
+                              </Assign.Value>
+                            </Assign>
+                            <If Condition="[Not String.IsNullOrWhiteSpace(str_ToEmail)]" DisplayName="Check Email" sap:VirtualizedContainerService.HintSize="400,350">
+                              <If.Then>
+                                <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="True" DisplayName="Send Poster Email" sap:VirtualizedContainerService.HintSize="334.4,176" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_Send" UnSafe="False" WorkflowFileName="Workflows\Email\5_Modules\Module_SendGmail.xaml">
+                                  <ui:InvokeWorkflowFile.Arguments>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_str_ToEmail">[str_ToEmail]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_str_Subject">["Job Opportunity: " + dr_Poster("Role").ToString]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_str_Body">["&lt;div&gt;&lt;p&gt;Please find the job poster attached for: &lt;strong&gt;" + dr_Poster("Role").ToString + "&lt;/strong&gt;&lt;/p&gt;&lt;br/&gt;&lt;img src='data:image/png;base64," + str_PosterBase64 + "' style='width:100%; max-width:800px; border:1px solid #ddd; border-radius:8px;' /&gt;&lt;/div&gt;"]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_str_ConnectionId">[If(dic_Config IsNot Nothing AndAlso dic_Config.ContainsKey("GmailConnectionId"), dic_Config("GmailConnectionId").ToString, "a03a0f0a-762f-44c5-9d07-4d280413f2ed")]</InArgument>
+                                    <InArgument x:TypeArguments="x:String" x:Key="in_str_AttachmentPath">[dr_Poster("FilePath").ToString]</InArgument>
+                                    <OutArgument x:TypeArguments="x:Boolean" x:Key="out_IsSent">[bol_EmailSent]</OutArgument>
+                                    <OutArgument x:TypeArguments="x:String" x:Key="out_Error">[str_EmailError]</OutArgument>
+                                  </ui:InvokeWorkflowFile.Arguments>
+                                </ui:InvokeWorkflowFile>
+                              </If.Then>
+                            </If>
+                          </Sequence>
+                        </ActivityAction>
+                      </ForEach>
+                    </Sequence>
+                  </ActivityAction>
+                </ForEach>
+              </Sequence>
+            </If.Then>
+            <If.Else>
+              <ui:LogMessage DisplayName="Log Preview Cancelled" sap:VirtualizedContainerService.HintSize="250,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_PreviewCancel" Level="Warn" Message="[&quot;User cancelled at preview. Emails NOT sent.&quot;]" />
+            </If.Else>
+          </If>
+          <ui:LogMessage DisplayName="STATE: REPORT" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Info" Message="[&quot;STATE: REPORT - Generating execution report&quot;]" />
+          <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" DisplayName="Invoke Report" sap:VirtualizedContainerService.HintSize="568,176" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_5" UnSafe="False" WorkflowFileName="Workflows\CanvaPoster\5_CanvaPoster_Report.xaml">
+            <ui:InvokeWorkflowFile.Arguments>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_ReportData">[dt_Report]</InArgument>
+              <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_ConfigDictionary">[dic_Config]</InArgument>
+              <InArgument x:TypeArguments="x:Int32" x:Key="in_SuccessCount">[int_SuccessCount]</InArgument>
+              <InArgument x:TypeArguments="x:Int32" x:Key="in_FailCount">[int_FailCount]</InArgument>
+            </ui:InvokeWorkflowFile.Arguments>
+          </ui:InvokeWorkflowFile>
+          <Assign DisplayName="Set Success Output" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="Assign_7">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:Boolean">[out_IsSuccess]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:Boolean">[True]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign DisplayName="Set Total Created" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_8">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:Int32">[out_TotalCreated]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:Int32">[int_SuccessCount]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign DisplayName="Set Total Failed" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_9">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:Int32">[out_TotalFailed]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:Int32">[int_FailCount]</InArgument>
+            </Assign.Value>
+          </Assign>
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="450,240" sap2010:WorkflowViewState.IdRef="Catch_2">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="ex" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Handle System Exception" sap:VirtualizedContainerService.HintSize="416,200" sap2010:WorkflowViewState.IdRef="Sequence_5">
+              <sap:WorkflowViewStateService.ViewState>
+                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                </scg:Dictionary>
+              </sap:WorkflowViewStateService.ViewState>
+              <ui:LogMessage DisplayName="Log System Error" sap:VirtualizedContainerService.HintSize="353.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Fatal" Message="[&quot;System Exception: &quot; + ex.Message + &quot; | Stack: &quot; + ex.StackTrace]" />
+              <Assign DisplayName="Set Error Output" sap:VirtualizedContainerService.HintSize="353.6,81.6" sap2010:WorkflowViewState.IdRef="Assign_5">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[out_ErrorMessage]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">[ex.Message]</InArgument>
+                </Assign.Value>
+              </Assign>
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+      <TryCatch.Finally>
+        <Sequence DisplayName="Finally Clean Up" sap:VirtualizedContainerService.HintSize="416,368.8" sap2010:WorkflowViewState.IdRef="Sequence_Finally">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:LogMessage DisplayName="Log Framework End" sap:VirtualizedContainerService.HintSize="353.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[&quot;=== Canva Poster Framework Completed (Success: &quot; + int_SuccessCount.ToString + &quot;/&quot; + (int_SuccessCount + int_FailCount).ToString + &quot;) ===&quot;]" />
+          <ui:InvokeCode ContinueOnError="True" Code="For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;    Try&#xA;        Dim title As String = p.MainWindowTitle.ToUpper()&#xA;        If title.Contains(&quot;CANVA_DASHBOARD&quot;) OrElse title.Contains(&quot;PROCESSING::&quot;) OrElse title.Contains(&quot;CANVA_PREVIEW&quot;) OrElse title.Contains(&quot;RESULT::&quot;) Then&#xA;            p.CloseMainWindow()&#xA;            p.WaitForExit(1000)&#xA;            If Not p.HasExited Then&#xA;                p.Kill()&#xA;            End If&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;Next" DisplayName="Close Orphaned UI Windows" sap:VirtualizedContainerService.HintSize="353.6,164.8" sap2010:WorkflowViewState.IdRef="InvokeCode_CleanEdge">
+            <ui:InvokeCode.Arguments>
+              <scg:Dictionary x:TypeArguments="x:String, Argument" />
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+        </Sequence>
+      </TryCatch.Finally>
+    </TryCatch>
+  </Sequence>
+</Activity>

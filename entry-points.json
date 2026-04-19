@@ -2,22 +2,75 @@
   "$schema": "https://cloud.uipath.com/draft/2024-12/entry-point",
   "entryPoints": [
     {
-      "filePath": "Main.xaml",
-      "uniqueId": "5e5f34c6-35ef-4a3b-ba6c-8f98447405eb",
+      "filePath": "Workflows\\Email\\5_Modules\\Module_SendGmail.xaml",
+      "uniqueId": "58cf54d9-0da7-4186-a26e-1a0b37314e66",
       "type": "process",
       "input": {
         "type": "object",
         "properties": {
-          "in_OrchestratorQueueName": {
-            "type": "string",
-            "description": "Allows the Orchestrator queue name to be passed as an argument, instead of only being defined in the configuration file."
+          "in_str_Body": {
+            "type": "string"
           },
-          "in_OrchestratorQueueFolder": {
-            "type": "string",
-            "description": "Allows the Orchestrator folder name where the queue is created to be passed as an argument, instead of only being defined in the configuration file."
+          "in_str_ToEmail": {
+            "type": "string"
+          },
+          "in_str_Subject": {
+            "type": "string"
+          },
+          "in_str_ConnectionId": {
+            "type": "string"
+          },
+          "in_str_AttachmentPath": {
+            "type": "string"
           }
         },
         "required": []
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "out_Error": {
+            "type": "string"
+          },
+          "out_IsSent": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "filePath": "Workflows\\CanvaPoster\\0_CanvaPoster_Main.xaml",
+      "uniqueId": "bcc25a44-4227-4635-8834-9569e1b46da8",
+      "type": "process",
+      "input": {
+        "type": "object",
+        "properties": {
+          "in_ConfigPath": {
+            "type": "string"
+          }
+        },
+        "required": []
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "out_IsSuccess": {
+            "type": "boolean"
+          },
+          "out_ErrorMessage": {
+            "type": "string"
+          },
+          "out_TotalCreated": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "out_TotalFailed": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          }
+        }
       }
     }
   ]

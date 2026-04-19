@@ -1,0 +1,141 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="_1_CanvaPoster_ReadInput" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_ConfigPath" Type="InArgument(x:String)" />
+    <x:Property Name="out_ConfigDictionary" Type="OutArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="out_Jobs" Type="OutArgument(sd:DataTable)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>866,1600</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>_1_CanvaPoster_ReadInput_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="24">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.IO</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="1_CanvaPoster_ReadInput.xaml&#xA;Purpose: Read Config.xlsx (Settings + FieldMappings sheets) and Excel input file&#xA;Output: dic_Config, dt_Jobs, dt_FieldMappings&#xA;Version: 1.0" DisplayName="1_ReadInput" sap:VirtualizedContainerService.HintSize="546,1500" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_ConfigSettings" />
+      <Variable x:TypeArguments="x:String" Name="str_InputFilePath" />
+      <Variable x:TypeArguments="x:String" Name="str_InputSheetName" />
+      <Variable x:TypeArguments="x:String" Name="str_OutputFolder" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log ReadInput Start" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;ReadInput: Starting - Config path: &quot; + If(String.IsNullOrWhiteSpace(in_ConfigPath), &quot;Data\Config.xlsx&quot;, in_ConfigPath)]" />
+    <TryCatch DisplayName="ReadInput TryCatch" sap:VirtualizedContainerService.HintSize="483.2,1100" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <Sequence DisplayName="Read Config and Input" sap:VirtualizedContainerService.HintSize="449.6,900" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[dt_ConfigSettings]" DisplayName="Read Config Settings" sap:VirtualizedContainerService.HintSize="387.2,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_1" SheetName="CanvaPoster" WorkbookPath="[If(String.IsNullOrWhiteSpace(in_ConfigPath), &quot;Data\Config.xlsx&quot;, in_ConfigPath)]" />
+          <ui:LogMessage DisplayName="Log Config Loaded" sap:VirtualizedContainerService.HintSize="387.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;ReadInput: Config.xlsx loaded. Rows: &quot; + dt_ConfigSettings.Rows.Count.ToString]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="out_Dict = New Dictionary(Of String, Object)(StringComparer.OrdinalIgnoreCase)&#xA;For Each row As DataRow In in_DT.Rows&#xA;    Dim key As String = row(0).ToString().Trim()&#xA;    Dim val As String = row(1).ToString().Trim()&#xA;    If Not String.IsNullOrEmpty(key) Then&#xA;        out_Dict(key) = val&#xA;    End If&#xA;Next" DisplayName="Convert Config to Dictionary" sap:VirtualizedContainerService.HintSize="387.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="sd:DataTable" x:Key="in_DT">[dt_ConfigSettings]</InArgument>
+              <OutArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="out_Dict">[out_ConfigDictionary]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <Assign DisplayName="Get Input File Path" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[str_InputFilePath]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("InputFilePath") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("InputFilePath").ToString), out_ConfigDictionary("InputFilePath").ToString, "Data\Input\Jobs_Local.xlsx")]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <Assign DisplayName="Get Input Sheet Name" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[str_InputSheetName]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("InputSheetName") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("InputSheetName").ToString), out_ConfigDictionary("InputSheetName").ToString, "Open Demands")]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_Jobs]" DisplayName="Read Jobs Excel" sap:VirtualizedContainerService.HintSize="387.2,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_2" SheetName="[str_InputSheetName]" WorkbookPath="[str_InputFilePath]" />
+          <ui:LogMessage DisplayName="Log Jobs Loaded" sap:VirtualizedContainerService.HintSize="387.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;ReadInput: Jobs loaded. Row count: &quot; + out_Jobs.Rows.Count.ToString]" />
+          <Assign DisplayName="Get Output Folder" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_3">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[str_OutputFolder]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("Canva_OutputFolder") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("Canva_OutputFolder").ToString), out_ConfigDictionary("Canva_OutputFolder").ToString, "Data\Output\Posters")]</InArgument>
+            </Assign.Value>
+          </Assign>
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not Directory.Exists(in_Folder) Then&#xA;    Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Create Output Folder" sap:VirtualizedContainerService.HintSize="387.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[str_OutputFolder]</InArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="450,240" sap2010:WorkflowViewState.IdRef="Catch_1">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="ex" />
+            </ActivityAction.Argument>
+            <Sequence DisplayName="Handle ReadInput Error" sap:VirtualizedContainerService.HintSize="416,200" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <sap:WorkflowViewStateService.ViewState>
+                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                </scg:Dictionary>
+              </sap:WorkflowViewStateService.ViewState>
+              <ui:LogMessage DisplayName="Log ReadInput Error" sap:VirtualizedContainerService.HintSize="353.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Error" Message="[&quot;ReadInput Error: &quot; + ex.Message]" />
+              <Throw DisplayName="Rethrow" Exception="[New System.Exception(&quot;ReadInputFailed: &quot; + ex.Message)]" sap:VirtualizedContainerService.HintSize="353.6,136" sap2010:WorkflowViewState.IdRef="Throw_1" />
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+  </Sequence>
+</Activity>

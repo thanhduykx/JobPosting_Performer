@@ -1,0 +1,2 @@
+var global_canva_jobs = 'ALL;Japanese Comtor;Java Developer;Service Desk Support;Project Manager;Software Test Engineer;Salesforce Engineer';
+var global_canva_templates = 'EAHHQIFhk_o|Autum Role;EAHHPvXyFHY|Bản sao của Bản sao của Bản sao của (Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn;EAHHPZLGpL0|Bản sao của Bản sao của (Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn;EAHHPQ-sETU|Bản sao của (Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn;EAHHPNsPR2M|(Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn';

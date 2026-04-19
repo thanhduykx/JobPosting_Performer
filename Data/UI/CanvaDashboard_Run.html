@@ -1,0 +1,359 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canva Poster Dashboard</title>
+    <style>
+        :root { 
+            --primary: #ffd700; 
+            --primary-hover: #ffc400; 
+            --bg: #90c2d1; 
+            --card: #fff; 
+            --text: #111827; 
+            --muted: #334155; 
+            --border: #cbd5e1; 
+        }
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            font-family: Segoe UI, Arial, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            display: flex; 
+            justify-content: center; 
+        }
+        .container { 
+            width: 100%; 
+            max-width: 820px; 
+            background: var(--card); 
+            border: 8px solid #fff; 
+            border-radius: 24px; 
+            padding: 32px; 
+        }
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { 
+            margin: 0; 
+            font-size: 44px; 
+            font-weight: 900; 
+            letter-spacing: -1px; 
+            text-transform: uppercase; 
+            color: #0f172a; 
+        }
+        .section { margin-bottom: 22px; }
+        .section-title { 
+            font-size: 13px; 
+            text-transform: uppercase; 
+            letter-spacing: .08em; 
+            font-weight: 700; 
+            color: var(--muted); 
+            margin-bottom: 10px; 
+            display: flex; 
+            gap: 8px; 
+            align-items: center; 
+        }
+        .section-title span.num { 
+            width: 22px; 
+            height: 22px; 
+            border-radius: 6px; 
+            background: #e2e8f0; 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #0f172a; 
+            font-size: 12px; 
+        }
+        .section-count {
+            margin-left: auto;
+            background: var(--primary);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        
+        .mode-options { 
+            display: flex; 
+            gap: 12px; 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 12px; 
+            background: #f8fafc; 
+        }
+        .mode-card { 
+            flex: 1; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            padding: 16px; 
+            background: #fff; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .mode-card.active { 
+            border-color: var(--primary); 
+            background: #eff6ff; 
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15); 
+        }
+        .mode-card strong { display: block; font-size: 20px; margin-bottom: 4px; }
+        .mode-card small { color: var(--muted); font-size: 12px; }
+
+        .job-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); 
+            gap: 10px; 
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            background: #f8fafc;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .job-item { 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            background: #fff; 
+            padding: 12px 14px; 
+            display: flex; 
+            gap: 10px; 
+            align-items: center; 
+            cursor: pointer; 
+            transition: all 0.1s;
+        }
+        .job-item.selected { border-color: var(--primary); background: #eff6ff; }
+        .job-item input { width: 20px; height: 20px; accent-color: var(--primary); }
+
+        textarea, select { 
+            width: 100%; 
+            border: 1px solid var(--border); 
+            border-radius: 10px; 
+            padding: 12px; 
+            font-size: 15px; 
+            font-family: inherit; 
+            background: #fff; 
+        }
+        textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+        
+        .footer { 
+            margin-top: 24px; 
+            border-top: 1px solid var(--border); 
+            padding-top: 18px; 
+            display: flex; 
+            justify-content: space-between; 
+            gap: 10px; 
+        }
+        .btn { 
+            border: none; 
+            border-radius: 999px; 
+            padding: 12px 24px; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .btn-cancel { background: #e2e8f0; color: #334155; }
+        .btn-continue { background: var(--primary); color: #000; flex-grow: 1; }
+        .btn-continue:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    </style>
+<script>var global_jobs = "ALL;Japanese Comtor;Java Developer;Service Desk Support;Project Manager;Software Test Engineer;Salesforce Engineer";
+var global_templates = "EAHHQIFhk_o|Autum Role;EAHHPvXyFHY|Bản sao của Bản sao của Bản sao của (Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn;EAHHPZLGpL0|Bản sao của Bản sao của (Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn;EAHHPQ-sETU|Bản sao của (Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn;EAHHPNsPR2M|(Tạo hàng loạt 1) Nội dung đoạn văn bản của bạn";</script>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>Canva Dashboard</h1></div>
+
+        <div class="section">
+            <div class="section-title"><span class="num">1</span>Operational Mode</div>
+            <div class="mode-options">
+                <div class="mode-card active" id="modeAuto" onclick="setMode('Auto')">
+                    <strong>Auto-Sync</strong><small>Emails_Local.xlsx</small>
+                </div>
+                <div class="mode-card" id="modeManual" onclick="setMode('Manual')">
+                    <strong>Manual</strong><small>Enter Emails</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span class="num">2</span>Select Job Vacancies
+                <span class="section-count" id="countDisplay">0 SELECTED</span>
+            </div>
+            <div class="job-grid" id="jobGrid">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title"><span class="num">3</span>Configuration</div>
+            <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:15px; margin-bottom:15px;">
+                <div>
+                    <label style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Select Poster Template</label>
+                    <select id="templateSelect">
+                        <option value="">-- Choose Template --</option>
+                    </select>
+                </div>
+                <div id="emailContainer" style="display:none;">
+                    <label style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Custom Emails (;)</label>
+                    <textarea id="targetEmails" style="height:44px; padding:8px; font-size:13px;" placeholder="me@test.com; you@test.com"></textarea>
+                </div>
+            </div>
+            <div id="modeHint" style="font-size:11px; color:#64748b; font-style:italic;">
+                * System will automatically filter templates based on job count.
+            </div>
+        </div>
+
+        <div class="footer">
+            <button class="btn btn-cancel" onclick="finish(false)">Cancel</button>
+            <button class="btn btn-continue" onclick="finish(true)">Continue & Generate</button>
+        </div>
+    </div>
+
+    <script>
+        function getQueryParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        const SESSION_ID = getQueryParam('session') || 'default';
+        document.title = "CANVA_DASHBOARD::" + SESSION_ID;
+
+        let currentMode = 'Auto';
+        let jobOptions = [];
+        let templateOptions = []; // {id, title}
+
+        // Data from Robot injection: global_jobs, global_templates
+        
+        function init() {
+            // Load Jobs
+            const jobsRaw = typeof global_jobs !== 'undefined' ? global_jobs : (getQueryParam('jobs') || '');
+            if (jobsRaw) {
+                jobOptions = jobsRaw.split(';').filter(x => x && x.trim());
+                renderJobs();
+            }
+
+            // Load Templates from format "id|title;id|title"
+            const tplRaw = typeof global_templates !== 'undefined' ? global_templates : (getQueryParam('templates') || '');
+            if (tplRaw) {
+                tplRaw.split(';').forEach(entry => {
+                    const parts = entry.split('|');
+                    if (parts.length >= 2) {
+                        templateOptions.push({ id: parts[0], title: parts[1] });
+                    }
+                });
+            }
+            updateUI(); // Initial count and filter
+        }
+
+        function renderJobs() {
+            const grid = document.getElementById('jobGrid');
+            grid.innerHTML = '';
+            jobOptions.forEach((job, i) => {
+                const item = document.createElement('div');
+                item.className = 'job-item';
+                item.onclick = (e) => {
+                    if (e.target.tagName !== 'INPUT') toggleJob(i);
+                };
+                item.innerHTML = `<input type="checkbox" name="jobId" value="${job}" id="job_${i}" onchange="updateUI()"> <label>${job}</label>`;
+                grid.appendChild(item);
+            });
+        }
+
+        function toggleJob(idx) {
+            const cb = document.getElementById('job_' + idx);
+            cb.checked = !cb.checked;
+            updateUI();
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('modeAuto').className = mode === 'Auto' ? 'mode-card active' : 'mode-card';
+            document.getElementById('modeManual').className = mode === 'Manual' ? 'mode-card active' : 'mode-card';
+            document.getElementById('emailContainer').style.display = mode === 'Manual' ? 'block' : 'none';
+        }
+
+        function updateUI() {
+            const checks = document.getElementsByName('jobId');
+            let count = 0;
+            let hasAll = false;
+            
+            for (let c of checks) {
+                if (c.checked) {
+                    if (c.value.toUpperCase() === 'ALL') {
+                        hasAll = true;
+                    } else {
+                        count++;
+                    }
+                }
+                c.parentNode.className = c.checked ? 'job-item selected' : 'job-item';
+            }
+
+            // ALL logic: if ALL is selected, we assume Group mode (summary)
+            const actualCount = hasAll ? 2 : count;
+            document.getElementById('countDisplay').innerText = (hasAll ? "ALL" : count) + " SELECTED";
+
+            const targetTag = actualCount >= 2 ? "GROUP" : "INDIVIDUAL";
+            
+            // Filter Templates
+            const ddl = document.getElementById('templateSelect');
+            const currentVal = ddl.value;
+            ddl.innerHTML = '<option value="">-- Choose ' + targetTag + ' Template --</option>';
+            
+            templateOptions.forEach(tpl => {
+                const t = tpl.title.toUpperCase();
+                // Filter: If count >= 2, only show things with "GROUP" in name. 
+                // If count == 1, only show things with "INDIVIDUAL" (or just show all those NOT containing group).
+                const isGroup = t.includes("GROUP") || t.includes("SUMMARY");
+                const isIndividual = t.includes("INDIVIDUAL") || t.includes("SINGLE");
+                
+                let show = false;
+                if (actualCount >= 2) {
+                    if (isGroup) show = true;
+                } else {
+                    if (isIndividual) show = true;
+                    // Fallback: if user hasn't tagged their templates well, show those that aren't group
+                    if (!isGroup && !isIndividual) show = true; 
+                }
+
+                if (show) {
+                    const opt = document.createElement('option');
+                    opt.value = tpl.id;
+                    opt.innerText = tpl.title;
+                    if (tpl.id === currentVal) opt.selected = true;
+                    ddl.appendChild(opt);
+                }
+            });
+        }
+
+        function finish(success) {
+            if (!success) {
+                document.title = "RESULT::" + SESSION_ID + "::CANCEL";
+                return;
+            }
+
+            const templateId = document.getElementById('templateSelect').value;
+            if (!templateId) return alert("Please select a template.");
+
+            const targetEmails = currentMode === 'Manual' ? document.getElementById('targetEmails').value : "";
+            
+            const selected = [];
+            const checks = document.getElementsByName('jobId');
+            for(let c of checks) if(c.checked) selected.push(c.value);
+
+            if (selected.length === 0) return alert("Please select at least one job.");
+            
+            const result = JSON.stringify({
+                templateId: templateId,
+                targetEmails: targetEmails,
+                jobs: selected.join(';')
+            });
+
+            document.title = "RESULT::" + SESSION_ID + "::" + encodeURIComponent(result);
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>

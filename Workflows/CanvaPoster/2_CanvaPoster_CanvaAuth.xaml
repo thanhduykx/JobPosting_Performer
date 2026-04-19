@@ -1,0 +1,128 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="_2_CanvaPoster_CanvaAuth" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_ConfigDictionary" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
+    <x:Property Name="out_AccessToken" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>866,1200</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>_2_CanvaPoster_CanvaAuth_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net</x:String>
+      <x:String>Newtonsoft.Json</x:String>
+      <x:String>Newtonsoft.Json.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="24">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>Newtonsoft.Json</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.IO</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.Net.Http</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="2_CanvaPoster_CanvaAuth.xaml&#xA;Purpose: Get and validate Canva API access token&#xA;Priority: 1) Orchestrator Asset  2) Config.xlsx&#xA;Validates by calling GET /v1/users/me&#xA;Version: 1.0" DisplayName="2_CanvaAuth" sap:VirtualizedContainerService.HintSize="546,1100" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="str_Token" />
+      <Variable x:TypeArguments="x:String" Name="str_ApiBaseUrl" />
+      <Variable x:TypeArguments="x:Int32" Name="int_StatusCode" />
+      <Variable x:TypeArguments="x:String" Name="str_ResponseBody" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log CanvaAuth Start" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;CanvaAuth: Starting authentication&quot;]" />
+    <Assign DisplayName="Get API Base URL" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[str_ApiBaseUrl]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_ApiBaseUrl"), in_ConfigDictionary("Canva_ApiBaseUrl").ToString, "https://api.canva.com/rest/v1")]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim tokenFilePath As String = If(in_Config.ContainsKey(&quot;Canva_TokenFilePath&quot;), in_Config(&quot;Canva_TokenFilePath&quot;).ToString(), &quot;Data\Temp\canva_tokens.json&quot;)&#xA;If Not File.Exists(tokenFilePath) Then&#xA;    Throw New Exception(&quot;Token file not found: &quot; + tokenFilePath)&#xA;End If&#xA;Dim jsonContent As String = File.ReadAllText(tokenFilePath)&#xA;Dim tokenObj As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(jsonContent)&#xA;out_Token = tokenObj(&quot;access_token&quot;).ToString()" DisplayName="Read Token from JSON" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_ConfigDictionary]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Token">[str_Token]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <ui:LogMessage DisplayName="Log Token Read" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;CanvaAuth: Token read from file. Length: &quot; + str_Token.Length.ToString]" />
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.GetAsync(in_Url).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="Validate Token - GET /users/me" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Token">[str_Token]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + &quot;/users/me&quot;]</InArgument>
+        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <ui:LogMessage DisplayName="Log Validation Result" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;CanvaAuth: Validation response code: &quot; + int_StatusCode.ToString]" />
+    <If Condition="[int_StatusCode &lt;&gt; 200]" DisplayName="If Token Invalid - Auto Refresh" sap:VirtualizedContainerService.HintSize="483.2,500" sap2010:WorkflowViewState.IdRef="If_1">
+      <If.Then>
+        <Sequence DisplayName="Auto Refresh Token" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Seq_Refresh">
+          <ui:LogMessage DisplayName="Log Refresh Attempt" sap:VirtualizedContainerService.HintSize="415.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Refresh" Level="Warn" Message="[&quot;CanvaAuth: Token expired (Status &quot; + int_StatusCode.ToString + &quot;). Attempting auto-refresh...&quot;]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim tokenFilePath As String = If(in_Config.ContainsKey(&quot;Canva_TokenFilePath&quot;), in_Config(&quot;Canva_TokenFilePath&quot;).ToString(), &quot;Data\Temp\canva_tokens.json&quot;)&#xA;Dim jsonContent As String = System.IO.File.ReadAllText(tokenFilePath)&#xA;Dim tokenObj = Newtonsoft.Json.Linq.JObject.Parse(jsonContent)&#xA;Dim refreshToken As String = tokenObj(&quot;refresh_token&quot;).ToString()&#xA;&#xA;Dim clientId As String = If(in_Config.ContainsKey(&quot;Canva_ClientId&quot;), in_Config(&quot;Canva_ClientId&quot;).ToString(), &quot;OC-AZ2iLEHXVW41&quot;)&#xA;Dim clientSecret As String = If(in_Config.ContainsKey(&quot;Canva_ClientSecret&quot;), in_Config(&quot;Canva_ClientSecret&quot;).ToString(), in_Secret)&#xA;&#xA;Dim authBytes = System.Text.Encoding.UTF8.GetBytes(clientId + &quot;:&quot; + clientSecret)&#xA;Dim authBase64 = Convert.ToBase64String(authBytes)&#xA;&#xA;Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Basic &quot; + authBase64)&#xA;&#xA;Dim postBody As New System.Net.Http.FormUrlEncodedContent(New Dictionary(Of String, String) From {&#xA;    {&quot;grant_type&quot;, &quot;refresh_token&quot;},&#xA;    {&quot;refresh_token&quot;, refreshToken}&#xA;})&#xA;&#xA;Dim response = client.PostAsync(&quot;https://api.canva.com/rest/v1/oauth/token&quot;, postBody).Result&#xA;If Not response.IsSuccessStatusCode Then&#xA;    Throw New Exception(&quot;Refresh failed: &quot; + response.Content.ReadAsStringAsync().Result)&#xA;End If&#xA;&#xA;Dim respBody = response.Content.ReadAsStringAsync().Result&#xA;Dim respObj = Newtonsoft.Json.Linq.JObject.Parse(respBody)&#xA;&#xA;Dim newToken As New Newtonsoft.Json.Linq.JObject()&#xA;newToken(&quot;access_token&quot;) = respObj(&quot;access_token&quot;).ToString()&#xA;newToken(&quot;token_type&quot;) = &quot;Bearer&quot;&#xA;newToken(&quot;created_at&quot;) = DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)&#xA;newToken(&quot;expires_in&quot;) = respObj(&quot;expires_in&quot;).ToString()&#xA;newToken(&quot;refresh_token&quot;) = respObj(&quot;refresh_token&quot;).ToString()&#xA;newToken(&quot;expires_at&quot;) = DateTime.Now.AddSeconds(CDbl(respObj(&quot;expires_in&quot;).ToString())).ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)&#xA;&#xA;System.IO.File.WriteAllText(tokenFilePath, newToken.ToString(), System.Text.Encoding.UTF8)&#xA;out_NewToken = respObj(&quot;access_token&quot;).ToString()" DisplayName="Refresh Token via OAuth" sap:VirtualizedContainerService.HintSize="415.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Refresh">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_ConfigDictionary]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Secret">[String.Empty]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_NewToken">[str_Token]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ui:LogMessage DisplayName="Log Refresh Success" sap:VirtualizedContainerService.HintSize="415.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_RefreshOK" Level="Info" Message="[&quot;CanvaAuth: Token refreshed successfully. New length: &quot; + str_Token.Length.ToString]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.GetAsync(in_Url).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="Re-validate Refreshed Token" sap:VirtualizedContainerService.HintSize="415.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Revalidate">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Token">[str_Token]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + &quot;/users/me&quot;]</InArgument>
+              <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <If Condition="[int_StatusCode &lt;&gt; 200]" DisplayName="If Refresh Also Failed" sap:VirtualizedContainerService.HintSize="415.2,200" sap2010:WorkflowViewState.IdRef="If_RefreshFail">
+            <If.Then>
+              <Throw DisplayName="Throw Auth Error" Exception="[New System.Exception(&quot;Canva token invalid even after refresh. Status: &quot; + int_StatusCode.ToString + &quot; Response: &quot; + str_ResponseBody)]" sap:VirtualizedContainerService.HintSize="381.6,136" sap2010:WorkflowViewState.IdRef="Throw_1" />
+            </If.Then>
+          </If>
+        </Sequence>
+      </If.Then>
+    </If>
+    <Assign DisplayName="Set Output Token" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[out_AccessToken]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[str_Token]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <ui:LogMessage DisplayName="Log Auth Complete" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;CanvaAuth: Authentication validated successfully&quot;]" />
+  </Sequence>
+</Activity>
