@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="_0_CanvaPoster_Main" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sdiag="clr-namespace:System.Diagnostics;assembly=System.Diagnostics.Process" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="_0_CanvaPoster_Main" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:sd1="clr-namespace:System.Diagnostics;assembly=System.Diagnostics.Process" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_ConfigPath" Type="InArgument(x:String)" />
     <x:Property Name="out_IsSuccess" Type="OutArgument(x:Boolean)" />
@@ -85,7 +85,7 @@
       <AssemblyReference>EPPlus</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="0_CanvaPoster_Main.xaml&#xA;Purpose: Main entry point for Canva Poster creation flow&#xA;Flow: ReadInput -&gt; CanvaAuth -&gt; Loop(CreateDesign -&gt; ExportDesign) -&gt; Report&#xA;Author: RPA Framework Team&#xA;Version: 1.0" DisplayName="0_CanvaPoster_Main" sap:VirtualizedContainerService.HintSize="723.6,4892" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="0_CanvaPoster_Main.xaml&#xA;Purpose: Main entry point for Canva Poster creation flow&#xA;Flow: ReadInput -&gt; CanvaAuth -&gt; Loop(CreateDesign -&gt; ExportDesign) -&gt; Report&#xA;Author: RPA Framework Team&#xA;Version: 1.0" DisplayName="0_CanvaPoster_Main" sap:VirtualizedContainerService.HintSize="1054,8231.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="scg:Dictionary(x:String, x:Object)" Name="dic_Config" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_Jobs" />
@@ -107,10 +107,8 @@
       <Variable x:TypeArguments="x:String" Name="str_SelectedJobs" />
       <Variable x:TypeArguments="x:String" Name="str_PreviewResult" />
       <Variable x:TypeArguments="x:String" Name="str_EmailListFull" />
-      <Variable x:TypeArguments="x:String" Name="str_CurrentRole" />
-      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="int_EmailTotal" />
       <Variable x:TypeArguments="x:String" Name="str_PosterBase64" />
-      <Variable x:TypeArguments="sdiag:Process" Name="prc_Loading" />
+      <Variable x:TypeArguments="sd1:Process" Name="prc_Loading" />
       <Variable x:TypeArguments="sd:DataTable" Name="dt_EmailList" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
@@ -120,9 +118,9 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log Canva Poster Start" sap:VirtualizedContainerService.HintSize="603.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;=== Canva Poster Framework Started ===&quot;]" />
-    <TryCatch DisplayName="Main TryCatch" sap:VirtualizedContainerService.HintSize="603.2,4694.4" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+    <TryCatch DisplayName="Main TryCatch" sap:VirtualizedContainerService.HintSize="603.2,8033.6" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
-        <Sequence DisplayName="Main Flow" sap:VirtualizedContainerService.HintSize="601.6,4132.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
+        <Sequence DisplayName="Main Flow" sap:VirtualizedContainerService.HintSize="601.6,7300" sap2010:WorkflowViewState.IdRef="Sequence_2">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -182,7 +180,7 @@
               <InArgument x:TypeArguments="x:String" x:Key="in_SelectedStr">[str_SelectedJobs]</InArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
-          <ui:LogMessage DisplayName="Log Filter Request" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Canva processing list initialized with &quot; + If(dt_Jobs IsNot Nothing, dt_Jobs.Rows.Count.ToString, &quot;0&quot;) + &quot; jobs...&quot;]" />
+          <ui:LogMessage DisplayName="Log Filter Request" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_11" Level="Info" Message="[&quot;Canva processing list initialized with &quot; + If(dt_Jobs IsNot Nothing, dt_Jobs.Rows.Count.ToString, &quot;0&quot;) + &quot; jobs...&quot;]" />
           <ui:LogMessage DisplayName="Log Auth Success" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;Canva authentication successful. Processing &quot; + If(dt_Jobs IsNot Nothing, dt_Jobs.Rows.Count.ToString, &quot;0&quot;) + &quot; jobs...&quot;]" />
           <ui:InvokeCode ContinueOnError="{x:Null}" Code="out_DT = New DataTable()&#xA;out_DT.Columns.Add(&quot;Role&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;Status&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;DesignId&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;FilePath&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;EmailSent&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;Error&quot;, GetType(String))&#xA;out_DT.Columns.Add(&quot;Timestamp&quot;, GetType(String))" DisplayName="Init Report Table" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
             <ui:InvokeCode.Arguments>
@@ -190,9 +188,9 @@
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
           <ui:LogMessage DisplayName="STATE: CREATE &amp; EXPORT" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;STATE: CREATE &amp; EXPORT - Processing each job row&quot;]" />
-          <ui:InvokeCode ContinueOnError="True" Code="Dim runFile As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\CanvaProcessing.html&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + runFile.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?task=Creating+Posters&quot;&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window&quot;&#xA;psi.UseShellExecute = True&#xA;out_Process = System.Diagnostics.Process.Start(psi)" DisplayName="Launch Loading Screen" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_LaunchLoad">
+          <ui:InvokeCode Code="Dim runFile As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Data\UI\CanvaProcessing.html&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + runFile.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?task=Creating+Posters&quot;&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window&quot;&#xA;psi.UseShellExecute = True&#xA;out_Process = System.Diagnostics.Process.Start(psi)" ContinueOnError="True" DisplayName="Launch Loading Screen" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_LaunchLoad">
             <ui:InvokeCode.Arguments>
-              <OutArgument x:TypeArguments="sdiag:Process" x:Key="out_Process">[prc_Loading]</OutArgument>
+              <OutArgument x:TypeArguments="sd1:Process" x:Key="out_Process">[prc_Loading]</OutArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
           <ForEach x:TypeArguments="sd:DataRow" DisplayName="For Each Job Row" sap:VirtualizedContainerService.HintSize="568,2138.4" sap2010:WorkflowViewState.IdRef="ForEach_1" Values="[dt_Jobs.AsEnumerable()]">
@@ -307,9 +305,9 @@
               </TryCatch>
             </ActivityAction>
           </ForEach>
-          <ui:InvokeCode ContinueOnError="True" Code="If in_Process IsNot Nothing Then&#xA;    Try&#xA;        in_Process.CloseMainWindow()&#xA;        in_Process.WaitForExit(2000)&#xA;        If Not in_Process.HasExited Then in_Process.Kill()&#xA;    Catch: End Try&#xA;End If&#xA;For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;    Try&#xA;        Dim title As String = p.MainWindowTitle.ToUpper()&#xA;        If title.Contains(&quot;PROCESSING::&quot;) Then&#xA;            p.CloseMainWindow()&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;Next" DisplayName="Close Loading Screen" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_CloseLoad">
+          <ui:InvokeCode Code="If in_Process IsNot Nothing Then&#xA;    Try&#xA;        in_Process.CloseMainWindow()&#xA;        in_Process.WaitForExit(2000)&#xA;        If Not in_Process.HasExited Then in_Process.Kill()&#xA;    Catch: End Try&#xA;End If&#xA;For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;    Try&#xA;        Dim title As String = p.MainWindowTitle.ToUpper()&#xA;        If title.Contains(&quot;PROCESSING::&quot;) Then&#xA;            p.CloseMainWindow()&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;Next" ContinueOnError="True" DisplayName="Close Loading Screen" sap:VirtualizedContainerService.HintSize="568,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_CloseLoad">
             <ui:InvokeCode.Arguments>
-              <InArgument x:TypeArguments="sdiag:Process" x:Key="in_Process">[prc_Loading]</InArgument>
+              <InArgument x:TypeArguments="sd1:Process" x:Key="in_Process">[prc_Loading]</InArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
           <ui:LogMessage DisplayName="STATE: PREVIEW &amp; EMAIL" sap:VirtualizedContainerService.HintSize="568,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Preview" Level="Info" Message="[&quot;STATE: PREVIEW - Building preview with &quot; + int_SuccessCount.ToString + &quot; posters&quot;]" />
@@ -360,7 +358,7 @@
                     <ActivityAction.Argument>
                       <DelegateInArgument x:TypeArguments="sd:DataRow" Name="dr_Poster" />
                     </ActivityAction.Argument>
-                    <Sequence DisplayName="Poster to Base64 &amp; Send" sap:VirtualizedContainerService.HintSize="466.4,800">
+                    <Sequence DisplayName="Poster to Base64 &amp; Send" sap:VirtualizedContainerService.HintSize="466.4,800" sap2010:WorkflowViewState.IdRef="Sequence_8">
                       <Assign DisplayName="Convert to Base64" sap:VirtualizedContainerService.HintSize="432.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_B64">
                         <Assign.To>
                           <OutArgument x:TypeArguments="x:String">[str_PosterBase64]</OutArgument>
@@ -374,7 +372,7 @@
                           <ActivityAction.Argument>
                             <DelegateInArgument x:TypeArguments="x:String" Name="str_PersonData" />
                           </ActivityAction.Argument>
-                          <Sequence DisplayName="Process Send" sap:VirtualizedContainerService.HintSize="432.8,500">
+                          <Sequence DisplayName="Process Send" sap:VirtualizedContainerService.HintSize="432.8,500" sap2010:WorkflowViewState.IdRef="Sequence_7">
                             <Assign DisplayName="Extract Email" sap:VirtualizedContainerService.HintSize="400,81.6" sap2010:WorkflowViewState.IdRef="Assign_ExtractEmail">
                               <Assign.To>
                                 <OutArgument x:TypeArguments="x:String">[str_ToEmail]</OutArgument>
@@ -383,7 +381,7 @@
                                 <InArgument x:TypeArguments="x:String">[str_PersonData.Split("|"c).Last().Trim()]</InArgument>
                               </Assign.Value>
                             </Assign>
-                            <If Condition="[Not String.IsNullOrWhiteSpace(str_ToEmail)]" DisplayName="Check Email" sap:VirtualizedContainerService.HintSize="400,350">
+                            <If Condition="[Not String.IsNullOrWhiteSpace(str_ToEmail)]" DisplayName="Check Email" sap:VirtualizedContainerService.HintSize="400,350" sap2010:WorkflowViewState.IdRef="If_3">
                               <If.Then>
                                 <ui:InvokeWorkflowFile ArgumentsVariable="{x:Null}" ContinueOnError="True" DisplayName="Send Poster Email" sap:VirtualizedContainerService.HintSize="334.4,176" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_Send" UnSafe="False" WorkflowFileName="Workflows\Email\5_Modules\Module_SendGmail.xaml">
                                   <ui:InvokeWorkflowFile.Arguments>
@@ -483,7 +481,7 @@
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
           <ui:LogMessage DisplayName="Log Framework End" sap:VirtualizedContainerService.HintSize="353.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[&quot;=== Canva Poster Framework Completed (Success: &quot; + int_SuccessCount.ToString + &quot;/&quot; + (int_SuccessCount + int_FailCount).ToString + &quot;) ===&quot;]" />
-          <ui:InvokeCode ContinueOnError="True" Code="For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;    Try&#xA;        Dim title As String = p.MainWindowTitle.ToUpper()&#xA;        If title.Contains(&quot;CANVA_DASHBOARD&quot;) OrElse title.Contains(&quot;PROCESSING::&quot;) OrElse title.Contains(&quot;CANVA_PREVIEW&quot;) OrElse title.Contains(&quot;RESULT::&quot;) Then&#xA;            p.CloseMainWindow()&#xA;            p.WaitForExit(1000)&#xA;            If Not p.HasExited Then&#xA;                p.Kill()&#xA;            End If&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;Next" DisplayName="Close Orphaned UI Windows" sap:VirtualizedContainerService.HintSize="353.6,164.8" sap2010:WorkflowViewState.IdRef="InvokeCode_CleanEdge">
+          <ui:InvokeCode Code="For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;    Try&#xA;        Dim title As String = p.MainWindowTitle.ToUpper()&#xA;        If title.Contains(&quot;CANVA_DASHBOARD&quot;) OrElse title.Contains(&quot;PROCESSING::&quot;) OrElse title.Contains(&quot;CANVA_PREVIEW&quot;) OrElse title.Contains(&quot;RESULT::&quot;) Then&#xA;            p.CloseMainWindow()&#xA;            p.WaitForExit(1000)&#xA;            If Not p.HasExited Then&#xA;                p.Kill()&#xA;            End If&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;Next" ContinueOnError="True" DisplayName="Close Orphaned UI Windows" sap:VirtualizedContainerService.HintSize="353.6,164.8" sap2010:WorkflowViewState.IdRef="InvokeCode_CleanEdge">
             <ui:InvokeCode.Arguments>
               <scg:Dictionary x:TypeArguments="x:String, Argument" />
             </ui:InvokeCode.Arguments>
