@@ -52,7 +52,7 @@
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="Goal: Summarize results and export the final Excel report.&#xA;Input: in_dtReportData.&#xA;Output: JobPosting_Report_yyyy-MM-dd_HHmm.xlsx in Data\\Output\\Reports.&#xA;Main steps: Calculate success/fail -&gt; build report path -&gt; ensure Reports folder -&gt; write Report sheet when data exists." DisplayName="5_Report" sap:VirtualizedContainerService.HintSize="546,900" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Summarize results and export the final Excel report.&#xA;Input: in_dtReportData.&#xA;Output: yyyy-MM-dd_HH-mm_JobPosting_Report.xlsx in Data\\Output\\Reports.&#xA;Main steps: Calculate success/fail -&gt; build report path -&gt; ensure Reports folder -&gt; write Report sheet when data exists." DisplayName="5_Report" sap:VirtualizedContainerService.HintSize="546,900" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:String" Name="strReportPath" />
       <Variable x:TypeArguments="x:String" Name="strTimestamp" />
@@ -69,7 +69,7 @@
         <OutArgument x:TypeArguments="x:String">[strTimestamp]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[DateTime.Now.ToString("yyyy-MM-dd_HHmm")]</InArgument>
+        <InArgument x:TypeArguments="x:String">[DateTime.Now.ToString("yyyy-MM-dd_HH-mm")]</InArgument>
       </Assign.Value>
     </Assign>
     <Assign DisplayName="Build Report Path" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
@@ -77,7 +77,7 @@
         <OutArgument x:TypeArguments="x:String">[strReportPath]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[Path.Combine(strReportFolder, "JobPosting_Report_" + strTimestamp + ".xlsx")]</InArgument>
+        <InArgument x:TypeArguments="x:String">[Path.Combine(strReportFolder, strTimestamp + "_JobPosting_Report.xlsx")]</InArgument>
       </Assign.Value>
     </Assign>
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not System.IO.Directory.Exists(in_Folder) Then&#xA;    System.IO.Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Ensure Reports Folder" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_EnsureReportsFolder">
