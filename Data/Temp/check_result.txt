@@ -1,4 +1,0 @@
-﻿=== Refreshing Token ===
-Token refreshed OK. Expires in: 14400s
-
-=== Brand Template: EAHHPNsPR2M ===

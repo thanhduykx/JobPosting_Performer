@@ -1,53 +1,79 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canva Poster Preview</title>
     <style>
-        :root { 
-            --primary: #ffd700; 
-            --primary-hover: #ffc400; 
-            --bg: #90c2d1; 
-            --card: #fff; 
-            --text: #111827; 
-            --muted: #334155; 
-            --border: #cbd5e1; 
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
         }
-        * { box-sizing: border-box; }
-        body { 
-            margin: 0; 
-            padding: 20px; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            display: flex; 
-            justify-content: center; 
+
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
         }
-        .container { 
-            width: 100%; 
-            max-width: 900px; 
-            background: var(--card); 
-            border: 8px solid #fff; 
-            border-radius: 24px; 
-            padding: 30px; 
+
+        :root {
+            --primary: #ffd700;
+            --primary-hover: #ffc400;
+            --bg: #90c2d1;
+            --card: #fff;
+            --text: #111827;
+            --muted: #334155;
+            --border: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'BR Omega', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card);
+            border: 8px solid #fff;
+            border-radius: 24px;
+            padding: 30px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { 
-            margin: 0; 
-            font-size: 40px; 
-            font-weight: 900; 
-            letter-spacing: -1px; 
-            text-transform: uppercase; 
-            color: #0f172a; 
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
         }
-        
+
+        .header h1 {
+            margin: 0;
+            font-size: 40px;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            color: #0f172a;
+        }
+
         .summary-row {
             display: flex;
             gap: 15px;
             margin-bottom: 25px;
         }
+
         .summary-card {
             flex: 1;
             background: #f8fafc;
@@ -55,8 +81,20 @@
             border-radius: 12px;
             padding: 15px;
         }
-        .summary-label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 5px; }
-        .summary-value { font-size: 16px; font-weight: 700; color: #0f172a; }
+
+        .summary-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+        }
 
         .main-grid {
             display: grid;
@@ -64,8 +102,14 @@
             gap: 20px;
             margin-bottom: 30px;
         }
-        
-        .section-title { font-size: 14px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
 
         .image-gallery {
             border: 1px solid var(--border);
@@ -78,6 +122,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
+
         .image-item {
             background: #fff;
             border: 2px solid #fff;
@@ -85,20 +130,54 @@
             overflow: hidden;
             cursor: pointer;
             transition: transform 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .image-item:hover { transform: scale(1.05); z-index: 10; }
-        .image-item img { width: 100%; height: auto; display: block; }
-        .image-wrapper { position: relative; }
+
+        .image-item:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .image-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .image-wrapper {
+            position: relative;
+        }
+
         .preview-btn {
-            position: absolute; inset: 0; background: rgba(0,0,0,0.6); 
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; transition: opacity 0.2s; color: #fff; font-weight: 800;
-            font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            color: #fff;
+            font-weight: 800;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             backdrop-filter: blur(2px);
         }
-        .image-item:hover .preview-btn { opacity: 1; }
-        .image-label { padding: 8px; font-size: 11px; font-weight: 600; text-align: center; background: #fff; position: relative; z-index: 2; }
+
+        .image-item:hover .preview-btn {
+            opacity: 1;
+        }
+
+        .image-label {
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            background: #fff;
+            position: relative;
+            z-index: 2;
+        }
 
         .email-list {
             border: 1px solid var(--border);
@@ -108,29 +187,101 @@
             max-height: 400px;
             overflow-y: auto;
         }
+
         .email-item {
             padding: 8px 10px;
             border-bottom: 1px solid #f1f5f9;
             display: flex;
             flex-direction: column;
         }
-        .email-item:last-child { border-bottom: none; }
-        .email-item span { font-weight: 700; font-size: 13px; }
-        .email-item small { color: #64748b; font-size: 12px; }
 
-        .footer { display: flex; gap: 15px; border-top: 1px solid #f1f5f9; padding-top: 20px; }
-        .btn { flex: 1; padding: 16px; border: none; border-radius: 999px; font-size: 15px; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .btn-cancel { background: #e2e8f0; color: var(--muted); }
-        .btn-confirm { background: var(--primary); color: #000; }
-        .btn-confirm:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255, 196, 0, 0.4); }
+        .email-item:last-child {
+            border-bottom: none;
+        }
+
+        .email-item span {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .email-item small {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .footer {
+            display: flex;
+            gap: 15px;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 999px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-cancel {
+            background: #e2e8f0;
+            color: var(--muted);
+        }
+
+        .btn-confirm {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .btn-confirm:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 196, 0, 0.4);
+        }
 
         #modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            justify-content: center; align-items: center; z-index: 100; padding: 40px; cursor: pointer;
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 40px;
+            cursor: pointer;
         }
-        #modal img { max-width: 100%; max-height: 100%; border: 5px solid #fff; border-radius: 8px; }
+
+        #modal img {
+            max-width: 100%;
+            max-height: 100%;
+            border: 5px solid #fff;
+            border-radius: 8px;
+        }
     </style>
+    <script>
+        let isFinishing = false;
+        function warnBeforeClose(event) {
+            if (isFinishing) return;
+            const msg = "Are you sure you want to close this window? The app will stop and emails will NOT be sent.";
+            event.preventDefault();
+            event.returnValue = msg;
+            return msg;
+        }
+        window.onbeforeunload = warnBeforeClose;
+        function signalCancelOnClose() {
+            if (isFinishing) return;
+            isFinishing = true;
+            const sid = (new URLSearchParams(window.location.search)).get('session') || 'default';
+            document.title = "RESULT::" + sid + "::CANCEL";
+        }
+        window.addEventListener("pagehide", signalCancelOnClose);
+    </script>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -139,8 +290,8 @@
 
         <div class="summary-row">
             <div class="summary-card">
-                <div class="summary-label">Success Rate</div>
-                <div class="summary-value" id="stat-rate">0 / 0</div>
+                <div class="summary-label">Posters Generated</div>
+                <div class="summary-value" id="stat-rate">0 Posters</div>
             </div>
             <div class="summary-card">
                 <div class="summary-label">Recipients</div>
@@ -164,7 +315,7 @@
         </div>
 
         <div class="footer">
-            <button class="btn btn-cancel" onclick="finish(false)">Cancel</button>
+            <button class="btn btn-cancel" onclick="cancelFlow()">Cancel (Do Not Send)</button>
             <button class="btn btn-confirm" onclick="finish(true)">Confirm & Send All</button>
         </div>
     </div>
@@ -200,11 +351,11 @@
                         <img src="${p.path}" onerror="this.src='https://via.placeholder.com/200x280?text=Error'">
                         <div class="preview-btn">View Poster</div>
                     </div>
-                    <div class="image-label">${p.role}</div>
+                    <div class="image-label" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;" title="${p.role}">${p.role}</div>
                 `;
                 gall.appendChild(item);
             });
-            document.getElementById('stat-rate').innerText = `${successCount} / ${global_poster_data.length} Success`;
+            document.getElementById('stat-rate').innerText = `${global_poster_data.length} Posters`;
 
             const emailBox = document.getElementById('emailList');
             if (typeof global_email_data !== 'undefined') {
@@ -218,12 +369,64 @@
             }
         }
 
+        // Secondary channel: write the same marker to clipboard so the robot can
+        // still pick up the result when screen sharing / focus changes break
+        // Process.MainWindowTitle detection.
+        function writeResultToClipboard(marker) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(marker).catch(function (e) { console.warn('clipboard write failed', e); });
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = marker;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.focus(); ta.select();
+                    try { document.execCommand('copy'); } catch (_) { }
+                    document.body.removeChild(ta);
+                }
+            } catch (e) { console.warn('clipboard write exception', e); }
+        }
+
+        // Best-effort self-close after the robot has had time to pick the result up.
+        function selfCloseSoon(delayMs) {
+            setTimeout(function () {
+                try { window.onbeforeunload = null; } catch (_) { }
+                try { window.removeEventListener('beforeunload', warnBeforeClose); } catch (_) { }
+                try { window.removeEventListener('pagehide', signalCancelOnClose); } catch (_) { }
+                try { window.close(); } catch (_) { }
+                setTimeout(function () {
+                    try {
+                        document.body.innerHTML =
+                            '<div style="font-family:sans-serif;padding:40px;text-align:center;color:#444">' +
+                            '<h2>Done. You can close this window.</h2>' +
+                            '<p>The robot has picked up your selection.</p>' +
+                            '</div>';
+                    } catch (_) { }
+                }, 800);
+            }, delayMs);
+        }
+
         function finish(success) {
+            isFinishing = true;
             const result = success ? "CONFIRM" : "CANCEL";
+            const marker = "CANVA_RESULT::" + SESSION_ID + "::" + result;
+            writeResultToClipboard(marker);
             document.title = "RESULT::" + SESSION_ID + "::" + result;
+            selfCloseSoon(700);
+        }
+
+        function cancelFlow() {
+            const confirmed = confirm("You selected NOT to send emails. The program will now exit. Are you sure?");
+            if (confirmed) {
+                finish(false);
+            }
         }
 
         window.onload = init;
     </script>
 </body>
+
 </html>
+

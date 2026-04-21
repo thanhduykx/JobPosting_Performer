@@ -30,8 +30,8 @@
       "DataSourceItems": null
     },
     {
-      "Name": "in_str_Body",
-      "DisplayName": "in_str_Body",
+      "Name": "in_strBody",
+      "DisplayName": "in_strBody",
       "Category": null,
       "Tooltip": null,
       "Placeholder": null,
@@ -42,8 +42,8 @@
       "DataSourceItems": null
     },
     {
-      "Name": "in_str_ToEmail",
-      "DisplayName": "in_str_ToEmail",
+      "Name": "in_strToEmail",
+      "DisplayName": "in_strToEmail",
       "Category": null,
       "Tooltip": null,
       "Placeholder": null,
@@ -54,8 +54,8 @@
       "DataSourceItems": null
     },
     {
-      "Name": "in_str_Subject",
-      "DisplayName": "in_str_Subject",
+      "Name": "in_strSubject",
+      "DisplayName": "in_strSubject",
       "Category": null,
       "Tooltip": null,
       "Placeholder": null,
@@ -78,8 +78,8 @@
       "DataSourceItems": null
     },
     {
-      "Name": "in_str_AttachmentPath",
-      "DisplayName": "in_str_AttachmentPath",
+      "Name": "in_strAttachmentPath",
+      "DisplayName": "in_strAttachmentPath",
       "Category": null,
       "Tooltip": null,
       "Placeholder": null,

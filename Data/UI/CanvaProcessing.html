@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Canva Automation Processing</title>
     <style>
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
         :root { 
             --primary: #ffd700; 
             --bg: #90c2d1; 
@@ -12,11 +24,12 @@
             --text: #111827; 
             --muted: #334155; 
         }
+        * { box-sizing: border-box; }
         body { 
             margin: 0; 
             padding: 0; 
             background: var(--bg); 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            font-family: 'BR Omega', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -83,17 +96,38 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
+        .actions {
+            margin-top: 18px;
+            display: flex;
+            justify-content: center;
+        }
+        .btn-cancel {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 22px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #e2e8f0;
+            color: #334155;
+            cursor: pointer;
+        }
     </style>
+    <script>
+        let isFinishing = false;
+    </script>
 </head>
 <body>
     <div class="container">
         <div class="loader"></div>
         <h2 id="task-title">Processing</h2>
-        <p>Robot is communicating with Canva API to generate high-quality posters...</p>
+        <p>The system is currently generating high-quality posters via Canva...</p>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
         <div class="status" id="status-text">INITIALIZING...</div>
+        <div class="actions">
+            <button class="btn-cancel" onclick="cancelFlow()">Cancel</button>
+        </div>
     </div>
 
     <script>
@@ -106,6 +140,46 @@
 
         const SESSION_ID = urlParams.get('session') || 'default';
         document.title = "PROCESSING::" + SESSION_ID;
+
+        // Self-close sentinel. The robot writes ../Temp/close_<sid>.png when
+        // processing is done. We poll with an <Image> (which works for file://
+        // sibling paths); when the image loads successfully, close the window.
+        // This avoids relying on the robot forcibly killing the Edge process,
+        // which fails when window-title detection is broken (Teams share etc.).
+        (function () {
+            const sentinelUrl = '../Temp/close_' + SESSION_ID + '.png';
+            let closed = false;
+            function doSelfClose() {
+                if (closed) return;
+                closed = true;
+                isFinishing = true;
+                try { window.close(); } catch (_) { }
+                setTimeout(function () {
+                    try {
+                        document.body.innerHTML =
+                            '<div style="padding:40px;text-align:center;font-family:sans-serif;color:#444">' +
+                            '<h2>Done. You can close this window.</h2>' +
+                            '</div>';
+                    } catch (_) { }
+                }, 600);
+            }
+            setInterval(function () {
+                if (closed) return;
+                const probe = new Image();
+                probe.onload = doSelfClose;
+                // Cache-bust so we always hit disk.
+                probe.src = sentinelUrl + '?t=' + Date.now();
+            }, 500);
+        })();
+
+        function cancelFlow() {
+            const confirmed = confirm("Ban da chon Cancel khi dang xu ly. Chuong trinh se ket thuc ngay bay gio. Ban co chac chan khong?");
+            if (confirmed) {
+                isFinishing = true;
+                document.title = "RESULT::" + SESSION_ID + "::CANCEL";
+                try { window.close(); } catch (_) { }
+            }
+        }
     </script>
 </body>
 </html>

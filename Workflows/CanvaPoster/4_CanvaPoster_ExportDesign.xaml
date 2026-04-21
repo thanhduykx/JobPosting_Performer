@@ -28,7 +28,7 @@
       <x:String>System.Data</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
-      <x:String>System.Net</x:String>
+      <x:String>System.Net</x:String><x:String>System.Net.Http</x:String>
       <x:String>Newtonsoft.Json</x:String>
       <x:String>Newtonsoft.Json.Linq</x:String>
       <x:String>UiPath.Core</x:String>
@@ -58,21 +58,21 @@
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="4_CanvaPoster_ExportDesign.xaml&#xA;Purpose: Export a Canva design to PNG/PDF and download to local&#xA;API: POST /v1/exports → Poll GET /v1/exports/{exportId} → Download URL&#xA;Output: Local file path of downloaded poster&#xA;Version: 1.0" DisplayName="4_ExportDesign" sap:VirtualizedContainerService.HintSize="1054,2379.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Export a Canva design to a poster file and download locally.&#xA;Input: access token, dicConfig, designId, jobRow.&#xA;Output: out_OutputFilePath and out_IsSuccess.&#xA;Main steps: Build export request -> POST /exports -> poll status -> resolve URL -> download file." DisplayName="4_ExportDesign" sap:VirtualizedContainerService.HintSize="1054,2379.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="str_ApiBaseUrl" />
-      <Variable x:TypeArguments="x:String" Name="str_ExportFormat" />
-      <Variable x:TypeArguments="x:String" Name="str_OutputFolder" />
-      <Variable x:TypeArguments="x:String" Name="str_RequestBody" />
-      <Variable x:TypeArguments="x:String" Name="str_ResponseBody" />
-      <Variable x:TypeArguments="x:Int32" Name="int_StatusCode" />
-      <Variable x:TypeArguments="x:String" Name="str_ExportJobId" />
-      <Variable x:TypeArguments="x:String" Name="str_ExportStatus" />
-      <Variable x:TypeArguments="x:String" Name="str_DownloadUrl" />
-      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="int_PollCount" />
-      <Variable x:TypeArguments="x:Int32" Name="int_MaxPollAttempts" />
-      <Variable x:TypeArguments="x:Int32" Name="int_PollIntervalMs" />
-      <Variable x:TypeArguments="x:String" Name="str_FileName" />
+      <Variable x:TypeArguments="x:String" Name="strApiBaseUrl" />
+      <Variable x:TypeArguments="x:String" Name="strExportFormat" />
+      <Variable x:TypeArguments="x:String" Name="strOutputFolder" />
+      <Variable x:TypeArguments="x:String" Name="strRequestBody" />
+      <Variable x:TypeArguments="x:String" Name="strResponseBody" />
+      <Variable x:TypeArguments="x:Int32" Name="intStatusCode" />
+      <Variable x:TypeArguments="x:String" Name="strExportJobId" />
+      <Variable x:TypeArguments="x:String" Name="strExportStatus" />
+      <Variable x:TypeArguments="x:String" Name="strDownloadUrl" />
+      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="intPollCount" />
+      <Variable x:TypeArguments="x:Int32" Name="intMaxPollAttempts" />
+      <Variable x:TypeArguments="x:Int32" Name="intPollIntervalMs" />
+      <Variable x:TypeArguments="x:String" Name="strFileName" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -82,7 +82,7 @@
     <ui:LogMessage DisplayName="Log Export Start" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;ExportDesign: Starting export for design: &quot; + in_DesignId]" />
     <Assign DisplayName="Get API Base URL" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_ApiBaseUrl]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strApiBaseUrl]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_ApiBaseUrl"), in_ConfigDictionary("Canva_ApiBaseUrl").ToString, "https://api.canva.com/rest/v1")]</InArgument>
@@ -90,7 +90,7 @@
     </Assign>
     <Assign DisplayName="Get Export Format" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_2">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_ExportFormat]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strExportFormat]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_ExportFormat"), in_ConfigDictionary("Canva_ExportFormat").ToString, "png")]</InArgument>
@@ -98,7 +98,7 @@
     </Assign>
     <Assign DisplayName="Get Output Folder" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_OutputFolder]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strOutputFolder]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_OutputFolder"), in_ConfigDictionary("Canva_OutputFolder").ToString, "Data\Output\Posters")]</InArgument>
@@ -106,7 +106,7 @@
     </Assign>
     <Assign DisplayName="Get Poll Interval" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_4">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:Int32">[int_PollIntervalMs]</OutArgument>
+        <OutArgument x:TypeArguments="x:Int32">[intPollIntervalMs]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:Int32">[If(in_ConfigDictionary.ContainsKey("Canva_PollIntervalMs"), CInt(in_ConfigDictionary("Canva_PollIntervalMs").ToString), 3000)]</InArgument>
@@ -114,47 +114,46 @@
     </Assign>
     <Assign DisplayName="Get Max Poll" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_5">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:Int32">[int_MaxPollAttempts]</OutArgument>
+        <OutArgument x:TypeArguments="x:Int32">[intMaxPollAttempts]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:Int32">[If(in_ConfigDictionary.ContainsKey("Canva_PollMaxAttempts"), CInt(in_ConfigDictionary("Canva_PollMaxAttempts").ToString), 20)]</InArgument>
       </Assign.Value>
     </Assign>
-    <Assign DisplayName="Build File Name" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_6">
-      <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_FileName]</OutArgument>
-      </Assign.To>
-      <Assign.Value>
-        <InArgument x:TypeArguments="x:String">["Poster_" + in_JobRow("Role").ToString.Replace(" ", "_") + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + "." + str_ExportFormat]</InArgument>
-      </Assign.Value>
-    </Assign>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim rawRole As String = &quot;Unknown&quot;&#xA;Try&#xA;    rawRole = Convert.ToString(in_JobRow(&quot;Role&quot;))&#xA;Catch&#xA;End Try&#xA;If String.IsNullOrWhiteSpace(rawRole) Then rawRole = &quot;Unknown&quot;&#xA;&#xA;Dim cleaned As String = rawRole.Replace(vbCr, &quot; &quot;).Replace(vbLf, &quot; &quot;).Trim()&#xA;For Each ch As Char In System.IO.Path.GetInvalidFileNameChars()&#xA;    cleaned = cleaned.Replace(ch, &quot;_&quot;c)&#xA;Next&#xA;Do While cleaned.Contains(&quot;__&quot;)&#xA;    cleaned = cleaned.Replace(&quot;__&quot;, &quot;_&quot;)&#xA;Loop&#xA;cleaned = cleaned.Replace(&quot; &quot;, &quot;_&quot;).Trim(&quot;_&quot;c)&#xA;If String.IsNullOrWhiteSpace(cleaned) Then cleaned = &quot;Unknown&quot;&#xA;If cleaned.Length &gt; 80 Then cleaned = cleaned.Substring(0, 80)&#xA;&#xA;out_FileName = &quot;Poster_&quot; + cleaned + &quot;_&quot; + DateTime.Now.ToString(&quot;yyyyMMdd_HHmmss&quot;) + &quot;.&quot; + in_Format.ToLowerInvariant().Trim()" DisplayName="Build Safe File Name" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_BuildSafeFileName">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="sd:DataRow" x:Key="in_JobRow">[in_JobRow]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Format">[strExportFormat]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_FileName">[strFileName]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not System.IO.Directory.Exists(in_Folder) Then&#xA;    System.IO.Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Ensure Output Folder" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_0">
       <ui:InvokeCode.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[str_OutputFolder]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[strOutputFolder]</InArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim body As New Newtonsoft.Json.Linq.JObject()&#xA;body(&quot;design_id&quot;) = in_DesignId&#xA;Dim formatObj As New Newtonsoft.Json.Linq.JObject()&#xA;formatObj(&quot;type&quot;) = in_Format.ToLowerInvariant().Trim()&#xA;body(&quot;format&quot;) = formatObj&#xA;out_Body = body.ToString()" DisplayName="Build Export JSON" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_DesignId">[in_DesignId]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Format">[str_ExportFormat]</InArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_RequestBody]</OutArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Format">[strExportFormat]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strRequestBody]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:LogMessage DisplayName="Log Export Request" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Trace" Message="[&quot;ExportDesign: Request body: &quot; + str_RequestBody]" />
+    <ui:LogMessage DisplayName="Log Export Request" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;ExportDesign: Request body: &quot; + strRequestBody]" />
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim content As New System.Net.Http.StringContent(in_Body, System.Text.Encoding.UTF8, &quot;application/json&quot;)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.PostAsync(in_Url, content).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="POST Export" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_3">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_Token">[in_AccessToken]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + "/exports"]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Body">[str_RequestBody]</InArgument>
-        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strApiBaseUrl + "/exports"]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Body">[strRequestBody]</InArgument>
+        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[intStatusCode]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strResponseBody]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:LogMessage DisplayName="Log POST Export Status" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;ExportDesign: POST /exports status: &quot; + int_StatusCode.ToString]" />
-    <If Condition="[int_StatusCode &lt;&gt; 200 AndAlso int_StatusCode &lt;&gt; 201]" DisplayName="If Export POST Failed" sap:VirtualizedContainerService.HintSize="483.2,300" sap2010:WorkflowViewState.IdRef="If_1">
+    <ui:LogMessage DisplayName="Log POST Export Status" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;ExportDesign: POST /exports status: &quot; + intStatusCode.ToString]" />
+    <If Condition="[intStatusCode &lt;&gt; 200 AndAlso intStatusCode &lt;&gt; 201]" DisplayName="If Export POST Failed" sap:VirtualizedContainerService.HintSize="483.2,300" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
         <Sequence DisplayName="Handle Export POST Fail" sap:VirtualizedContainerService.HintSize="449.6,200" sap2010:WorkflowViewState.IdRef="Sequence_2">
-          <ui:LogMessage DisplayName="Log Export POST Error" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Error" Message="[&quot;ExportDesign: Export POST failed. Status: &quot; + int_StatusCode.ToString + &quot; Body: &quot; + str_ResponseBody]" />
+          <ui:LogMessage DisplayName="Log Export POST Error" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Info" Message="[&quot;ExportDesign: Export POST failed. Status: &quot; + intStatusCode.ToString + &quot; Body: &quot; + strResponseBody]" />
           <Assign DisplayName="Set Export Fail" sap:VirtualizedContainerService.HintSize="416,81.6" sap2010:WorkflowViewState.IdRef="Assign_7">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Boolean">[out_IsSuccess]</OutArgument>
@@ -174,52 +173,51 @@
           </sap:WorkflowViewStateService.ViewState>
           <Assign DisplayName="Parse Export Job ID" sap:VirtualizedContainerService.HintSize="416,81.6" sap2010:WorkflowViewState.IdRef="Assign_8">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_ExportJobId]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strExportJobId]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("id").ToString]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("id").ToString]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:LogMessage DisplayName="Log Export Submitted" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;ExportDesign: Export job submitted. Job ID: &quot; + str_ExportJobId]" />
+          <ui:LogMessage DisplayName="Log Export Submitted" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;ExportDesign: Export job submitted. Job ID: &quot; + strExportJobId]" />
           <Assign DisplayName="Init Export Status" sap:VirtualizedContainerService.HintSize="416,81.6" sap2010:WorkflowViewState.IdRef="Assign_9">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_ExportStatus]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strExportStatus]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("status").ToString]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("status").ToString]</InArgument>
             </Assign.Value>
           </Assign>
-          <While DisplayName="Poll Export Status" sap:VirtualizedContainerService.HintSize="416,800" sap2010:WorkflowViewState.IdRef="While_1" Condition="[str_ExportStatus &lt;&gt; &quot;success&quot; AndAlso str_ExportStatus &lt;&gt; &quot;failed&quot; AndAlso int_PollCount &lt; int_MaxPollAttempts]">
+          <While DisplayName="Poll Export Status" sap:VirtualizedContainerService.HintSize="416,800" sap2010:WorkflowViewState.IdRef="While_1" Condition="[strExportStatus &lt;&gt; &quot;success&quot; AndAlso strExportStatus &lt;&gt; &quot;failed&quot; AndAlso intPollCount &lt; intMaxPollAttempts]">
             <Sequence DisplayName="Export Poll Iteration" sap:VirtualizedContainerService.HintSize="382.4,600" sap2010:WorkflowViewState.IdRef="Sequence_4">
-              <Delay DisplayName="Wait Before Poll" Duration="[TimeSpan.FromMilliseconds(int_PollIntervalMs)]" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Delay_1" />
+              <Delay DisplayName="Wait Before Poll" Duration="[TimeSpan.FromMilliseconds(intPollIntervalMs)]" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Delay_1" />
               <Assign DisplayName="Increment Poll" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_10">
                 <Assign.To>
-                  <OutArgument x:TypeArguments="x:Int32">[int_PollCount]</OutArgument>
+                  <OutArgument x:TypeArguments="x:Int32">[intPollCount]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:Int32">[int_PollCount + 1]</InArgument>
+                  <InArgument x:TypeArguments="x:Int32">[intPollCount + 1]</InArgument>
                 </Assign.Value>
               </Assign>
               <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.GetAsync(in_Url).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="GET Export Status" sap:VirtualizedContainerService.HintSize="348.8,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_4">
                 <ui:InvokeCode.Arguments>
                   <InArgument x:TypeArguments="x:String" x:Key="in_Token">[in_AccessToken]</InArgument>
-                  <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + "/exports/" + str_ExportJobId]</InArgument>
-                  <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
-                  <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strApiBaseUrl + "/exports/" + strExportJobId]</InArgument>
+                  <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[intStatusCode]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strResponseBody]</OutArgument>
                 </ui:InvokeCode.Arguments>
               </ui:InvokeCode>
               <Assign DisplayName="Parse Export Status" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_11">
                 <Assign.To>
-                  <OutArgument x:TypeArguments="x:String">[str_ExportStatus]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String">[strExportStatus]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("status").ToString]</InArgument>
+                  <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("status").ToString]</InArgument>
                 </Assign.Value>
               </Assign>
-              <ui:LogMessage DisplayName="Log Export Poll" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_7" Level="Trace" Message="[&quot;ExportDesign: Poll &quot; + int_PollCount.ToString + &quot;/&quot; + int_MaxPollAttempts.ToString + &quot; Status: &quot; + str_ExportStatus]" />
             </Sequence>
           </While>
-          <If Condition="[str_ExportStatus = &quot;success&quot;]" DisplayName="If Export Success" sap:VirtualizedContainerService.HintSize="416,600" sap2010:WorkflowViewState.IdRef="If_2">
+          <If Condition="[strExportStatus = &quot;success&quot;]" DisplayName="If Export Success" sap:VirtualizedContainerService.HintSize="416,600" sap2010:WorkflowViewState.IdRef="If_2">
             <If.Then>
               <Sequence DisplayName="Download File" sap:VirtualizedContainerService.HintSize="382.4,400" sap2010:WorkflowViewState.IdRef="Sequence_5">
                 <sap:WorkflowViewStateService.ViewState>
@@ -227,26 +225,24 @@
                     <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                   </scg:Dictionary>
                 </sap:WorkflowViewStateService.ViewState>
-                <Assign DisplayName="Get Download URL" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_12">
-                  <Assign.To>
-                    <OutArgument x:TypeArguments="x:String">[str_DownloadUrl]</OutArgument>
-                  </Assign.To>
-                  <Assign.Value>
-                    <InArgument x:TypeArguments="x:String">[If(Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("urls") IsNot Nothing, Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("urls")(0).ToString, Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("result")("designs")(0)("urls")(0)("url").ToString)]</InArgument>
-                  </Assign.Value>
-                </Assign>
+                <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim root As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(in_Body)&#xA;Dim url As String = &quot;&quot;&#xA;&#xA;Try&#xA;    Dim urlsToken = root.SelectToken(&quot;job.urls&quot;)&#xA;    If urlsToken IsNot Nothing Then&#xA;        If urlsToken.Type = Newtonsoft.Json.Linq.JTokenType.Array AndAlso urlsToken.HasValues Then&#xA;            url = urlsToken(0).ToString()&#xA;        ElseIf urlsToken.Type = Newtonsoft.Json.Linq.JTokenType.String Then&#xA;            url = urlsToken.ToString()&#xA;        End If&#xA;    End If&#xA;Catch&#xA;End Try&#xA;&#xA;If String.IsNullOrWhiteSpace(url) Then&#xA;    Try&#xA;        Dim arr = root.SelectToken(&quot;job.result.designs&quot;)&#xA;        If arr IsNot Nothing AndAlso arr.Type = Newtonsoft.Json.Linq.JTokenType.Array AndAlso arr.HasValues Then&#xA;            Dim uToken = arr(0).SelectToken(&quot;urls[0].url&quot;)&#xA;            If uToken IsNot Nothing Then url = uToken.ToString()&#xA;        End If&#xA;    Catch&#xA;    End Try&#xA;End If&#xA;&#xA;If String.IsNullOrWhiteSpace(url) Then&#xA;    Throw New Exception(&quot;ExportDesign: Cannot resolve download URL from export response.&quot;)&#xA;End If&#xA;&#xA;out_Url = url" DisplayName="Resolve Download URL" sap:VirtualizedContainerService.HintSize="348.8,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ResolveUrl">
+                  <ui:InvokeCode.Arguments>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_Body">[strResponseBody]</InArgument>
+                    <OutArgument x:TypeArguments="x:String" x:Key="out_Url">[strDownloadUrl]</OutArgument>
+                  </ui:InvokeCode.Arguments>
+                </ui:InvokeCode>
                 <Assign DisplayName="Set Output Path" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_13">
                   <Assign.To>
                     <OutArgument x:TypeArguments="x:String">[out_OutputFilePath]</OutArgument>
                   </Assign.To>
                   <Assign.Value>
-                    <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(str_OutputFolder, str_FileName)]</InArgument>
+                    <InArgument x:TypeArguments="x:String">[System.IO.Path.Combine(strOutputFolder, strFileName)]</InArgument>
                   </Assign.Value>
                 </Assign>
                 <ui:LogMessage DisplayName="Log Downloading" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Info" Message="[&quot;ExportDesign: Downloading to &quot; + out_OutputFilePath]" />
-                <ui:InvokeCode ContinueOnError="{x:Null}" Code="Using wc As New System.Net.WebClient()&#xA;    wc.DownloadFile(in_Url, in_Path)&#xA;End Using" DisplayName="Download Poster File" sap:VirtualizedContainerService.HintSize="348.8,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
+                <ui:InvokeCode ContinueOnError="{x:Null}" Code="If String.IsNullOrWhiteSpace(in_Url) Then&#xA;    Throw New Exception(&quot;ExportDesign: Download URL is empty.&quot;)&#xA;End If&#xA;If String.IsNullOrWhiteSpace(in_Path) Then&#xA;    Throw New Exception(&quot;ExportDesign: Output path is empty.&quot;)&#xA;End If&#xA;&#xA;Try&#xA;    Dim folder As String = System.IO.Path.GetDirectoryName(in_Path)&#xA;    If Not String.IsNullOrWhiteSpace(folder) AndAlso Not System.IO.Directory.Exists(folder) Then&#xA;        System.IO.Directory.CreateDirectory(folder)&#xA;    End If&#xA;&#xA;    Using client As New System.Net.Http.HttpClient()&#xA;        Dim bytes As Byte() = client.GetByteArrayAsync(in_Url).Result&#xA;        System.IO.File.WriteAllBytes(in_Path, bytes)&#xA;    End Using&#xA;Catch ex As Exception&#xA;    Throw New Exception(&quot;ExportDesign: Download failed. Url=&quot; + in_Url + &quot; | Path=&quot; + in_Path + &quot; | &quot; + ex.Message)&#xA;End Try" DisplayName="Download Poster File" sap:VirtualizedContainerService.HintSize="348.8,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
                   <ui:InvokeCode.Arguments>
-                    <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_DownloadUrl]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strDownloadUrl]</InArgument>
                     <InArgument x:TypeArguments="x:String" x:Key="in_Path">[out_OutputFilePath]</InArgument>
                   </ui:InvokeCode.Arguments>
                 </ui:InvokeCode>
@@ -263,7 +259,7 @@
                   </If.Then>
                   <If.Else>
                     <Sequence DisplayName="Download Verify Fail" sap:VirtualizedContainerService.HintSize="314.4,200" sap2010:WorkflowViewState.IdRef="Sequence_7">
-                      <ui:LogMessage DisplayName="Log Download Fail" sap:VirtualizedContainerService.HintSize="280.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Error" Message="[&quot;ExportDesign: Downloaded file not found at: &quot; + out_OutputFilePath]" />
+                      <ui:LogMessage DisplayName="Log Download Fail" sap:VirtualizedContainerService.HintSize="280.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_9" Level="Info" Message="[&quot;ExportDesign: Downloaded file not found at: &quot; + out_OutputFilePath]" />
                       <Assign DisplayName="Set Fail" sap:VirtualizedContainerService.HintSize="280.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_15">
                         <Assign.To>
                           <OutArgument x:TypeArguments="x:Boolean">[out_IsSuccess]</OutArgument>
@@ -279,7 +275,7 @@
             </If.Then>
             <If.Else>
               <Sequence DisplayName="Export Failed" sap:VirtualizedContainerService.HintSize="382.4,200" sap2010:WorkflowViewState.IdRef="Sequence_6">
-                <ui:LogMessage DisplayName="Log Export Fail" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_10" Level="Error" Message="[&quot;ExportDesign: Export failed/timed out. Status: &quot; + str_ExportStatus + &quot; Response: &quot; + str_ResponseBody]" />
+                <ui:LogMessage DisplayName="Log Export Fail" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_10" Level="Info" Message="[&quot;ExportDesign: Export failed/timed out. Status: &quot; + strExportStatus + &quot; Response: &quot; + strResponseBody]" />
                 <Assign DisplayName="Set Export Fail" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_16">
                   <Assign.To>
                     <OutArgument x:TypeArguments="x:Boolean">[out_IsSuccess]</OutArgument>

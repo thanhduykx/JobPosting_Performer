@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="_3_CanvaPoster_CreateDesign" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="_3_CanvaPoster_CreateDesign" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_AccessToken" Type="InArgument(x:String)" />
     <x:Property Name="in_ConfigDictionary" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
@@ -27,6 +27,9 @@
       <x:String>System.Data</x:String>
       <x:String>System.IO</x:String>
       <x:String>System.Linq</x:String>
+      <x:String>System.Net</x:String>
+      <x:String>System.Net.Http</x:String>
+      <x:String>System.Text</x:String>
       <x:String>Newtonsoft.Json</x:String>
       <x:String>Newtonsoft.Json.Linq</x:String>
       <x:String>UiPath.Core</x:String>
@@ -41,6 +44,7 @@
       <AssemblyReference>System</AssemblyReference>
       <AssemblyReference>System.Activities</AssemblyReference>
       <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
       <AssemblyReference>System.Core</AssemblyReference>
       <AssemblyReference>System.Data</AssemblyReference>
       <AssemblyReference>System.IO</AssemblyReference>
@@ -51,41 +55,41 @@
       <AssemblyReference>System.Private.CoreLib</AssemblyReference>
       <AssemblyReference>System.Xaml</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="3_CanvaPoster_CreateDesign.xaml&#xA;Purpose: Create a new Canva design from brand template using Autofill API&#xA;API: POST /v1/autofills → Poll GET /v1/autofills/{jobId}&#xA;Output: Design ID of the created poster&#xA;Version: 1.0" DisplayName="3_CreateDesign" sap:VirtualizedContainerService.HintSize="546,1700" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Create a Canva design from one job row (autofill).&#xA;Input: access token, dicConfig, in_JobRow.&#xA;Output: out_DesignId and out_IsSuccess.&#xA;Main steps: Build JSON body -&gt; POST /autofills -&gt; poll status -&gt; get designId on success." DisplayName="3_CreateDesign" sap:VirtualizedContainerService.HintSize="546,1700" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="str_ApiBaseUrl" />
-      <Variable x:TypeArguments="x:String" Name="str_TemplateId" />
-      <Variable x:TypeArguments="x:String" Name="str_RequestBody" />
-      <Variable x:TypeArguments="x:String" Name="str_ResponseBody" />
-      <Variable x:TypeArguments="x:Int32" Name="int_StatusCode" />
-      <Variable x:TypeArguments="x:String" Name="str_AutofillJobId" />
-      <Variable x:TypeArguments="x:String" Name="str_JobStatus" />
-      <Variable x:TypeArguments="x:Int32" Name="int_PollCount" Default="[0]" />
-      <Variable x:TypeArguments="x:Int32" Name="int_MaxPollAttempts" />
-      <Variable x:TypeArguments="x:Int32" Name="int_PollIntervalMs" />
-      <Variable x:TypeArguments="x:String" Name="str_JobTitle" />
+      <Variable x:TypeArguments="x:String" Name="strApiBaseUrl" />
+      <Variable x:TypeArguments="x:String" Name="strTemplateId" />
+      <Variable x:TypeArguments="x:String" Name="strRequestBody" />
+      <Variable x:TypeArguments="x:String" Name="strResponseBody" />
+      <Variable x:TypeArguments="x:Int32" Name="intStatusCode" />
+      <Variable x:TypeArguments="x:String" Name="strAutofillJobId" />
+      <Variable x:TypeArguments="x:String" Name="strJobStatus" />
+      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="intPollCount" />
+      <Variable x:TypeArguments="x:Int32" Name="intMaxPollAttempts" />
+      <Variable x:TypeArguments="x:Int32" Name="intPollIntervalMs" />
+      <Variable x:TypeArguments="x:String" Name="strJobTitle" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-
     <Assign DisplayName="Init Job Title" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_0">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_JobTitle]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strJobTitle]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[in_JobRow("Role").ToString]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:LogMessage DisplayName="Log CreateDesign Start" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;CreateDesign: Processing job - &quot; + str_JobTitle]" />
+    <ui:LogMessage DisplayName="Log CreateDesign Start" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;CreateDesign: Processing job - &quot; + strJobTitle]" />
     <Assign DisplayName="Get API Base URL" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_ApiBaseUrl]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strApiBaseUrl]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_ApiBaseUrl"), in_ConfigDictionary("Canva_ApiBaseUrl").ToString, "https://api.canva.com/rest/v1")]</InArgument>
@@ -93,7 +97,7 @@
     </Assign>
     <Assign DisplayName="Get Template ID" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_TemplateId]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strTemplateId]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_BrandTemplateId"), in_ConfigDictionary("Canva_BrandTemplateId").ToString, "EAHHPNsPR2M")]</InArgument>
@@ -101,7 +105,7 @@
     </Assign>
     <Assign DisplayName="Get Poll Interval" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_3">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:Int32">[int_PollIntervalMs]</OutArgument>
+        <OutArgument x:TypeArguments="x:Int32">[intPollIntervalMs]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:Int32">[If(in_ConfigDictionary.ContainsKey("Canva_PollIntervalMs"), CInt(in_ConfigDictionary("Canva_PollIntervalMs").ToString), 3000)]</InArgument>
@@ -109,7 +113,7 @@
     </Assign>
     <Assign DisplayName="Get Max Poll Attempts" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_4">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:Int32">[int_MaxPollAttempts]</OutArgument>
+        <OutArgument x:TypeArguments="x:Int32">[intMaxPollAttempts]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:Int32">[If(in_ConfigDictionary.ContainsKey("Canva_PollMaxAttempts"), CInt(in_ConfigDictionary("Canva_PollMaxAttempts").ToString), 20)]</InArgument>
@@ -118,26 +122,26 @@
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim fields As New Newtonsoft.Json.Linq.JObject()&#xA;Dim normalize As Func(Of String, String) = Function(s As String) If(String.IsNullOrWhiteSpace(s), &quot;&quot;, s.Trim().ToLowerInvariant().Replace(&quot;{&quot;, &quot;&quot;).Replace(&quot;}&quot;, &quot;&quot;).Replace(&quot;-&quot;, &quot;&quot;).Replace(&quot;_&quot;, &quot;&quot;).Replace(&quot; &quot;, &quot;&quot;))&#xA;Dim colMap As New Dictionary(Of String, String)()&#xA;For Each col As DataColumn In in_Row.Table.Columns&#xA;    Dim n As String = normalize(col.ColumnName)&#xA;    If Not String.IsNullOrWhiteSpace(n) AndAlso Not colMap.ContainsKey(n) Then&#xA;        colMap(n) = col.ColumnName&#xA;    End If&#xA;Next&#xA;Dim semanticDefaults As New Dictionary(Of String, String)()&#xA;semanticDefaults(&quot;role&quot;) = &quot;Role&quot;&#xA;semanticDefaults(&quot;careerlevel&quot;) = &quot;Career Level&quot;&#xA;semanticDefaults(&quot;headcount&quot;) = &quot;Headcount&quot;&#xA;semanticDefaults(&quot;worklocation&quot;) = &quot;Work Location&quot;&#xA;semanticDefaults(&quot;worksetup&quot;) = &quot;Work Set-up&quot;&#xA;semanticDefaults(&quot;workschedule&quot;) = &quot;Work Schedule&quot;&#xA;semanticDefaults(&quot;qualifications&quot;) = &quot;Qualifications&quot;&#xA;Dim configKeys As New Dictionary(Of String, String)()&#xA;configKeys(&quot;role&quot;) = &quot;Canva_Field_Role&quot;&#xA;configKeys(&quot;careerlevel&quot;) = &quot;Canva_Field_CareerLevel&quot;&#xA;configKeys(&quot;headcount&quot;) = &quot;Canva_Field_Headcount&quot;&#xA;configKeys(&quot;worklocation&quot;) = &quot;Canva_Field_WorkLocation&quot;&#xA;configKeys(&quot;worksetup&quot;) = &quot;Canva_Field_WorkSetup&quot;&#xA;configKeys(&quot;workschedule&quot;) = &quot;Canva_Field_WorkSchedule&quot;&#xA;configKeys(&quot;qualifications&quot;) = &quot;Canva_Field_Qualifications&quot;&#xA;Dim excelAliases As New Dictionary(Of String, List(Of String))()&#xA;excelAliases(&quot;role&quot;) = New List(Of String) From {&quot;Role&quot;, &quot;role&quot;}&#xA;excelAliases(&quot;careerlevel&quot;) = New List(Of String) From {&quot;Career Level&quot;, &quot;CareerLevel&quot;, &quot;career_level&quot;, &quot;career level&quot;}&#xA;excelAliases(&quot;headcount&quot;) = New List(Of String) From {&quot;Headcount&quot;, &quot;Head Count&quot;, &quot;head_count&quot;, &quot;head&quot;}&#xA;excelAliases(&quot;worklocation&quot;) = New List(Of String) From {&quot;Work Location&quot;, &quot;WorkLocation&quot;, &quot;work_location&quot;}&#xA;excelAliases(&quot;worksetup&quot;) = New List(Of String) From {&quot;Work Set-up&quot;, &quot;Work Setup&quot;, &quot;WorkSetUp&quot;, &quot;work_setup&quot;}&#xA;excelAliases(&quot;workschedule&quot;) = New List(Of String) From {&quot;Work Schedule&quot;, &quot;WorkSchedule&quot;, &quot;work_schedule&quot;}&#xA;excelAliases(&quot;qualifications&quot;) = New List(Of String) From {&quot;Qualifications&quot;, &quot;Qualification&quot;, &quot;qualification&quot;}&#xA;For Each semantic As String In semanticDefaults.Keys&#xA;    Dim sourceCol As String = Nothing&#xA;    For Each aliasName As String In excelAliases(semantic)&#xA;        Dim n As String = normalize(aliasName)&#xA;        If colMap.ContainsKey(n) Then&#xA;            sourceCol = colMap(n)&#xA;            Exit For&#xA;        End If&#xA;    Next&#xA;    If String.IsNullOrWhiteSpace(sourceCol) Then&#xA;        Continue For&#xA;    End If&#xA;    Dim textValue As String = Convert.ToString(in_Row(sourceCol)).Trim()&#xA;    If String.IsNullOrWhiteSpace(textValue) Then&#xA;        Continue For&#xA;    End If&#xA;    Dim targetField As String = semanticDefaults(semantic)&#xA;    Dim cfgKey As String = configKeys(semantic)&#xA;    If in_Config.ContainsKey(cfgKey) AndAlso Not String.IsNullOrWhiteSpace(in_Config(cfgKey).ToString()) Then&#xA;        targetField = in_Config(cfgKey).ToString().Trim()&#xA;    End If&#xA;    If normalize(targetField) = normalize(semanticDefaults(semantic)) Then&#xA;        targetField = semanticDefaults(semantic)&#xA;    End If&#xA;    Dim fieldObj As New Newtonsoft.Json.Linq.JObject()&#xA;    fieldObj(&quot;type&quot;) = &quot;text&quot;&#xA;    fieldObj(&quot;text&quot;) = textValue&#xA;    fields(targetField) = fieldObj&#xA;Next&#xA;Dim titleSource As String = &quot;Unknown&quot;&#xA;If colMap.ContainsKey(normalize(&quot;Role&quot;)) Then&#xA;    titleSource = Convert.ToString(in_Row(colMap(normalize(&quot;Role&quot;))))&#xA;End If&#xA;Dim body As New Newtonsoft.Json.Linq.JObject()&#xA;body(&quot;brand_template_id&quot;) = in_TemplateId&#xA;body(&quot;title&quot;) = &quot;Poster_&quot; + titleSource.Replace(&quot; &quot;, &quot;_&quot;)&#xA;body(&quot;data&quot;) = fields&#xA;out_Body = body.ToString()" DisplayName="Build Autofill JSON Body" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="sd:DataRow" x:Key="in_Row">[in_JobRow]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_TemplateId">[str_TemplateId]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_TemplateId">[strTemplateId]</InArgument>
         <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_ConfigDictionary]</InArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_RequestBody]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strRequestBody]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:LogMessage DisplayName="Log Request Body" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Trace" Message="[&quot;CreateDesign: Request body: &quot; + str_RequestBody]" />
+    <ui:LogMessage DisplayName="Log Request Body" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;CreateDesign: Request body: &quot; + strRequestBody]" />
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim content As New System.Net.Http.StringContent(in_Body, System.Text.Encoding.UTF8, &quot;application/json&quot;)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.PostAsync(in_Url, content).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="POST Autofill" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_3">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_Token">[in_AccessToken]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + &quot;/autofills&quot;]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Body">[str_RequestBody]</InArgument>
-        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strApiBaseUrl + "/autofills"]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Body">[strRequestBody]</InArgument>
+        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[intStatusCode]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strResponseBody]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:LogMessage DisplayName="Log POST Response" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;CreateDesign: POST /autofills status: &quot; + int_StatusCode.ToString]" />
-    <If Condition="[int_StatusCode &lt;&gt; 200 AndAlso int_StatusCode &lt;&gt; 201]" DisplayName="If POST Failed" sap:VirtualizedContainerService.HintSize="483.2,300" sap2010:WorkflowViewState.IdRef="If_1">
+    <ui:LogMessage DisplayName="Log POST Response" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;CreateDesign: POST /autofills status: &quot; + intStatusCode.ToString]" />
+    <If Condition="[intStatusCode &lt;&gt; 200 AndAlso intStatusCode &lt;&gt; 201]" DisplayName="If POST Failed" sap:VirtualizedContainerService.HintSize="483.2,300" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
         <Sequence DisplayName="Handle POST Fail" sap:VirtualizedContainerService.HintSize="449.6,200" sap2010:WorkflowViewState.IdRef="Sequence_2">
-          <ui:LogMessage DisplayName="Log POST Error" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Error" Message="[&quot;CreateDesign: Autofill POST failed. Status: &quot; + int_StatusCode.ToString + &quot; Body: &quot; + str_ResponseBody]" />
+          <ui:LogMessage DisplayName="Log POST Error" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Info" Message="[&quot;CreateDesign: Autofill POST failed. Status: &quot; + intStatusCode.ToString + &quot; Body: &quot; + strResponseBody]" />
           <Assign DisplayName="Set Fail" sap:VirtualizedContainerService.HintSize="416,81.6" sap2010:WorkflowViewState.IdRef="Assign_5">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Boolean">[out_IsSuccess]</OutArgument>
@@ -157,52 +161,51 @@
           </sap:WorkflowViewStateService.ViewState>
           <Assign DisplayName="Parse Job ID" sap:VirtualizedContainerService.HintSize="416,81.6" sap2010:WorkflowViewState.IdRef="Assign_6">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_AutofillJobId]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strAutofillJobId]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("id").ToString]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("id").ToString]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:LogMessage DisplayName="Log Autofill Submitted" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;CreateDesign: Autofill job submitted. Job ID: &quot; + str_AutofillJobId]" />
+          <ui:LogMessage DisplayName="Log Autofill Submitted" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;CreateDesign: Autofill job submitted. Job ID: &quot; + strAutofillJobId]" />
           <Assign DisplayName="Init Job Status" sap:VirtualizedContainerService.HintSize="416,81.6" sap2010:WorkflowViewState.IdRef="Assign_7">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_JobStatus]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strJobStatus]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("status").ToString]</InArgument>
+              <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("status").ToString]</InArgument>
             </Assign.Value>
           </Assign>
-          <While Condition="[str_JobStatus &lt;&gt; &quot;success&quot; AndAlso str_JobStatus &lt;&gt; &quot;failed&quot; AndAlso int_PollCount &lt; int_MaxPollAttempts]" DisplayName="Poll Autofill Status" sap:VirtualizedContainerService.HintSize="416,800" sap2010:WorkflowViewState.IdRef="While_1">
+          <While DisplayName="Poll Autofill Status" sap:VirtualizedContainerService.HintSize="416,800" sap2010:WorkflowViewState.IdRef="While_1" Condition="[strJobStatus &lt;&gt; &quot;success&quot; AndAlso strJobStatus &lt;&gt; &quot;failed&quot; AndAlso intPollCount &lt; intMaxPollAttempts]">
             <Sequence DisplayName="Poll Iteration" sap:VirtualizedContainerService.HintSize="382.4,600" sap2010:WorkflowViewState.IdRef="Sequence_4">
-              <Delay Duration="[TimeSpan.FromMilliseconds(int_PollIntervalMs)]" DisplayName="Wait Before Poll" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Delay_1" />
+              <Delay DisplayName="Wait Before Poll" Duration="[TimeSpan.FromMilliseconds(intPollIntervalMs)]" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Delay_1" />
               <Assign DisplayName="Increment Poll" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_8">
                 <Assign.To>
-                  <OutArgument x:TypeArguments="x:Int32">[int_PollCount]</OutArgument>
+                  <OutArgument x:TypeArguments="x:Int32">[intPollCount]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:Int32">[int_PollCount + 1]</InArgument>
+                  <InArgument x:TypeArguments="x:Int32">[intPollCount + 1]</InArgument>
                 </Assign.Value>
               </Assign>
               <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.GetAsync(in_Url).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="GET Autofill Status" sap:VirtualizedContainerService.HintSize="348.8,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_4">
                 <ui:InvokeCode.Arguments>
                   <InArgument x:TypeArguments="x:String" x:Key="in_Token">[in_AccessToken]</InArgument>
-                  <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + &quot;/autofills/&quot; + str_AutofillJobId]</InArgument>
-                  <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
-                  <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+                  <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strApiBaseUrl + "/autofills/" + strAutofillJobId]</InArgument>
+                  <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[intStatusCode]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strResponseBody]</OutArgument>
                 </ui:InvokeCode.Arguments>
               </ui:InvokeCode>
               <Assign DisplayName="Parse Status" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_9">
                 <Assign.To>
-                  <OutArgument x:TypeArguments="x:String">[str_JobStatus]</OutArgument>
+                  <OutArgument x:TypeArguments="x:String">[strJobStatus]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("status").ToString]</InArgument>
+                  <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("status").ToString]</InArgument>
                 </Assign.Value>
               </Assign>
-              <ui:LogMessage DisplayName="Log Poll Status" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_7" Level="Trace" Message="[&quot;CreateDesign: Poll &quot; + int_PollCount.ToString + &quot;/&quot; + int_MaxPollAttempts.ToString + &quot; Status: &quot; + str_JobStatus]" />
             </Sequence>
           </While>
-          <If Condition="[str_JobStatus = &quot;success&quot;]" DisplayName="If Autofill Success" sap:VirtualizedContainerService.HintSize="416,400" sap2010:WorkflowViewState.IdRef="If_2">
+          <If Condition="[strJobStatus = &quot;success&quot;]" DisplayName="If Autofill Success" sap:VirtualizedContainerService.HintSize="416,400" sap2010:WorkflowViewState.IdRef="If_2">
             <If.Then>
               <Sequence DisplayName="Extract Design ID" sap:VirtualizedContainerService.HintSize="382.4,200" sap2010:WorkflowViewState.IdRef="Sequence_5">
                 <Assign DisplayName="Get Design ID" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_10">
@@ -210,7 +213,7 @@
                     <OutArgument x:TypeArguments="x:String">[out_DesignId]</OutArgument>
                   </Assign.To>
                   <Assign.Value>
-                    <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(str_ResponseBody)("job")("result")("design")("id").ToString]</InArgument>
+                    <InArgument x:TypeArguments="x:String">[Newtonsoft.Json.Linq.JObject.Parse(strResponseBody)("job")("result")("design")("id").ToString]</InArgument>
                   </Assign.Value>
                 </Assign>
                 <Assign DisplayName="Set Success True" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_11">
@@ -225,7 +228,7 @@
             </If.Then>
             <If.Else>
               <Sequence DisplayName="Autofill Failed" sap:VirtualizedContainerService.HintSize="382.4,200" sap2010:WorkflowViewState.IdRef="Sequence_6">
-                <ui:LogMessage DisplayName="Log Autofill Fail" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Error" Message="[&quot;CreateDesign: Autofill failed/timed out. Status: &quot; + str_JobStatus + &quot; Response: &quot; + str_ResponseBody]" />
+                <ui:LogMessage DisplayName="Log Autofill Fail" sap:VirtualizedContainerService.HintSize="348.8,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_8" Level="Info" Message="[&quot;CreateDesign: Autofill failed/timed out. Status: &quot; + strJobStatus + &quot; Response: &quot; + strResponseBody]" />
                 <Assign DisplayName="Set Fail" sap:VirtualizedContainerService.HintSize="348.8,81.6" sap2010:WorkflowViewState.IdRef="Assign_12">
                   <Assign.To>
                     <OutArgument x:TypeArguments="x:Boolean">[out_IsSuccess]</OutArgument>
@@ -240,6 +243,6 @@
         </Sequence>
       </If.Else>
     </If>
-    <ui:LogMessage DisplayName="Log CreateDesign Result" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;CreateDesign: Completed for '&quot; + str_JobTitle + &quot;'. Success: &quot; + out_IsSuccess.ToString + If(out_IsSuccess, &quot; DesignId: &quot; + out_DesignId, &quot;&quot;)]" />
+    <ui:LogMessage DisplayName="Log CreateDesign Result" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;CreateDesign: Completed for '&quot; + strJobTitle + &quot;'. Success: &quot; + out_IsSuccess.ToString + If(out_IsSuccess, &quot; DesignId: &quot; + out_DesignId, &quot;&quot;)]" />
   </Sequence>
 </Activity>

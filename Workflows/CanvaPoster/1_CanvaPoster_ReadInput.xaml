@@ -2,7 +2,7 @@
   <x:Members>
     <x:Property Name="in_ConfigPath" Type="InArgument(x:String)" />
     <x:Property Name="out_ConfigDictionary" Type="OutArgument(scg:Dictionary(x:String, x:Object))" />
-    <x:Property Name="out_Jobs" Type="OutArgument(sd:DataTable)" />
+    <x:Property Name="out_dt_Jobs" Type="OutArgument(sd:DataTable)" />
   </x:Members>
   <VisualBasic.Settings>
     <x:Null />
@@ -51,12 +51,13 @@
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="1_CanvaPoster_ReadInput.xaml&#xA;Purpose: Read Config.xlsx (Settings + FieldMappings sheets) and Excel input file&#xA;Output: dic_Config, dt_Jobs, dt_FieldMappings&#xA;Version: 1.0" DisplayName="1_ReadInput" sap:VirtualizedContainerService.HintSize="546,1500" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Read configuration and input jobs.&#xA;Input: Config.xlsx (or in_ConfigPath).&#xA;Output: validated dicConfig and dt_Jobs.&#xA;Main steps: Read config sheet -> map key/value -> read jobs sheet -> create output folder if needed." DisplayName="1_ReadInput" sap:VirtualizedContainerService.HintSize="546,1500" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
       <Variable x:TypeArguments="sd:DataTable" Name="dt_ConfigSettings" />
-      <Variable x:TypeArguments="x:String" Name="str_InputFilePath" />
-      <Variable x:TypeArguments="x:String" Name="str_InputSheetName" />
-      <Variable x:TypeArguments="x:String" Name="str_OutputFolder" />
+      <Variable x:TypeArguments="x:String" Name="strInputFilePath" />
+      <Variable x:TypeArguments="x:String" Name="strInputSheetName" />
+      <Variable x:TypeArguments="x:String" Name="strOutputFolder" />
+      <Variable x:TypeArguments="x:Int32" Default="[0]" Name="intDuplicateRemoved" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -82,25 +83,32 @@
           </ui:InvokeCode>
           <Assign DisplayName="Get Input File Path" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_1">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_InputFilePath]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strInputFilePath]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("InputFilePath") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("InputFilePath").ToString), out_ConfigDictionary("InputFilePath").ToString, "Data\Input\Jobs_Local.xlsx")]</InArgument>
+              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("Jobs_InputPath") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("Jobs_InputPath").ToString), out_ConfigDictionary("Jobs_InputPath").ToString, "Data\Input\Jobs_Local.xlsx")]</InArgument>
             </Assign.Value>
           </Assign>
           <Assign DisplayName="Get Input Sheet Name" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_InputSheetName]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strInputSheetName]</OutArgument>
             </Assign.To>
             <Assign.Value>
-              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("InputSheetName") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("InputSheetName").ToString), out_ConfigDictionary("InputSheetName").ToString, "Open Demands")]</InArgument>
+              <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("Jobs_InputSheet") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("Jobs_InputSheet").ToString), out_ConfigDictionary("Jobs_InputSheet").ToString, "Open Demands")]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_Jobs]" DisplayName="Read Jobs Excel" sap:VirtualizedContainerService.HintSize="387.2,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_2" SheetName="[str_InputSheetName]" WorkbookPath="[str_InputFilePath]" />
-          <ui:LogMessage DisplayName="Log Jobs Loaded" sap:VirtualizedContainerService.HintSize="387.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;ReadInput: Jobs loaded. Row count: &quot; + out_Jobs.Rows.Count.ToString]" />
+          <ui:ReadRange Range="{x:Null}" AddHeaders="True" DataTable="[out_dt_Jobs]" DisplayName="Read Jobs Excel" sap:VirtualizedContainerService.HintSize="387.2,226.4" sap2010:WorkflowViewState.IdRef="ReadRange_2" SheetName="[strInputSheetName]" WorkbookPath="[strInputFilePath]" />
+          <ui:LogMessage DisplayName="Log Jobs Loaded" sap:VirtualizedContainerService.HintSize="387.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;ReadInput: Jobs loaded. Row count: &quot; + out_dt_Jobs.Rows.Count.ToString]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="out_Removed = 0&#xA;If io_DT Is Nothing Then Return&#xA;If Not io_DT.Columns.Contains(&quot;Role&quot;) OrElse Not io_DT.Columns.Contains(&quot;Email&quot;) Then Return&#xA;&#xA;Dim beforeCount As Integer = io_DT.Rows.Count&#xA;Dim uniqueDT As DataTable = io_DT.Clone()&#xA;Dim seen As New HashSet(Of String)(StringComparer.OrdinalIgnoreCase)&#xA;&#xA;For Each row As DataRow In io_DT.Rows&#xA;    Dim role As String = &quot;&quot;&#xA;    Dim email As String = &quot;&quot;&#xA;&#xA;    If row(&quot;Role&quot;) IsNot DBNull.Value AndAlso row(&quot;Role&quot;) IsNot Nothing Then&#xA;        role = row(&quot;Role&quot;).ToString().Trim()&#xA;    End If&#xA;    If row(&quot;Email&quot;) IsNot DBNull.Value AndAlso row(&quot;Email&quot;) IsNot Nothing Then&#xA;        email = row(&quot;Email&quot;).ToString().Trim()&#xA;    End If&#xA;&#xA;    Dim key As String = role.Replace(&quot;|&quot;, &quot;||&quot;) + &quot;|&quot; + email.Replace(&quot;|&quot;, &quot;||&quot;)&#xA;    If seen.Add(key) Then&#xA;        uniqueDT.ImportRow(row)&#xA;    End If&#xA;Next&#xA;&#xA;io_DT = uniqueDT&#xA;out_Removed = Math.Max(0, beforeCount - io_DT.Rows.Count)" DisplayName="Remove Duplicate Job Rows In-Memory" sap:VirtualizedContainerService.HintSize="387.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_RemoveDuplicates">
+            <ui:InvokeCode.Arguments>
+              <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_DT">[out_dt_Jobs]</InOutArgument>
+              <OutArgument x:TypeArguments="x:Int32" x:Key="out_Removed">[intDuplicateRemoved]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ui:LogMessage DisplayName="Log Duplicate Filter" sap:VirtualizedContainerService.HintSize="387.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_DuplicateFilter" Level="Info" Message="[&quot;ReadInput: Duplicate check done (memory only). Removed: &quot; + intDuplicateRemoved.ToString + &quot; | Remaining: &quot; + out_dt_Jobs.Rows.Count.ToString]" />
           <Assign DisplayName="Get Output Folder" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_3">
             <Assign.To>
-              <OutArgument x:TypeArguments="x:String">[str_OutputFolder]</OutArgument>
+              <OutArgument x:TypeArguments="x:String">[strOutputFolder]</OutArgument>
             </Assign.To>
             <Assign.Value>
               <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary.ContainsKey("Canva_OutputFolder") AndAlso Not String.IsNullOrWhiteSpace(out_ConfigDictionary("Canva_OutputFolder").ToString), out_ConfigDictionary("Canva_OutputFolder").ToString, "Data\Output\Posters")]</InArgument>
@@ -108,7 +116,7 @@
           </Assign>
           <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not Directory.Exists(in_Folder) Then&#xA;    Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Create Output Folder" sap:VirtualizedContainerService.HintSize="387.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
             <ui:InvokeCode.Arguments>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[str_OutputFolder]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[strOutputFolder]</InArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
         </Sequence>
@@ -130,7 +138,7 @@
                   <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                 </scg:Dictionary>
               </sap:WorkflowViewStateService.ViewState>
-              <ui:LogMessage DisplayName="Log ReadInput Error" sap:VirtualizedContainerService.HintSize="353.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Error" Message="[&quot;ReadInput Error: &quot; + ex.Message]" />
+              <ui:LogMessage DisplayName="Log ReadInput Error" sap:VirtualizedContainerService.HintSize="353.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;ReadInput Error: &quot; + ex.Message]" />
               <Throw DisplayName="Rethrow" Exception="[New System.Exception(&quot;ReadInputFailed: &quot; + ex.Message)]" sap:VirtualizedContainerService.HintSize="353.6,136" sap2010:WorkflowViewState.IdRef="Throw_1" />
             </Sequence>
           </ActivityAction>

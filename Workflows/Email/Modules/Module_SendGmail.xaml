@@ -1,10 +1,10 @@
 <Activity mc:Ignorable="sap sap2010" x:Class="Module_SendGmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:uga="clr-namespace:UiPath.GSuite.Activities;assembly=UiPath.GSuite.Activities" xmlns:ugage="clr-namespace:UiPath.GSuite.Activities.Gmail.Enums;assembly=UiPath.GSuite.Activities" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.GSuite.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
-    <x:Property Name="in_str_Body" Type="InArgument(x:String)" />
-    <x:Property Name="in_str_ToEmail" Type="InArgument(x:String)" />
-    <x:Property Name="in_str_Subject" Type="InArgument(x:String)" />
-    <x:Property Name="in_str_ConnectionId" Type="InArgument(x:String)" />
-    <x:Property Name="in_str_AttachmentPath" Type="InArgument(x:String)" />
+    <x:Property Name="in_strBody" Type="InArgument(x:String)" />
+    <x:Property Name="in_strToEmail" Type="InArgument(x:String)" />
+    <x:Property Name="in_strSubject" Type="InArgument(x:String)" />
+
+    <x:Property Name="in_strAttachmentPath" Type="InArgument(x:String)" />
     <x:Property Name="out_Error" Type="OutArgument(x:String)" />
     <x:Property Name="out_IsSent" Type="OutArgument(x:Boolean)" />
   </x:Members>
@@ -92,25 +92,41 @@
       <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Module_SendGmail" sap:VirtualizedContainerService.HintSize="664.4000000000001,1764.8" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence DisplayName="Module_SendGmail" sap2010:Annotation.AnnotationText="Goal: Send recruitment email via Gmail connector.&#xA;Input: toEmail, subject, HTML body, attachment path.&#xA;Output: out_IsSent and out_Error.&#xA;Main steps: Log input -> SendEmailConnections -> set success/fail with detailed error." sap:VirtualizedContainerService.HintSize="1067.6000000000001,1939.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <TryCatch DisplayName="Try Send Email" sap:VirtualizedContainerService.HintSize="451.2,1741.6" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+    <TryCatch DisplayName="Try Send Email" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="451.2,1916" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
-        <Sequence DisplayName="Try" sap:VirtualizedContainerService.HintSize="449.6,1087.2" sap2010:WorkflowViewState.IdRef="Sequence_2">
+        <Sequence DisplayName="Send Gmail Main Flow" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="449.6,1261.6" sap2010:WorkflowViewState.IdRef="Sequence_2">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:LogMessage DisplayName="Log: Attachment Info" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;[Gmail] Attaching file: &quot; + in_str_AttachmentPath]" />
-          <uga:SendEmailConnections ArgumentAttachmentPaths="{x:Null}" AttachmentPaths="{x:Null}" Attachments="{x:Null}" Bcc="{x:Null}" Cc="{x:Null}" ConnectionAccountName="{x:Null}" ContinueOnError="{x:Null}" ReplyTo="{x:Null}" SingleAttachment="{x:Null}" TextBody="{x:Null}" AttachmentInputMode="Builder" AuthScopesInvalid="False" Body="[in_str_Body]" ConnectionId="a03a0f0a-762f-44c5-9d07-4d280413f2ed" DisplayName="Gmail: Send Recruitment Email" sap:VirtualizedContainerService.HintSize="416,512.8" sap2010:WorkflowViewState.IdRef="SendEmailConnections_1" Importance="Normal" InputType="HTML" SaveAsDraft="False" Subject="[in_str_Subject]" To="[New String(){in_str_ToEmail}]" UseConnectionService="True">
+          <ui:LogMessage DisplayName="Log: Attachment Info" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;[Gmail] Attaching file: &quot; + in_strAttachmentPath]" />
+          <ui:LogMessage DisplayName="Log: Sending Email" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_SendDebug" Level="Info" Message="[&quot;[Gmail] Sending recruitment email to: &quot; + in_strToEmail]" />
+          <uga:SendEmailConnections ArgumentAttachmentPaths="{x:Null}" ConnectionAccountName="{x:Null}" AttachmentInputMode="Builder" AttachmentPaths="{x:Null}" Attachments="{x:Null}" AuthScopesInvalid="False" Bcc="{x:Null}" Body="[in_strBody]" Cc="{x:Null}" ConnectionId="a03a0f0a-762f-44c5-9d07-4d280413f2ed" ContinueOnError="{x:Null}" DisplayName="Gmail: Send Recruitment Email" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,512.8" sap2010:WorkflowViewState.IdRef="SendEmailConnections_1" Importance="Normal" InputType="HTML" ReplyTo="{x:Null}" SaveAsDraft="False" SingleAttachment="{x:Null}" Subject="[in_strSubject]" TextBody="{x:Null}" To="[New String(){in_strToEmail}]" UseConnectionService="True">
             <uga:SendEmailConnections.ArgumentAttachments>
               <scg:List x:TypeArguments="InArgument(upr:IResource)" Capacity="4">
-                <InArgument x:TypeArguments="upr:IResource">[UiPath.Platform.ResourceHandling.LocalResource.FromPath(in_str_AttachmentPath.Trim())]</InArgument>
+                <InArgument x:TypeArguments="upr:IResource">[UiPath.Platform.ResourceHandling.LocalResource.FromPath(in_strAttachmentPath.Trim())]</InArgument>
               </scg:List>
             </uga:SendEmailConnections.ArgumentAttachments>
             <uga:SendEmailConnections.AttachmentsBackup>
@@ -133,7 +149,10 @@
               </usau:BackupSlot>
             </uga:SendEmailConnections.InputTypeBackup>
           </uga:SendEmailConnections>
-          <Assign DisplayName="Set Success" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
+          <Assign DisplayName="Set Success" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
             </Assign.To>
@@ -141,7 +160,10 @@
               <InArgument x:TypeArguments="x:Boolean">True</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Clear Error" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+          <Assign DisplayName="Clear Error" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_2">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
             </Assign.To>
@@ -157,13 +179,19 @@
             <ActivityAction.Argument>
               <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
             </ActivityAction.Argument>
-            <Sequence DisplayName="Handle Error" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Sequence_3">
+            <Sequence DisplayName="Handle Error" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Sequence_3">
               <sap:WorkflowViewStateService.ViewState>
                 <scg:Dictionary x:TypeArguments="x:String, x:Object">
                   <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                 </scg:Dictionary>
               </sap:WorkflowViewStateService.ViewState>
-              <Assign DisplayName="Set Fail" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
+              <Assign DisplayName="Set Fail" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
                 <Assign.To>
                   <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
                 </Assign.To>
@@ -171,7 +199,10 @@
                   <InArgument x:TypeArguments="x:Boolean">False</InArgument>
                 </Assign.Value>
               </Assign>
-              <Assign DisplayName="Set Error Msg" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_4">
+              <Assign DisplayName="Set Error Msg" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_4">
                 <Assign.To>
                   <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
                 </Assign.To>
@@ -184,12 +215,16 @@
         </Catch>
       </TryCatch.Catches>
       <TryCatch.Finally>
-        <Sequence DisplayName="Finally" sap:VirtualizedContainerService.HintSize="449.6,89.6" sap2010:WorkflowViewState.IdRef="Sequence_4">
+        <Sequence DisplayName="Finalize Send Gmail" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
+Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
+Author: RPA Framework Team
+Status: Production Ready" sap:VirtualizedContainerService.HintSize="449.6,89.6" sap2010:WorkflowViewState.IdRef="Sequence_4">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
+          <ui:LogMessage DisplayName="Log Finalize Module" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Finalize" Level="Info" Message="[&quot;[Gmail] Module finished. Sent=&quot; + out_IsSent.ToString + &quot; | Error=&quot; + If(String.IsNullOrWhiteSpace(out_Error), &quot;None&quot;, out_Error)]" />
         </Sequence>
       </TryCatch.Finally>
     </TryCatch>

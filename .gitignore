@@ -4,6 +4,43 @@
 # Prevent caching and local artifacts from being committed
 ################################################################################
 .local
+.objects/
+.project/
+.settings/
+.tmh/
+
+# Project Specific Ignores
+**/_Run.html
+**/*.tmp
+**/*.temp
+**/*.log
+**/*.py
+**/*.zip
+**/*.otf
+**/*.ttf
+.tmp_jobs/
+Data/Temp/
+Data/Output/
+Data/Reports/
+
+# Excel and Sensitive Data
+*.xlsx
+*.xls
+*.xlsm
+canva_tokens.json
+
+# Secrets / credentials (never commit)
+**/*.env
+**/*.secret
+**/*.dpapi
+**/*.pfx
+**/*.pem
+Scripts/*.local.ps1
+Data/Secrets/
+
+# Excel temporary files
+**/~$*.xlsx
+
 ################################################################################
 # End of UiPath Studio common ignores
 ################################################################################

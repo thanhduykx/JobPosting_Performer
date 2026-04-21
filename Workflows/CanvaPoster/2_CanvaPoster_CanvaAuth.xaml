@@ -1,4 +1,4 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="_2_CanvaPoster_CanvaAuth" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<Activity mc:Ignorable="sap sap2010" x:Class="_2_CanvaPoster_CanvaAuth" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:ss="clr-namespace:System.Security;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_ConfigDictionary" Type="InArgument(scg:Dictionary(x:String, x:Object))" />
     <x:Property Name="out_AccessToken" Type="OutArgument(x:String)" />
@@ -28,6 +28,7 @@
       <x:String>Newtonsoft.Json.Linq</x:String>
       <x:String>UiPath.Core</x:String>
       <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Security</x:String>
     </scg:List>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
@@ -38,6 +39,7 @@
       <AssemblyReference>System</AssemblyReference>
       <AssemblyReference>System.Activities</AssemblyReference>
       <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
       <AssemblyReference>System.Core</AssemblyReference>
       <AssemblyReference>System.IO</AssemblyReference>
       <AssemblyReference>System.Linq</AssemblyReference>
@@ -47,15 +49,18 @@
       <AssemblyReference>System.Private.CoreLib</AssemblyReference>
       <AssemblyReference>System.Xaml</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
       <AssemblyReference>UiPath.Workflow</AssemblyReference>
     </scg:List>
   </TextExpression.ReferencesForImplementation>
-  <Sequence sap2010:Annotation.AnnotationText="2_CanvaPoster_CanvaAuth.xaml&#xA;Purpose: Get and validate Canva API access token&#xA;Priority: 1) Orchestrator Asset  2) Config.xlsx&#xA;Validates by calling GET /v1/users/me&#xA;Version: 1.0" DisplayName="2_CanvaAuth" sap:VirtualizedContainerService.HintSize="546,1100" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Obtain a valid Canva access token before API calls.&#xA;Input: dicConfig (token file, client id/secret, api base url).&#xA;Output: validated out_AccessToken, auto-refreshed when expired.&#xA;Main steps: Read token file -&gt; GET /users/me -&gt; refresh if needed -&gt; return token." DisplayName="2_CanvaAuth" sap:VirtualizedContainerService.HintSize="886,2591.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <Sequence.Variables>
-      <Variable x:TypeArguments="x:String" Name="str_Token" />
-      <Variable x:TypeArguments="x:String" Name="str_ApiBaseUrl" />
-      <Variable x:TypeArguments="x:Int32" Name="int_StatusCode" />
-      <Variable x:TypeArguments="x:String" Name="str_ResponseBody" />
+      <Variable x:TypeArguments="x:String" Name="strToken" />
+      <Variable x:TypeArguments="x:String" Name="strApiBaseUrl" />
+      <Variable x:TypeArguments="x:Int32" Name="intStatusCode" />
+      <Variable x:TypeArguments="x:String" Name="strResponseBody" />
+      <Variable x:TypeArguments="x:String" Name="strCanvaClientId" />
+      <Variable x:TypeArguments="ss:SecureString" Name="ssCanvaClientSecret" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -63,53 +68,82 @@
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
     <ui:LogMessage DisplayName="Log CanvaAuth Start" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;CanvaAuth: Starting authentication&quot;]" />
-    <Assign DisplayName="Get API Base URL" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_1">
+    <Assign DisplayName="Get API Base URL" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
       <Assign.To>
-        <OutArgument x:TypeArguments="x:String">[str_ApiBaseUrl]</OutArgument>
+        <OutArgument x:TypeArguments="x:String">[strApiBaseUrl]</OutArgument>
       </Assign.To>
       <Assign.Value>
         <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary.ContainsKey("Canva_ApiBaseUrl"), in_ConfigDictionary("Canva_ApiBaseUrl").ToString, "https://api.canva.com/rest/v1")]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim tokenFilePath As String = If(in_Config.ContainsKey(&quot;Canva_TokenFilePath&quot;), in_Config(&quot;Canva_TokenFilePath&quot;).ToString(), &quot;Data\Temp\canva_tokens.json&quot;)&#xA;If Not File.Exists(tokenFilePath) Then&#xA;    Throw New Exception(&quot;Token file not found: &quot; + tokenFilePath)&#xA;End If&#xA;Dim jsonContent As String = File.ReadAllText(tokenFilePath)&#xA;Dim tokenObj As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(jsonContent)&#xA;out_Token = tokenObj(&quot;access_token&quot;).ToString()" DisplayName="Read Token from JSON" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
+    <TryCatch DisplayName="Try Get Canva_OAuth Credential (Orchestrator)" sap:VirtualizedContainerService.HintSize="483.2,720.8" sap2010:WorkflowViewState.IdRef="TryCatch_GetCred">
+      <TryCatch.Try>
+        <Sequence DisplayName="Read Orchestrator Credential" sap:VirtualizedContainerService.HintSize="449.6,423.2" sap2010:WorkflowViewState.IdRef="Seq_GetCred">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:GetRobotCredential TimeoutMS="{x:Null}" AssetName="[If(in_ConfigDictionary.ContainsKey(&quot;Canva_OrchestratorCredentialAsset&quot;), in_ConfigDictionary(&quot;Canva_OrchestratorCredentialAsset&quot;).ToString, &quot;Canva_OAuth&quot;)]" CacheStrategy="None" DisplayName="Get Canva_OAuth Credential" FolderPath="Shared" sap:VirtualizedContainerService.HintSize="416,175.2" sap2010:WorkflowViewState.IdRef="GetRobotCredential_Canva" Password="[ssCanvaClientSecret]" Username="[strCanvaClientId]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim plainSecret As String = String.Empty&#xA;If in_Secure IsNot Nothing Then&#xA;    Dim bstr As IntPtr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(in_Secure)&#xA;    Try&#xA;        plainSecret = System.Runtime.InteropServices.Marshal.PtrToStringBSTR(bstr)&#xA;    Finally&#xA;        System.Runtime.InteropServices.Marshal.ZeroFreeBSTR(bstr)&#xA;    End Try&#xA;End If&#xA;&#xA;If Not String.IsNullOrWhiteSpace(in_ClientId) Then&#xA;    io_Config(&quot;Canva_ClientId&quot;) = in_ClientId.Trim()&#xA;End If&#xA;If Not String.IsNullOrWhiteSpace(plainSecret) Then&#xA;    io_Config(&quot;Canva_ClientSecret&quot;) = plainSecret&#xA;End If&#xA;Console.WriteLine(&quot;CanvaAuth: Loaded ClientId/Secret from Orchestrator asset. ClientId length=&quot; + If(in_ClientId Is Nothing, 0, in_ClientId.Length).ToString() + &quot;, Secret length=&quot; + plainSecret.Length.ToString())" DisplayName="Apply Credential to Config" sap:VirtualizedContainerService.HintSize="416,188" sap2010:WorkflowViewState.IdRef="InvokeCode_ApplyCred">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_ClientId">[strCanvaClientId]</InArgument>
+              <InArgument x:TypeArguments="ss:SecureString" x:Key="in_Secure">[ssCanvaClientSecret]</InArgument>
+              <InOutArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="io_Config">[in_ConfigDictionary]</InOutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+        </Sequence>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="400,120" sap2010:WorkflowViewState.IdRef="Catch_GetCred">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="credEx" />
+            </ActivityAction.Argument>
+            <ui:LogMessage DisplayName="Log Credential Fallback" sap:VirtualizedContainerService.HintSize="400,104" sap2010:WorkflowViewState.IdRef="LogMessage_CredFallback" Level="Warn" Message="[&quot;CanvaAuth: Orchestrator credential asset unavailable (&quot; + credEx.Message + &quot;). Falling back to Config.xlsx values for Canva_ClientId / Canva_ClientSecret.&quot;]" />
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim tokenFilePath As String = If(in_Config.ContainsKey(&quot;Canva_TokenFilePath&quot;), in_Config(&quot;Canva_TokenFilePath&quot;).ToString(), &quot;Data\Temp\canva_tokens.json&quot;)&#xA;If Not File.Exists(tokenFilePath) Then&#xA;    Dim scriptPath As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Scripts\canva_reauth.ps1&quot;)&#xA;    If System.IO.File.Exists(scriptPath) Then&#xA;        Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;        psi.FileName = &quot;powershell.exe&quot;&#xA;        psi.Arguments = &quot;-ExecutionPolicy Bypass -File &quot;&quot;&quot; + scriptPath + &quot;&quot;&quot;&quot;&#xA;        psi.UseShellExecute = True&#xA;        Dim p As System.Diagnostics.Process = System.Diagnostics.Process.Start(psi)&#xA;        p.WaitForExit()&#xA;        If Not System.IO.File.Exists(tokenFilePath) Then&#xA;            Throw New Exception(&quot;Auth failed. Token file not created at: &quot; + tokenFilePath)&#xA;        End If&#xA;    Else&#xA;        Throw New Exception(&quot;Token file not found: &quot; + tokenFilePath)&#xA;    End If&#xA;End If&#xA;Dim jsonContent As String = System.IO.File.ReadAllText(tokenFilePath)&#xA;Dim tokenObj As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(jsonContent)&#xA;out_Token = tokenObj(&quot;access_token&quot;).ToString()" DisplayName="Read Token from JSON" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_ConfigDictionary]</InArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Token">[str_Token]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Token">[strToken]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:LogMessage DisplayName="Log Token Read" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;CanvaAuth: Token read from file. Length: &quot; + str_Token.Length.ToString]" />
+    <ui:LogMessage DisplayName="Log Token Read" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;CanvaAuth: Token read from file. Length: &quot; + strToken.Length.ToString]" />
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.GetAsync(in_Url).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="Validate Token - GET /users/me" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
       <ui:InvokeCode.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Token">[str_Token]</InArgument>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + &quot;/users/me&quot;]</InArgument>
-        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
-        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Token">[strToken]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strApiBaseUrl + "/users/me"]</InArgument>
+        <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[intStatusCode]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strResponseBody]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:LogMessage DisplayName="Log Validation Result" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;CanvaAuth: Validation response code: &quot; + int_StatusCode.ToString]" />
-    <If Condition="[int_StatusCode &lt;&gt; 200]" DisplayName="If Token Invalid - Auto Refresh" sap:VirtualizedContainerService.HintSize="483.2,500" sap2010:WorkflowViewState.IdRef="If_1">
+    <ui:LogMessage DisplayName="Log Validation Result" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;CanvaAuth: Validation response code: &quot; + intStatusCode.ToString]" />
+    <If Condition="[intStatusCode &lt;&gt; 200]" DisplayName="If Token Invalid - Auto Refresh" sap:VirtualizedContainerService.HintSize="483.2,500" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
         <Sequence DisplayName="Auto Refresh Token" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Seq_Refresh">
-          <ui:LogMessage DisplayName="Log Refresh Attempt" sap:VirtualizedContainerService.HintSize="415.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Refresh" Level="Warn" Message="[&quot;CanvaAuth: Token expired (Status &quot; + int_StatusCode.ToString + &quot;). Attempting auto-refresh...&quot;]" />
-          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim tokenFilePath As String = If(in_Config.ContainsKey(&quot;Canva_TokenFilePath&quot;), in_Config(&quot;Canva_TokenFilePath&quot;).ToString(), &quot;Data\Temp\canva_tokens.json&quot;)&#xA;Dim jsonContent As String = System.IO.File.ReadAllText(tokenFilePath)&#xA;Dim tokenObj = Newtonsoft.Json.Linq.JObject.Parse(jsonContent)&#xA;Dim refreshToken As String = tokenObj(&quot;refresh_token&quot;).ToString()&#xA;&#xA;Dim clientId As String = If(in_Config.ContainsKey(&quot;Canva_ClientId&quot;), in_Config(&quot;Canva_ClientId&quot;).ToString(), &quot;OC-AZ2iLEHXVW41&quot;)&#xA;Dim clientSecret As String = If(in_Config.ContainsKey(&quot;Canva_ClientSecret&quot;), in_Config(&quot;Canva_ClientSecret&quot;).ToString(), in_Secret)&#xA;&#xA;Dim authBytes = System.Text.Encoding.UTF8.GetBytes(clientId + &quot;:&quot; + clientSecret)&#xA;Dim authBase64 = Convert.ToBase64String(authBytes)&#xA;&#xA;Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Basic &quot; + authBase64)&#xA;&#xA;Dim postBody As New System.Net.Http.FormUrlEncodedContent(New Dictionary(Of String, String) From {&#xA;    {&quot;grant_type&quot;, &quot;refresh_token&quot;},&#xA;    {&quot;refresh_token&quot;, refreshToken}&#xA;})&#xA;&#xA;Dim response = client.PostAsync(&quot;https://api.canva.com/rest/v1/oauth/token&quot;, postBody).Result&#xA;If Not response.IsSuccessStatusCode Then&#xA;    Throw New Exception(&quot;Refresh failed: &quot; + response.Content.ReadAsStringAsync().Result)&#xA;End If&#xA;&#xA;Dim respBody = response.Content.ReadAsStringAsync().Result&#xA;Dim respObj = Newtonsoft.Json.Linq.JObject.Parse(respBody)&#xA;&#xA;Dim newToken As New Newtonsoft.Json.Linq.JObject()&#xA;newToken(&quot;access_token&quot;) = respObj(&quot;access_token&quot;).ToString()&#xA;newToken(&quot;token_type&quot;) = &quot;Bearer&quot;&#xA;newToken(&quot;created_at&quot;) = DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)&#xA;newToken(&quot;expires_in&quot;) = respObj(&quot;expires_in&quot;).ToString()&#xA;newToken(&quot;refresh_token&quot;) = respObj(&quot;refresh_token&quot;).ToString()&#xA;newToken(&quot;expires_at&quot;) = DateTime.Now.AddSeconds(CDbl(respObj(&quot;expires_in&quot;).ToString())).ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)&#xA;&#xA;System.IO.File.WriteAllText(tokenFilePath, newToken.ToString(), System.Text.Encoding.UTF8)&#xA;out_NewToken = respObj(&quot;access_token&quot;).ToString()" DisplayName="Refresh Token via OAuth" sap:VirtualizedContainerService.HintSize="415.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Refresh">
+          <ui:LogMessage DisplayName="Log Refresh Attempt" sap:VirtualizedContainerService.HintSize="415.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_Refresh" Level="Info" Message="[&quot;CanvaAuth: Token expired (Status &quot; + intStatusCode.ToString + &quot;). Attempting auto-refresh...&quot;]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim tokenFilePath As String = If(in_Config.ContainsKey(&quot;Canva_TokenFilePath&quot;), in_Config(&quot;Canva_TokenFilePath&quot;).ToString(), &quot;Data\Temp\canva_tokens.json&quot;)&#xA;If Not System.IO.Path.IsPathRooted(tokenFilePath) Then tokenFilePath = System.IO.Path.Combine(Environment.CurrentDirectory, tokenFilePath)&#xA;tokenFilePath = System.IO.Path.GetFullPath(tokenFilePath)&#xA;&#xA;If Not System.IO.File.Exists(tokenFilePath) Then Throw New Exception(&quot;Token file not found: &quot; + tokenFilePath)&#xA;Dim jsonContent As String = System.IO.File.ReadAllText(tokenFilePath)&#xA;Dim tokenObj As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(jsonContent)&#xA;Dim refreshToken As String = If(tokenObj(&quot;refresh_token&quot;) IsNot Nothing, tokenObj(&quot;refresh_token&quot;).ToString(), String.Empty)&#xA;If String.IsNullOrWhiteSpace(refreshToken) Then Throw New Exception(&quot;Token file missing refresh_token: &quot; + tokenFilePath)&#xA;&#xA;Dim clientId As String = If(in_Config.ContainsKey(&quot;Canva_ClientId&quot;), in_Config(&quot;Canva_ClientId&quot;).ToString(), String.Empty)&#xA;Dim clientSecret As String = If(in_Config.ContainsKey(&quot;Canva_ClientSecret&quot;), in_Config(&quot;Canva_ClientSecret&quot;).ToString(), in_Secret)&#xA;If String.IsNullOrWhiteSpace(clientId) Then Throw New Exception(&quot;Canva_ClientId is missing in Config.&quot;)&#xA;&#xA;Dim postParams As New Dictionary(Of String, String)()&#xA;postParams.Add(&quot;grant_type&quot;, &quot;refresh_token&quot;)&#xA;postParams.Add(&quot;refresh_token&quot;, refreshToken)&#xA;postParams.Add(&quot;client_id&quot;, clientId)&#xA;&#xA;Dim client As New System.Net.Http.HttpClient()&#xA;client.Timeout = TimeSpan.FromSeconds(30)&#xA;If Not String.IsNullOrWhiteSpace(clientSecret) Then&#xA;    Dim authBytes As Byte() = System.Text.Encoding.UTF8.GetBytes(clientId + &quot;:&quot; + clientSecret)&#xA;    Dim authBase64 As String = Convert.ToBase64String(authBytes)&#xA;    client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Basic &quot; + authBase64)&#xA;End If&#xA;&#xA;Dim postBody As New System.Net.Http.FormUrlEncodedContent(postParams)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.PostAsync(&quot;https://api.canva.com/rest/v1/oauth/token&quot;, postBody).Result&#xA;Dim body As String = response.Content.ReadAsStringAsync().Result&#xA;&#xA;If Not response.IsSuccessStatusCode Then&#xA;    If CInt(response.StatusCode) = 400 AndAlso body.ToLowerInvariant().Contains(&quot;invalid_grant&quot;) Then&#xA;        Dim scriptPath As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Scripts\canva_reauth.ps1&quot;)&#xA;        If Not System.IO.File.Exists(scriptPath) Then Throw New Exception(&quot;Refresh token revoked and reauth script not found: &quot; + scriptPath)&#xA;        Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;        psi.FileName = &quot;powershell.exe&quot;&#xA;        psi.Arguments = &quot;-ExecutionPolicy Bypass -File &quot;&quot;&quot; + scriptPath + &quot;&quot;&quot;&quot;&#xA;        psi.UseShellExecute = True&#xA;        Dim p As System.Diagnostics.Process = System.Diagnostics.Process.Start(psi)&#xA;        p.WaitForExit()&#xA;        Dim newJson As String = System.IO.File.ReadAllText(tokenFilePath)&#xA;        Dim newObj As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(newJson)&#xA;        Dim freshAccess As String = If(newObj(&quot;access_token&quot;) IsNot Nothing, newObj(&quot;access_token&quot;).ToString(), String.Empty)&#xA;        If String.IsNullOrWhiteSpace(freshAccess) Then Throw New Exception(&quot;Re-auth completed but access_token is missing in token file.&quot;)&#xA;        out_NewToken = freshAccess&#xA;    Else&#xA;        Throw New Exception(&quot;Refresh failed [&quot; + CInt(response.StatusCode).ToString() + &quot;]: &quot; + body)&#xA;    End If&#xA;Else&#xA;    Dim respObj As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(body)&#xA;    Dim newToken As New Newtonsoft.Json.Linq.JObject()&#xA;    newToken(&quot;access_token&quot;) = respObj(&quot;access_token&quot;).ToString()&#xA;    newToken(&quot;token_type&quot;) = &quot;Bearer&quot;&#xA;    newToken(&quot;created_at&quot;) = DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)&#xA;    newToken(&quot;expires_in&quot;) = respObj(&quot;expires_in&quot;).ToString()&#xA;    If respObj(&quot;refresh_token&quot;) IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(respObj(&quot;refresh_token&quot;).ToString()) Then&#xA;        newToken(&quot;refresh_token&quot;) = respObj(&quot;refresh_token&quot;).ToString()&#xA;    Else&#xA;        newToken(&quot;refresh_token&quot;) = refreshToken&#xA;    End If&#xA;    newToken(&quot;expires_at&quot;) = DateTime.Now.AddSeconds(CDbl(respObj(&quot;expires_in&quot;).ToString())).ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)&#xA;    System.IO.File.WriteAllText(tokenFilePath, newToken.ToString(), System.Text.Encoding.UTF8)&#xA;    out_NewToken = respObj(&quot;access_token&quot;).ToString()&#xA;End If" DisplayName="Refresh Token via OAuth" sap:VirtualizedContainerService.HintSize="415.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Refresh">
             <ui:InvokeCode.Arguments>
               <InArgument x:TypeArguments="scg:Dictionary(x:String, x:Object)" x:Key="in_Config">[in_ConfigDictionary]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Secret">[String.Empty]</InArgument>
-              <OutArgument x:TypeArguments="x:String" x:Key="out_NewToken">[str_Token]</OutArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Secret">[If(in_ConfigDictionary.ContainsKey("Canva_ClientSecret"), in_ConfigDictionary("Canva_ClientSecret").ToString(), String.Empty)]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_NewToken">[strToken]</OutArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
-          <ui:LogMessage DisplayName="Log Refresh Success" sap:VirtualizedContainerService.HintSize="415.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_RefreshOK" Level="Info" Message="[&quot;CanvaAuth: Token refreshed successfully. New length: &quot; + str_Token.Length.ToString]" />
+          <ui:LogMessage DisplayName="Log Refresh Success" sap:VirtualizedContainerService.HintSize="415.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_RefreshOK" Level="Info" Message="[&quot;CanvaAuth: Token refreshed successfully. New length: &quot; + strToken.Length.ToString]" />
           <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim client As New System.Net.Http.HttpClient()&#xA;client.DefaultRequestHeaders.Add(&quot;Authorization&quot;, &quot;Bearer &quot; + in_Token)&#xA;Dim response As System.Net.Http.HttpResponseMessage = client.GetAsync(in_Url).Result&#xA;out_Code = CInt(response.StatusCode)&#xA;out_Body = response.Content.ReadAsStringAsync().Result" DisplayName="Re-validate Refreshed Token" sap:VirtualizedContainerService.HintSize="415.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_Revalidate">
             <ui:InvokeCode.Arguments>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Token">[str_Token]</InArgument>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Url">[str_ApiBaseUrl + &quot;/users/me&quot;]</InArgument>
-              <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[int_StatusCode]</OutArgument>
-              <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[str_ResponseBody]</OutArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Token">[strToken]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Url">[strApiBaseUrl + "/users/me"]</InArgument>
+              <OutArgument x:TypeArguments="x:Int32" x:Key="out_Code">[intStatusCode]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_Body">[strResponseBody]</OutArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
-          <If Condition="[int_StatusCode &lt;&gt; 200]" DisplayName="If Refresh Also Failed" sap:VirtualizedContainerService.HintSize="415.2,200" sap2010:WorkflowViewState.IdRef="If_RefreshFail">
+          <If Condition="[intStatusCode &lt;&gt; 200]" DisplayName="If Refresh Also Failed" sap:VirtualizedContainerService.HintSize="415.2,200" sap2010:WorkflowViewState.IdRef="If_RefreshFail">
             <If.Then>
-              <Throw DisplayName="Throw Auth Error" Exception="[New System.Exception(&quot;Canva token invalid even after refresh. Status: &quot; + int_StatusCode.ToString + &quot; Response: &quot; + str_ResponseBody)]" sap:VirtualizedContainerService.HintSize="381.6,136" sap2010:WorkflowViewState.IdRef="Throw_1" />
+              <Throw DisplayName="Throw Auth Error" Exception="[New System.Exception(&quot;Canva token invalid even after refresh. Status: &quot; + intStatusCode.ToString + &quot; Response: &quot; + strResponseBody)]" sap:VirtualizedContainerService.HintSize="381.6,136" sap2010:WorkflowViewState.IdRef="Throw_1" />
             </If.Then>
           </If>
         </Sequence>
@@ -120,7 +154,7 @@
         <OutArgument x:TypeArguments="x:String">[out_AccessToken]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[str_Token]</InArgument>
+        <InArgument x:TypeArguments="x:String">[strToken]</InArgument>
       </Assign.Value>
     </Assign>
     <ui:LogMessage DisplayName="Log Auth Complete" sap:VirtualizedContainerService.HintSize="483.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;CanvaAuth: Authentication validated successfully&quot;]" />

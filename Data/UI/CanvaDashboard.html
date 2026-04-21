@@ -1,10 +1,22 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canva Poster Dashboard</title>
+    <title>Job Posting</title>
     <style>
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
         :root { 
             --primary: #ffd700; 
             --primary-hover: #ffc400; 
@@ -18,7 +30,7 @@
         body { 
             margin: 0; 
             padding: 20px; 
-            font-family: Segoe UI, Arial, sans-serif; 
+            font-family: 'BR Omega', 'Segoe UI', Arial, sans-serif; 
             background: var(--bg); 
             color: var(--text); 
             display: flex; 
@@ -72,6 +84,7 @@
             border-radius: 6px;
             font-size: 11px;
             font-weight: 800;
+            color: #000;
         }
         
         .mode-options { 
@@ -125,7 +138,7 @@
         .job-item.selected { border-color: var(--primary); background: #eff6ff; }
         .job-item input { width: 20px; height: 20px; accent-color: var(--primary); }
 
-        textarea, select { 
+        textarea { 
             width: 100%; 
             border: 1px solid var(--border); 
             border-radius: 10px; 
@@ -134,8 +147,54 @@
             font-family: inherit; 
             background: #fff; 
         }
-        textarea:focus, select:focus { outline: none; border-color: var(--primary); }
-        
+        textarea:focus { outline: none; border-color: var(--primary); }
+
+        /* Custom dropdown (avoids native Win32 combo-box popup that breaks window polling) */
+        .cdd-wrap { position: relative; }
+        .cdd-trigger {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 15px;
+            font-family: inherit;
+            background: #fff;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            color: #111827;
+        }
+        .cdd-trigger:focus, .cdd-wrap.open .cdd-trigger { outline: none; border-color: var(--primary); }
+        .cdd-arrow { font-size: 12px; color: #64748b; margin-left: 8px; transition: transform .15s ease; }
+        .cdd-wrap.open .cdd-arrow { transform: rotate(180deg); }
+        .cdd-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 6px 18px rgba(0,0,0,.10);
+            display: none;
+        }
+        .cdd-wrap.open .cdd-list { display: block; }
+        .cdd-option {
+            padding: 10px 14px;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid #f1f5f9;
+            user-select: none;
+        }
+        .cdd-option:last-child { border-bottom: none; }
+        .cdd-option:hover, .cdd-option.active { background: #eff6ff; }
+        .cdd-option.placeholder { color: #64748b; }
+
         .footer { 
             margin-top: 24px; 
             border-top: 1px solid var(--border); 
@@ -160,13 +219,13 @@
 </head>
 <body>
     <div class="container">
-        <div class="header"><h1>Canva Dashboard</h1></div>
+        <div class="header"><h1>Job Posting</h1></div>
 
         <div class="section">
             <div class="section-title"><span class="num">1</span>Operational Mode</div>
             <div class="mode-options">
                 <div class="mode-card active" id="modeAuto" onclick="setMode('Auto')">
-                    <strong>Auto-Sync</strong><small>Emails_Local.xlsx</small>
+                    <strong>Auto-Sync</strong><small>Recruitment Lead Email</small>
                 </div>
                 <div class="mode-card" id="modeManual" onclick="setMode('Manual')">
                     <strong>Manual</strong><small>Enter Emails</small>
@@ -189,13 +248,18 @@
             <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:15px; margin-bottom:15px;">
                 <div>
                     <label style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Select Poster Template</label>
-                    <select id="templateSelect">
-                        <option value="">-- Choose Template --</option>
-                    </select>
+                    <div class="cdd-wrap" id="templateSelect" data-value="">
+                        <button type="button" class="cdd-trigger" id="cddTrigger">
+                            <span id="cddDisplay">-- Choose Template --</span>
+                            <span class="cdd-arrow">&#9662;</span>
+                        </button>
+                        <div class="cdd-list" id="cddList"></div>
+                    </div>
                 </div>
                 <div id="emailContainer" style="display:none;">
-                    <label style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Custom Emails (;)</label>
-                    <textarea id="targetEmails" style="height:44px; padding:8px; font-size:13px;" placeholder="me@test.com; you@test.com"></textarea>
+                    <label for="targetEmails" style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Recipient Emails</label>
+                    <textarea id="targetEmails" style="height:44px; padding:8px; font-size:13px;" placeholder="alice@company.com; bob@company.com"></textarea>
+                    <div style="font-size:11px; color:#64748b; margin-top:4px;">Separate multiple emails with a semicolon <code style="background:#f1f5f9; padding:1px 5px; border-radius:4px;">;</code></div>
                 </div>
             </div>
             <div id="modeHint" style="font-size:11px; color:#64748b; font-style:italic;">
@@ -204,7 +268,7 @@
         </div>
 
         <div class="footer">
-            <button class="btn btn-cancel" onclick="finish(false)">Cancel</button>
+            <button class="btn btn-cancel" onclick="cancelFlow()">Cancel</button>
             <button class="btn btn-continue" onclick="finish(true)">Continue & Generate</button>
         </div>
     </div>
@@ -217,10 +281,88 @@
 
         const SESSION_ID = getQueryParam('session') || 'default';
         document.title = "CANVA_DASHBOARD::" + SESSION_ID;
+        let isFinishing = false;
+
+        // Custom dropdown helper (replaces native <select> to avoid OS-level popup
+        // that breaks Process.MainWindowHandle/Title polling).
+        const CDD = {
+            options: [],
+            get value() {
+                return document.getElementById('templateSelect').getAttribute('data-value') || '';
+            },
+            set value(v) {
+                document.getElementById('templateSelect').setAttribute('data-value', v || '');
+            },
+            setOptions(opts, placeholderText) {
+                this.options = opts.slice();
+                const list = document.getElementById('cddList');
+                list.innerHTML = '';
+                const placeholder = { value: '', text: placeholderText || '-- Choose Template --', placeholder: true };
+                [placeholder].concat(opts).forEach(o => {
+                    const row = document.createElement('div');
+                    row.className = 'cdd-option' + (o.placeholder ? ' placeholder' : '');
+                    row.textContent = o.text;
+                    row.setAttribute('data-val', o.value);
+                    row.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        CDD.select(o.value, o.text);
+                    });
+                    list.appendChild(row);
+                });
+                // Preserve current selection if still available; otherwise reset.
+                const current = this.value;
+                const stillValid = opts.some(o => o.value === current);
+                if (!stillValid) {
+                    this.select('', placeholder.text);
+                } else {
+                    // Refresh display text in case title changed
+                    const match = opts.find(o => o.value === current);
+                    if (match) this.select(match.value, match.text);
+                }
+            },
+            select(v, t) {
+                this.value = v;
+                document.getElementById('cddDisplay').textContent = t;
+                this.close();
+                // Mark active item
+                document.querySelectorAll('#cddList .cdd-option').forEach(el => {
+                    el.classList.toggle('active', el.getAttribute('data-val') === v);
+                });
+            },
+            open() {
+                document.getElementById('templateSelect').classList.add('open');
+            },
+            close() {
+                document.getElementById('templateSelect').classList.remove('open');
+            },
+            toggle() {
+                const w = document.getElementById('templateSelect');
+                if (w.classList.contains('open')) this.close();
+                else this.open();
+            }
+        };
+
+        function warnBeforeClose(event) {
+            if (isFinishing) return;
+            event.preventDefault();
+            event.returnValue = " ";
+            return " ";
+        }
+
+        function signalCancelOnClose() {
+            if (isFinishing) return;
+            isFinishing = true;
+            const sid = getQueryParam('session') || 'default';
+            document.title = "RESULT::" + sid + "::CANCEL";
+        }
+        window.onbeforeunload = warnBeforeClose;
+        window.addEventListener("beforeunload", warnBeforeClose);
+        window.addEventListener("pagehide", signalCancelOnClose);
 
         let currentMode = 'Auto';
         let jobOptions = [];
-        let templateOptions = []; // {id, title}
+        let templateOptions = []; // {id, title, group}
+        let lastTargetTag = '';
 
         // Data from Robot injection: global_jobs, global_templates
         
@@ -232,17 +374,30 @@
                 renderJobs();
             }
 
-            // Load Templates from format "id|title;id|title"
+            // Load Templates from format "id|title|group;id|title|group"
             const tplRaw = typeof global_templates !== 'undefined' ? global_templates : (getQueryParam('templates') || '');
             if (tplRaw) {
                 tplRaw.split(';').forEach(entry => {
                     const parts = entry.split('|');
-                    if (parts.length >= 2) {
-                        templateOptions.push({ id: parts[0], title: parts[1] });
+                    if (parts.length >= 2 && parts[0]) {
+                        let title = parts[1] || 'Untitled';
+                        try { title = decodeURIComponent(title); } catch (e) {}
+                        const rawGroup = parts.length >= 3 ? (parts[2] || '') : '';
+                        const inferredGroup = normalizeTemplateGroup(rawGroup || title);
+                        templateOptions.push({ id: parts[0], title: title, group: inferredGroup });
                     }
                 });
             }
-            updateUI(); // Initial count and filter
+            updateUI('init'); // Initial count and filter
+        }
+
+        function normalizeTemplateGroup(text) {
+            const t = (text || '').toUpperCase().replace(/\s+/g, '_');
+            if (t.startsWith('G_') || t.startsWith('GROUP_')) return 'GROUP';
+            if (t.startsWith('I_') || t.startsWith('INDIVIDUAL_') || t.startsWith('INVIDUAL_')) return 'INDIVIDUAL';
+            if (t.includes('GROUP_TEMPLATE') || t.includes('GROUP')) return 'GROUP';
+            if (t.includes('INVIDUAL_TEMPLATE') || t.includes('INDIVIDUAL_TEMPLATE') || t.includes('INDIVIDUAL') || t.includes('SINGLE')) return 'INDIVIDUAL';
+            return '';
         }
 
         function renderJobs() {
@@ -254,15 +409,28 @@
                 item.onclick = (e) => {
                     if (e.target.tagName !== 'INPUT') toggleJob(i);
                 };
-                item.innerHTML = `<input type="checkbox" name="jobId" value="${job}" id="job_${i}" onchange="updateUI()"> <label>${job}</label>`;
+                item.innerHTML = `<input type="checkbox" name="jobId" value="${job}" id="job_${i}" onchange="onJobCheckboxChange(${i})"> <label>${job}</label>`;
                 grid.appendChild(item);
             });
+        }
+
+        function onJobCheckboxChange(idx) {
+            const cb = document.getElementById('job_' + idx);
+            const isAll = cb && cb.value && cb.value.toUpperCase() === 'ALL';
+            updateUI(isAll ? 'all_toggle' : 'job_toggle');
         }
 
         function toggleJob(idx) {
             const cb = document.getElementById('job_' + idx);
             cb.checked = !cb.checked;
-            updateUI();
+            onJobCheckboxChange(idx);
+        }
+
+        function setAllJobs(checked) {
+            const checks = document.getElementsByName('jobId');
+            for (let c of checks) {
+                if (c.value.toUpperCase() !== 'ALL') c.checked = checked;
+            }
         }
 
         function setMode(mode) {
@@ -272,67 +440,139 @@
             document.getElementById('emailContainer').style.display = mode === 'Manual' ? 'block' : 'none';
         }
 
-        function updateUI() {
+        function updateUI(trigger) {
             const checks = document.getElementsByName('jobId');
-            let count = 0;
-            let hasAll = false;
-            
+            let allCb = null;
+            const individual = [];
+
             for (let c of checks) {
-                if (c.checked) {
-                    if (c.value.toUpperCase() === 'ALL') {
-                        hasAll = true;
-                    } else {
-                        count++;
-                    }
+                if (c.value.toUpperCase() === 'ALL') {
+                    allCb = c;
+                } else {
+                    individual.push(c);
                 }
-                c.parentNode.className = c.checked ? 'job-item selected' : 'job-item';
             }
 
-            // ALL logic: if ALL is selected, we assume Group mode (summary)
-            const actualCount = hasAll ? 2 : count;
-            document.getElementById('countDisplay').innerText = (hasAll ? "ALL" : count) + " SELECTED";
+            if (allCb && trigger === 'all_toggle') {
+                setAllJobs(allCb.checked);
+            }
 
-            const targetTag = actualCount >= 2 ? "GROUP" : "INDIVIDUAL";
+            if (allCb && trigger !== 'all_toggle') {
+                const allChecked = individual.length > 0 && individual.every(c => c.checked);
+                allCb.checked = allChecked;
+            }
+
+            const count = individual.filter(c => c.checked).length;
             
+            for (let c of checks) {
+                if(c.parentNode) c.parentNode.className = c.checked ? 'job-item selected' : 'job-item';
+            }
+
+            document.getElementById('countDisplay').innerText = count + " SELECTED";
+
+            const targetTag = count >= 2 ? "GROUP" : "INDIVIDUAL";
+            
+            // Optimization: Skip DOM rebuild if template list doesn't need to change
+            if (targetTag === lastTargetTag && trigger !== 'init') return;
+            
+            // Re-check: only update if options are truly different or first time
+            lastTargetTag = targetTag;
+
             // Filter Templates
-            const ddl = document.getElementById('templateSelect');
-            const currentVal = ddl.value;
-            ddl.innerHTML = '<option value="">-- Choose ' + targetTag + ' Template --</option>';
-            
+            const preferred = [];
+            const fallbackByUnknown = [];
+
             templateOptions.forEach(tpl => {
-                const t = tpl.title.toUpperCase();
-                // Filter: If count >= 2, only show things with "GROUP" in name. 
-                // If count == 1, only show things with "INDIVIDUAL" (or just show all those NOT containing group).
-                const isGroup = t.includes("GROUP") || t.includes("SUMMARY");
-                const isIndividual = t.includes("INDIVIDUAL") || t.includes("SINGLE");
+                const t = (tpl.title || '').toUpperCase();
+                const isGroup = tpl.group === 'GROUP' || t.includes("GROUP");
+                const isIndividual = tpl.group === 'INDIVIDUAL' || t.includes("INDIVIDUAL") || t.includes("INVIDUAL") || t.includes("SINGLE");
                 
                 let show = false;
-                if (actualCount >= 2) {
-                    if (isGroup) show = true;
+                if (count >= 2) {
+                    show = isGroup;
                 } else {
-                    if (isIndividual) show = true;
-                    // Fallback: if user hasn't tagged their templates well, show those that aren't group
-                    if (!isGroup && !isIndividual) show = true; 
+                    show = isIndividual;
                 }
 
-                if (show) {
-                    const opt = document.createElement('option');
-                    opt.value = tpl.id;
-                    opt.innerText = tpl.title;
-                    if (tpl.id === currentVal) opt.selected = true;
-                    ddl.appendChild(opt);
-                }
+                if (show) preferred.push(tpl);
+                else if (!isGroup && !isIndividual) fallbackByUnknown.push(tpl);
             });
+
+            const finalList = preferred.length > 0 ? preferred : (fallbackByUnknown.length > 0 ? fallbackByUnknown : templateOptions);
+
+            const cddOpts = finalList.map(tpl => ({ value: tpl.id, text: tpl.title }));
+            CDD.setOptions(cddOpts, '-- Choose ' + targetTag + ' Template --');
+
+            const modeHint = document.getElementById('modeHint');
+            if (templateOptions.length === 0) {
+                modeHint.innerText = "* No templates found.";
+            } else if (preferred.length === 0) {
+                modeHint.innerText = "* No exact " + targetTag + " match. Showing all available templates.";
+            } else {
+                modeHint.innerText = "* System filtering for " + targetTag + " mode templates.";
+            }
+        }
+
+        // Write the same marker to the clipboard. The robot polls both window-title
+        // and clipboard, so it can still pick up the result even when Teams screen
+        // sharing / focus changes break Process.MainWindowTitle detection.
+        function writeResultToClipboard(marker) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(marker).catch(function(e){ console.warn('clipboard write failed', e); });
+                } else {
+                    // Legacy fallback: textarea + execCommand('copy').
+                    const ta = document.createElement('textarea');
+                    ta.value = marker;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.focus(); ta.select();
+                    try { document.execCommand('copy'); } catch (_) {}
+                    document.body.removeChild(ta);
+                }
+            } catch (e) { console.warn('clipboard write exception', e); }
+        }
+
+        // Best-effort self-close. Edge --app windows allow window.close() in most
+        // cases. We also strip beforeunload handlers so no confirm dialog blocks.
+        function selfCloseSoon(delayMs) {
+            setTimeout(function () {
+                try { window.onbeforeunload = null; } catch (_) {}
+                try { window.removeEventListener('beforeunload', warnBeforeClose); } catch (_) {}
+                try { window.removeEventListener('pagehide', signalCancelOnClose); } catch (_) {}
+                try { window.close(); } catch (_) {}
+                // Fallback: blank out the page so even if close is denied the user
+                // sees a clear "done" state instead of the same dashboard.
+                setTimeout(function () {
+                    try {
+                        document.body.innerHTML =
+                            '<div style="font-family:sans-serif;padding:40px;text-align:center;color:#444">' +
+                            '<h2>Done. You can close this window.</h2>' +
+                            '<p>The robot has picked up your selection and is now generating posters.</p>' +
+                            '</div>';
+                    } catch (_) {}
+                }, 800);
+            }, delayMs);
         }
 
         function finish(success) {
             if (!success) {
+                isFinishing = true;
+                const marker = "CANVA_RESULT::" + SESSION_ID + "::CANCEL";
+                writeResultToClipboard(marker);
                 document.title = "RESULT::" + SESSION_ID + "::CANCEL";
+                selfCloseSoon(700);
                 return;
             }
 
-            const templateId = document.getElementById('templateSelect').value;
-            if (!templateId) return alert("Please select a template.");
+            const templateId = CDD.value;
+            const hint = document.getElementById('modeHint');
+            if (!templateId) {
+                hint.style.color = 'red';
+                hint.innerText = "Error: Please select a template.";
+                return;
+            }
 
             const targetEmails = currentMode === 'Manual' ? document.getElementById('targetEmails').value : "";
             
@@ -340,18 +580,69 @@
             const checks = document.getElementsByName('jobId');
             for(let c of checks) if(c.checked) selected.push(c.value);
 
-            if (selected.length === 0) return alert("Please select at least one job.");
+            if (selected.length === 0) {
+                hint.style.color = 'red';
+                hint.innerText = "Error: Please select at least one job.";
+                return;
+            }
             
+            isFinishing = true;
             const result = JSON.stringify({
-                templateId: templateId,
-                targetEmails: targetEmails,
-                jobs: selected.join(';')
+                t: templateId,
+                e: targetEmails,
+                j: selected.join(';')
             });
 
-            document.title = "RESULT::" + SESSION_ID + "::" + encodeURIComponent(result);
+            const encoded = encodeURIComponent(result);
+            const marker = "CANVA_RESULT::" + SESSION_ID + "::" + encoded;
+            writeResultToClipboard(marker);
+            document.title = "RESULT::" + SESSION_ID + "::" + encoded;
+            // Give the robot ~700 ms to pick the result up, then auto-close.
+            selfCloseSoon(700);
         }
 
-        window.onload = init;
+        function cancelFlow() {
+            const confirmed = confirm("You chose Cancel. The workflow will stop now. Are you sure?");
+            if (confirmed) {
+                finish(false);
+            }
+        }
+
+        // Wire up custom dropdown trigger + outside-click close.
+        document.addEventListener('click', (ev) => {
+            const wrap = document.getElementById('templateSelect');
+            if (!wrap) return;
+            const trigger = document.getElementById('cddTrigger');
+            if (trigger && trigger.contains(ev.target)) {
+                ev.stopPropagation();
+                CDD.toggle();
+                return;
+            }
+            if (!wrap.contains(ev.target)) {
+                CDD.close();
+            }
+        });
+
+        // Initialize once DOM is ready AND the sidecar data script has loaded (or errored).
+        let __domReady = false, __dataReady = false;
+        function __tryInit() {
+            if (__domReady && __dataReady) init();
+        }
+        document.addEventListener('DOMContentLoaded', () => { __domReady = true; __tryInit(); });
+
+        (function loadDataScript() {
+            // Sidecar file is rewritten by the robot right before every launch.
+            // Cache-bust with session + timestamp so we never read a stale copy.
+            const sess = getQueryParam('session') || ('t' + Date.now());
+            const s = document.createElement('script');
+            s.src = 'canvadashboard_data.js?s=' + encodeURIComponent(sess) + '&t=' + Date.now();
+            s.onload = () => { __dataReady = true; __tryInit(); };
+            s.onerror = () => { __dataReady = true; __tryInit(); };
+            document.head.appendChild(s);
+            // Safety net: init anyway after 5s if neither load nor error fires.
+            setTimeout(() => { if (!__dataReady) { __dataReady = true; __tryInit(); } }, 5000);
+        })();
     </script>
 </body>
 </html>
+
