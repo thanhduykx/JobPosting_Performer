@@ -57,6 +57,11 @@
       <Variable x:TypeArguments="x:String" Name="strReportPath" />
       <Variable x:TypeArguments="x:String" Name="strTimestamp" />
       <Variable x:TypeArguments="x:String" Default="Data\Output\Reports" Name="strReportFolder" />
+      <Variable x:TypeArguments="x:String" Default="JobPosting_Report" Name="strReportFileBaseName" />
+      <Variable x:TypeArguments="x:String" Default="Report" Name="strReportSheetName" />
+      <Variable x:TypeArguments="x:String" Default="Summary" Name="strReportSummarySheetName" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_ReportExport" />
+      <Variable x:TypeArguments="sd:DataTable" Name="dt_Summary" />
     </Sequence.Variables>
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -72,22 +77,74 @@
         <InArgument x:TypeArguments="x:String">[DateTime.Now.ToString("yyyy-MM-dd_HH-mm")]</InArgument>
       </Assign.Value>
     </Assign>
+    <Assign DisplayName="Get Report Folder" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_ReportFolder">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[strReportFolder]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary IsNot Nothing AndAlso in_ConfigDictionary.ContainsKey("Report_OutputFolder") AndAlso Not String.IsNullOrWhiteSpace(Convert.ToString(in_ConfigDictionary("Report_OutputFolder"))), Convert.ToString(in_ConfigDictionary("Report_OutputFolder")), strReportFolder)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Get Report File Base Name" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_ReportFileBaseName">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[strReportFileBaseName]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary IsNot Nothing AndAlso in_ConfigDictionary.ContainsKey("Report_FileBaseName") AndAlso Not String.IsNullOrWhiteSpace(Convert.ToString(in_ConfigDictionary("Report_FileBaseName"))), Convert.ToString(in_ConfigDictionary("Report_FileBaseName")), strReportFileBaseName)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Get Report Sheet Name" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_ReportSheetName">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[strReportSheetName]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary IsNot Nothing AndAlso in_ConfigDictionary.ContainsKey("Report_SheetName") AndAlso Not String.IsNullOrWhiteSpace(Convert.ToString(in_ConfigDictionary("Report_SheetName"))), Convert.ToString(in_ConfigDictionary("Report_SheetName")), strReportSheetName)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Get Report Summary Sheet Name" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_ReportSummarySheetName">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[strReportSummarySheetName]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[If(in_ConfigDictionary IsNot Nothing AndAlso in_ConfigDictionary.ContainsKey("Report_SummarySheetName") AndAlso Not String.IsNullOrWhiteSpace(Convert.ToString(in_ConfigDictionary("Report_SummarySheetName"))), Convert.ToString(in_ConfigDictionary("Report_SummarySheetName")), strReportSummarySheetName)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Resolve + Ensure Report Folder" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_EnsureReportFolder">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[strReportFolder]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[System.IO.Directory.CreateDirectory(If(System.IO.Path.IsPathRooted(strReportFolder), strReportFolder, System.IO.Path.GetFullPath(System.IO.Path.Combine(Environment.CurrentDirectory, strReportFolder)))).FullName]</InArgument>
+      </Assign.Value>
+    </Assign>
     <Assign DisplayName="Build Report Path" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_2">
       <Assign.To>
         <OutArgument x:TypeArguments="x:String">[strReportPath]</OutArgument>
       </Assign.To>
       <Assign.Value>
-        <InArgument x:TypeArguments="x:String">[Path.Combine(strReportFolder, strTimestamp + "_JobPosting_Report.xlsx")]</InArgument>
+        <InArgument x:TypeArguments="x:String">[Path.Combine(strReportFolder, strTimestamp + "_" + strReportFileBaseName + ".xlsx")]</InArgument>
       </Assign.Value>
     </Assign>
-    <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not System.IO.Directory.Exists(in_Folder) Then&#xA;    System.IO.Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Ensure Reports Folder" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_EnsureReportsFolder">
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="dt_Report = New System.Data.DataTable(&quot;Report&quot;)&#xA;dt_SummaryOut = New System.Data.DataTable(&quot;Summary&quot;)&#xA;dt_SummaryOut.Columns.Add(&quot;Metric&quot;, GetType(String))&#xA;dt_SummaryOut.Columns.Add(&quot;Value&quot;, GetType(String))&#xA;&#xA;If in_Report Is Nothing Then Return&#xA;&#xA;dt_Report = in_Report.Copy()&#xA;Dim extraCols As String() = {&quot;EmailDeliveryStatus&quot;, &quot;EmailFailureCategory&quot;, &quot;EmailFailureCodes&quot;, &quot;EmailRetryRecommendation&quot;, &quot;EmailFailureSummary&quot;}&#xA;For Each colName As String In extraCols&#xA;    If Not dt_Report.Columns.Contains(colName) Then&#xA;        dt_Report.Columns.Add(colName, GetType(String))&#xA;    End If&#xA;Next&#xA;&#xA;Dim totalRows As Integer = dt_Report.Rows.Count&#xA;Dim emailRows As Integer = 0&#xA;Dim completeCount As Integer = 0&#xA;Dim partialCount As Integer = 0&#xA;Dim failedCount As Integer = 0&#xA;Dim temporaryCount As Integer = 0&#xA;Dim permanentCount As Integer = 0&#xA;Dim invalidCount As Integer = 0&#xA;Dim policyCount As Integer = 0&#xA;&#xA;Dim knownMap As New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase) From {&#xA;    {&quot;421&quot;, &quot;421 Gmail server temporarily unavailable&quot;},&#xA;    {&quot;450&quot;, &quot;450 Recipient mailbox busy or unavailable&quot;},&#xA;    {&quot;451&quot;, &quot;451 Temporary server processing issue&quot;},&#xA;    {&quot;452&quot;, &quot;452 Recipient mailbox storage full&quot;},&#xA;    {&quot;550&quot;, &quot;550 Recipient address does not exist&quot;},&#xA;    {&quot;551&quot;, &quot;551 Recipient does not accept this email&quot;},&#xA;    {&quot;552&quot;, &quot;552 Message exceeded mailbox size limit&quot;},&#xA;    {&quot;553&quot;, &quot;553 Recipient email address invalid&quot;},&#xA;    {&quot;554&quot;, &quot;554 Message rejected by spam or policy rules&quot;}&#xA;}&#xA;&#xA;For Each row As System.Data.DataRow In dt_Report.Rows&#xA;    Dim recipientsTotal As Integer = 0&#xA;    Dim recipientsSent As Integer = 0&#xA;    Dim recipientsFailed As Integer = 0&#xA;    Integer.TryParse(Convert.ToString(If(dt_Report.Columns.Contains(&quot;RecipientsTotal&quot;), row(&quot;RecipientsTotal&quot;), 0)), recipientsTotal)&#xA;    Integer.TryParse(Convert.ToString(If(dt_Report.Columns.Contains(&quot;RecipientsSent&quot;), row(&quot;RecipientsSent&quot;), 0)), recipientsSent)&#xA;    Integer.TryParse(Convert.ToString(If(dt_Report.Columns.Contains(&quot;RecipientsFailed&quot;), row(&quot;RecipientsFailed&quot;), 0)), recipientsFailed)&#xA;&#xA;    Dim failedText As String = If(dt_Report.Columns.Contains(&quot;FailedToEmails&quot;), Convert.ToString(row(&quot;FailedToEmails&quot;)), &quot;&quot;)&#xA;    Dim statusText As String = If(dt_Report.Columns.Contains(&quot;EmailSent&quot;), Convert.ToString(row(&quot;EmailSent&quot;)), &quot;&quot;)&#xA;    Dim lowerText As String = (failedText + &quot; &quot; + statusText).ToLowerInvariant()&#xA;    Dim codes As New List(Of String)()&#xA;    For Each m As System.Text.RegularExpressions.Match In System.Text.RegularExpressions.Regex.Matches(lowerText, &quot;\b(421|450|451|452|550|551|552|553|554)\b&quot;)&#xA;        If Not codes.Contains(m.Groups(1).Value) Then codes.Add(m.Groups(1).Value)&#xA;    Next&#xA;&#xA;    Dim category As String = &quot;&quot;&#xA;    Dim retryAdvice As String = &quot;&quot;&#xA;    Dim deliveryStatus As String = &quot;&quot;&#xA;    Dim summaryParts As New List(Of String)()&#xA;&#xA;    If recipientsTotal &gt; 0 OrElse Not String.IsNullOrWhiteSpace(statusText) OrElse Not String.IsNullOrWhiteSpace(failedText) Then&#xA;        emailRows += 1&#xA;    End If&#xA;&#xA;    If recipientsTotal &lt;= 0 Then&#xA;        deliveryStatus = &quot;No recipients&quot;&#xA;        category = &quot;NoRecipients&quot;&#xA;        retryAdvice = &quot;NotRequired&quot;&#xA;    ElseIf recipientsFailed &lt;= 0 AndAlso recipientsSent &gt; 0 Then&#xA;        deliveryStatus = &quot;Delivered&quot;&#xA;        category = &quot;Success&quot;&#xA;        retryAdvice = &quot;NotRequired&quot;&#xA;        completeCount += 1&#xA;    ElseIf recipientsSent &gt; 0 Then&#xA;        deliveryStatus = &quot;Partial delivery&quot;&#xA;        partialCount += 1&#xA;    Else&#xA;        deliveryStatus = &quot;Delivery failed&quot;&#xA;        failedCount += 1&#xA;    End If&#xA;&#xA;    If String.IsNullOrWhiteSpace(category) Then&#xA;        If codes.Any(Function(c) c = &quot;421&quot; OrElse c = &quot;450&quot; OrElse c = &quot;451&quot; OrElse c = &quot;452&quot;) Then&#xA;            category = &quot;TemporaryFailure&quot;&#xA;            retryAdvice = &quot;RetryLater&quot;&#xA;            temporaryCount += 1&#xA;        ElseIf codes.Any(Function(c) c = &quot;553&quot;) OrElse lowerText.Contains(&quot;invalid email format&quot;) Then&#xA;            category = &quot;InvalidAddress&quot;&#xA;            retryAdvice = &quot;FixEmailAddress&quot;&#xA;            invalidCount += 1&#xA;            permanentCount += 1&#xA;        ElseIf codes.Any(Function(c) c = &quot;554&quot;) Then&#xA;            category = &quot;RejectedPolicy&quot;&#xA;            retryAdvice = &quot;ReviewContentOrPolicy&quot;&#xA;            policyCount += 1&#xA;            permanentCount += 1&#xA;        ElseIf codes.Any(Function(c) c = &quot;550&quot; OrElse c = &quot;551&quot; OrElse c = &quot;552&quot;) Then&#xA;            category = &quot;PermanentFailure&quot;&#xA;            retryAdvice = If(codes.Contains(&quot;552&quot;), &quot;ReviewAttachmentSize&quot;, &quot;DoNotRetry&quot;)&#xA;            permanentCount += 1&#xA;        ElseIf recipientsFailed &gt; 0 Then&#xA;            category = &quot;UnknownFailure&quot;&#xA;            retryAdvice = &quot;ReviewAndRetry&quot;&#xA;        ElseIf recipientsSent &gt; 0 Then&#xA;            category = &quot;Success&quot;&#xA;            retryAdvice = &quot;NotRequired&quot;&#xA;        Else&#xA;            category = &quot;NotApplicable&quot;&#xA;            retryAdvice = &quot;NotRequired&quot;&#xA;        End If&#xA;    End If&#xA;&#xA;    If codes.Count &gt; 0 Then&#xA;        For Each code As String In codes&#xA;            If knownMap.ContainsKey(code) Then summaryParts.Add(knownMap(code))&#xA;        Next&#xA;    ElseIf lowerText.Contains(&quot;invalid email format&quot;) Then&#xA;        summaryParts.Add(&quot;553 Recipient email address invalid&quot;)&#xA;    ElseIf recipientsFailed &gt; 0 Then&#xA;        summaryParts.Add(If(String.IsNullOrWhiteSpace(failedText), &quot;Unclassified delivery failure&quot;, failedText))&#xA;    ElseIf recipientsSent &gt; 0 Then&#xA;        summaryParts.Add(&quot;All recipients accepted the email request.&quot;)&#xA;    End If&#xA;&#xA;    row(&quot;EmailDeliveryStatus&quot;) = deliveryStatus&#xA;    row(&quot;EmailFailureCategory&quot;) = category&#xA;    row(&quot;EmailFailureCodes&quot;) = String.Join(&quot;, &quot;, codes)&#xA;    row(&quot;EmailRetryRecommendation&quot;) = retryAdvice&#xA;    row(&quot;EmailFailureSummary&quot;) = String.Join(&quot; | &quot;, summaryParts.Distinct())&#xA;Next&#xA;&#xA;Dim summaryRows As New List(Of String()) From {&#xA;    New String() {&quot;Generated At&quot;, DateTime.Now.ToString(&quot;yyyy-MM-dd HH:mm:ss&quot;)},&#xA;    New String() {&quot;Poster Rows&quot;, totalRows.ToString()},&#xA;    New String() {&quot;Poster Create Success&quot;, in_Success.ToString()},&#xA;    New String() {&quot;Poster Create Failed&quot;, in_Fail.ToString()},&#xA;    New String() {&quot;Rows With Email Activity&quot;, emailRows.ToString()},&#xA;    New String() {&quot;Email Delivered Rows&quot;, completeCount.ToString()},&#xA;    New String() {&quot;Email Partial Delivery Rows&quot;, partialCount.ToString()},&#xA;    New String() {&quot;Email Failed Rows&quot;, failedCount.ToString()},&#xA;    New String() {&quot;Temporary Email Failures&quot;, temporaryCount.ToString()},&#xA;    New String() {&quot;Permanent Email Failures&quot;, permanentCount.ToString()},&#xA;    New String() {&quot;Invalid Email Addresses&quot;, invalidCount.ToString()},&#xA;    New String() {&quot;Policy / Spam Rejections&quot;, policyCount.ToString()}&#xA;}&#xA;For Each item As String() In summaryRows&#xA;    Dim r = dt_SummaryOut.NewRow()&#xA;    r(&quot;Metric&quot;) = item(0)&#xA;    r(&quot;Value&quot;) = item(1)&#xA;    dt_SummaryOut.Rows.Add(r)&#xA;Next" DisplayName="Build Enhanced Report Tables" sap:VirtualizedContainerService.HintSize="483.2,164.8" sap2010:WorkflowViewState.IdRef="InvokeCode_BuildEnhancedReportTables">
       <ui:InvokeCode.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[strReportFolder]</InArgument>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Report">[in_dt_ReportData]</InArgument>
+        <InArgument x:TypeArguments="x:Int32" x:Key="in_Success">[in_SuccessCount]</InArgument>
+        <InArgument x:TypeArguments="x:Int32" x:Key="in_Fail">[in_FailCount]</InArgument>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="dt_Report">[dt_ReportExport]</OutArgument>
+        <OutArgument x:TypeArguments="sd:DataTable" x:Key="dt_SummaryOut">[dt_Summary]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
     <If Condition="[in_dt_ReportData IsNot Nothing AndAlso in_dt_ReportData.Rows.Count &gt; 0]" DisplayName="If Has Report Data" sap:VirtualizedContainerService.HintSize="483.2,400" sap2010:WorkflowViewState.IdRef="If_1">
       <If.Then>
-        <ui:WriteRange DataTable="[in_dt_ReportData]" DisplayName="Write Report Excel" sap:VirtualizedContainerService.HintSize="449.6,226.4" sap2010:WorkflowViewState.IdRef="WriteRange_1" SheetName="Report" StartingCell="A1" WorkbookPath="[strReportPath]" />
+        <Sequence DisplayName="Write Summary + Detail Sheets" sap:VirtualizedContainerService.HintSize="449.6,352.8" sap2010:WorkflowViewState.IdRef="Sequence_WriteEnhancedReport">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ui:WriteRange DataTable="[dt_Summary]" DisplayName="Write Summary Excel" sap:VirtualizedContainerService.HintSize="416,226.4" sap2010:WorkflowViewState.IdRef="WriteRange_Summary" SheetName="[strReportSummarySheetName]" StartingCell="A1" WorkbookPath="[strReportPath]" />
+          <ui:WriteRange DataTable="[dt_ReportExport]" DisplayName="Write Detail Report Excel" sap:VirtualizedContainerService.HintSize="416,226.4" sap2010:WorkflowViewState.IdRef="WriteRange_1" SheetName="[strReportSheetName]" StartingCell="A1" WorkbookPath="[strReportPath]" />
+        </Sequence>
       </If.Then>
       <If.Else>
         <ui:LogMessage DisplayName="Log No Data" sap:VirtualizedContainerService.HintSize="449.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Report: No report data to write. Skipping Excel export.&quot;]" />

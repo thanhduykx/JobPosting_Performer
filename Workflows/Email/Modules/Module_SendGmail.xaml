@@ -141,7 +141,7 @@
               <OutArgument x:TypeArguments="x:String" x:Key="out_TokenBody">[strTokenBodyForm]</OutArgument>
             </ui:InvokeCode.Arguments>
           </ui:InvokeCode>
-          <If Condition="[String.IsNullOrWhiteSpace(strCfgAccessToken)]" sap:VirtualizedContainerService.HintSize="451.2,654.4" sap2010:WorkflowViewState.IdRef="If_GetToken">
+          <If Condition="[String.IsNullOrWhiteSpace(strCfgAccessToken)]" DisplayName="Use Refresh Token When Access Token Missing" sap:VirtualizedContainerService.HintSize="451.2,654.4" sap2010:WorkflowViewState.IdRef="If_GetToken">
             <If.Then>
               <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="449.6,351.2" sap2010:WorkflowViewState.IdRef="Sequence_GetToken">
                 <sap:WorkflowViewStateService.ViewState>
@@ -203,7 +203,7 @@
               <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
             </ui:HttpClient.UrlSegments>
           </ui:HttpClient>
-          <ui:InvokeCode ContinueOnError="{x:Null}" Code="If in_Status &lt; 200 OrElse in_Status &gt;= 300 Then&#xA;    Throw New Exception(&quot;Gmail send failed [&quot; + in_Status.ToString() + &quot;]: &quot; + in_Response)&#xA;End If" DisplayName="Validate Gmail Send Response" sap:VirtualizedContainerService.HintSize="451.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ValidateSendResponse">
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="If in_Status &lt; 200 OrElse in_Status &gt;= 300 Then&#xA;    Dim normalizedCode As Integer = in_Status&#xA;    Dim category As String = &quot;UnknownFailure&quot;&#xA;    Dim retryAdvice As String = &quot;ReviewAndRetry&quot;&#xA;    Dim messageText As String = &quot;Mail send failed.&quot;&#xA;&#xA;    Select Case normalizedCode&#xA;        Case 421&#xA;            category = &quot;TemporaryFailure&quot;&#xA;            retryAdvice = &quot;RetryLater&quot;&#xA;            messageText = &quot;Gmail server is temporarily unavailable.&quot;&#xA;        Case 450&#xA;            category = &quot;TemporaryFailure&quot;&#xA;            retryAdvice = &quot;RetryLater&quot;&#xA;            messageText = &quot;Recipient mailbox is busy or temporarily unavailable.&quot;&#xA;        Case 451&#xA;            category = &quot;TemporaryFailure&quot;&#xA;            retryAdvice = &quot;RetryLater&quot;&#xA;            messageText = &quot;Temporary server-side processing issue.&quot;&#xA;        Case 452&#xA;            category = &quot;TemporaryFailure&quot;&#xA;            retryAdvice = &quot;RetryLater&quot;&#xA;            messageText = &quot;Recipient mailbox storage is full.&quot;&#xA;        Case 550&#xA;            category = &quot;PermanentFailure&quot;&#xA;            retryAdvice = &quot;DoNotRetry&quot;&#xA;            messageText = &quot;Recipient address does not exist.&quot;&#xA;        Case 551&#xA;            category = &quot;PermanentFailure&quot;&#xA;            retryAdvice = &quot;DoNotRetry&quot;&#xA;            messageText = &quot;Recipient does not accept this email.&quot;&#xA;        Case 552&#xA;            category = &quot;PermanentFailure&quot;&#xA;            retryAdvice = &quot;ReviewAttachmentSize&quot;&#xA;            messageText = &quot;Message exceeds mailbox size limits.&quot;&#xA;        Case 553&#xA;            category = &quot;InvalidAddress&quot;&#xA;            retryAdvice = &quot;FixEmailAddress&quot;&#xA;            messageText = &quot;Recipient email address is invalid.&quot;&#xA;        Case 554&#xA;            category = &quot;RejectedPolicy&quot;&#xA;            retryAdvice = &quot;ReviewContentOrPolicy&quot;&#xA;            messageText = &quot;Message rejected due to spam or policy rules.&quot;&#xA;        Case Else&#xA;            If normalizedCode &gt;= 400 AndAlso normalizedCode &lt; 500 Then&#xA;                category = &quot;TemporaryFailure&quot;&#xA;                retryAdvice = &quot;RetryLater&quot;&#xA;                messageText = &quot;Temporary delivery issue reported by Gmail.&quot;&#xA;            ElseIf normalizedCode &gt;= 500 Then&#xA;                category = &quot;PermanentFailure&quot;&#xA;                retryAdvice = &quot;ReviewRecipientOrPolicy&quot;&#xA;                messageText = &quot;Permanent delivery issue reported by Gmail.&quot;&#xA;            End If&#xA;    End Select&#xA;&#xA;    Throw New Exception(&quot;EMAIL_STATUS|code=&quot; + normalizedCode.ToString() + &quot;|category=&quot; + category + &quot;|retry=&quot; + retryAdvice + &quot;|message=&quot; + messageText + &quot;|raw=&quot; + in_Response)&#xA;End If" DisplayName="Validate Gmail Send Response" sap:VirtualizedContainerService.HintSize="451.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ValidateSendResponse">
             <ui:InvokeCode.Arguments>
               <InArgument x:TypeArguments="x:Int32" x:Key="in_Status">[intSendStatusCode]</InArgument>
               <InArgument x:TypeArguments="x:String" x:Key="in_Response">[strSendApiResponse]</InArgument>
@@ -252,7 +252,7 @@
                   <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:String">["Invalid email format: " + in_strToEmail + " | " + exception.Message]</InArgument>
+                  <InArgument x:TypeArguments="x:String">["EMAIL_STATUS|code=553|category=InvalidAddress|retry=FixEmailAddress|message=Recipient email address is invalid.|raw=" + in_strToEmail + " | " + exception.Message]</InArgument>
                 </Assign.Value>
               </Assign>
             </Sequence>
@@ -282,7 +282,7 @@
                   <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:String">[If(exception Is Nothing, "Unknown exception", If(exception.InnerException IsNot Nothing, exception.InnerException.ToString() + " | Outer: " + exception.ToString(), exception.ToString()))]</InArgument>
+                  <InArgument x:TypeArguments="x:String">[If(exception Is Nothing, "EMAIL_STATUS|code=0|category=UnknownFailure|retry=ReviewAndRetry|message=Unknown exception while sending Gmail.|raw=Unknown exception", If(If(exception.InnerException IsNot Nothing, exception.InnerException.Message, exception.Message).StartsWith("EMAIL_STATUS|"), If(exception.InnerException IsNot Nothing, exception.InnerException.Message, exception.Message), "EMAIL_STATUS|code=0|category=UnknownFailure|retry=ReviewAndRetry|message=Unhandled exception while sending Gmail.|raw=" + If(exception.InnerException IsNot Nothing, exception.InnerException.Message, exception.Message)))]</InArgument>
                 </Assign.Value>
               </Assign>
             </Sequence>
@@ -302,3 +302,4 @@
     </TryCatch>
   </Sequence>
 </Activity>
+

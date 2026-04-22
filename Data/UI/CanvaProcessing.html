@@ -156,11 +156,12 @@
             titleEl.innerText = task;
             const t = task.toLowerCase();
             if (t.includes('approval')) {
-                descEl.innerText = "Please wait while the system checks the leader's decision from Gmail.";
+                descEl.innerText = "Please wait while the system is checking Gmail’s decision.";
                 statusEl.innerText = "Checking approval response...";
             } else if (t.includes('sending')) {
+                titleEl.innerText = "SENDING EMAILS";
                 descEl.innerText = "The system is now sending emails to all approved recipients.";
-                statusEl.innerText = "Sending bulk emails...";
+                statusEl.innerText = "Sending emails...";
             } else {
                 statusEl.innerText = "Working on " + task + "...";
             }
@@ -186,7 +187,7 @@
                     try {
                         document.body.innerHTML =
                             '<div style="padding:40px;text-align:center;font-family:sans-serif;color:#444">' +
-                            '<h2>Done. You can close this window.</h2>' +
+                            '<h2>Processing complete. You can close this window.</h2>' +
                             '</div>';
                     } catch (_) { }
                 }, 600);
@@ -201,12 +202,12 @@
         })();
 
         // Decision sentinel. Approval gate writes one of these files:
-        // - ../Temp/leader_approved_<sid>.png
-        // - ../Temp/leader_denied_<sid>.png
+        // - ../Temp/approved_<sid>.png
+        // - ../Temp/denied_<sid>.png
         // When detected, we navigate to the decision page in the SAME window.
         (function () {
-            const approvedUrl = '../Temp/leader_approved_' + SESSION_ID + '.png';
-            const deniedUrl = '../Temp/leader_denied_' + SESSION_ID + '.png';
+            const approvedUrl = '../Temp/approved_' + SESSION_ID + '.png';
+            const deniedUrl = '../Temp/denied_' + SESSION_ID + '.png';
             let navigated = false;
             function go(page) {
                 if (navigated) return;

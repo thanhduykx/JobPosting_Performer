@@ -172,11 +172,14 @@
               <InArgument x:TypeArguments="x:String">[If(out_ConfigDictionary IsNot Nothing AndAlso out_ConfigDictionary.ContainsKey("Canva_OutputFolder") AndAlso Not String.IsNullOrWhiteSpace(Convert.ToString(out_ConfigDictionary("Canva_OutputFolder"))), Convert.ToString(out_ConfigDictionary("Canva_OutputFolder")), "Data\Output\Posters")]</InArgument>
             </Assign.Value>
           </Assign>
-          <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not Directory.Exists(in_Folder) Then&#xA;    Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Create Output Folder" sap:VirtualizedContainerService.HintSize="387.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_2">
-            <ui:InvokeCode.Arguments>
-              <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[strOutputFolder]</InArgument>
-            </ui:InvokeCode.Arguments>
-          </ui:InvokeCode>
+          <Assign DisplayName="Resolve + Create Output Folder" sap:VirtualizedContainerService.HintSize="387.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_CreateOutputFolder">
+            <Assign.To>
+              <OutArgument x:TypeArguments="x:String">[strOutputFolder]</OutArgument>
+            </Assign.To>
+            <Assign.Value>
+              <InArgument x:TypeArguments="x:String">[System.IO.Directory.CreateDirectory(If(System.IO.Path.IsPathRooted(strOutputFolder), strOutputFolder, System.IO.Path.GetFullPath(System.IO.Path.Combine(Environment.CurrentDirectory, strOutputFolder)))).FullName]</InArgument>
+            </Assign.Value>
+          </Assign>
         </Sequence>
       </TryCatch.Try>
       <TryCatch.Catches>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leader Decision</title>
+    <title>Decision</title>
     <style>
         @font-face {
             font-family: 'BR Omega';
@@ -101,18 +101,18 @@
             }, 400);
         }
         window.addEventListener("DOMContentLoaded", function () {
-            document.title = "LEADER_APPROVED";
+            document.title = "APPROVED";
+            setTimeout(closeNow, 1400);
         });
     </script>
 </head>
 <body>
     <div class="card">
         <div class="icon">✓</div>
-        <h1>Leader Approved</h1>
+        <h1>Approved</h1>
         <p>The campaign is approved.</p>
-        <div class="msg-strong">Bulk email sending will continue.</div>
+        <div class="msg-strong">Email sending will continue.</div>
         <button class="btn" onclick="closeNow()">OK</button>
     </div>
 </body>
 </html>
-

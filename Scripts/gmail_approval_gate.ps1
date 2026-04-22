@@ -188,7 +188,7 @@ function Show-DecisionWindow {
         if(-not (Test-Path $edgePath)){ $edgePath = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe" }
         if(-not (Test-Path $edgePath)){ $edgePath = "msedge.exe" }
         $url = "file:///" + ($HtmlPath -replace "\\","/")
-        $proc = Start-Process -FilePath $edgePath -ArgumentList "--app=""$url"" --new-window --start-maximized" -WindowStyle Maximized -PassThru
+        $proc = Start-Process -FilePath $edgePath -ArgumentList "--app=""$url"" --new-window --kiosk" -WindowStyle Maximized -PassThru
         if($null -eq $proc){ return }
         try { $proc.WaitForExit([Math]::Max(1,$MaxWaitSeconds) * 1000) | Out-Null } catch {}
         try {
@@ -211,7 +211,7 @@ function Write-DecisionMarker {
     try {
         $tempDir = Join-Path (Resolve-Path (Join-Path $PSScriptRoot "..")).Path "Data\\Temp"
         if(-not (Test-Path $tempDir)){ New-Item -ItemType Directory -Path $tempDir | Out-Null }
-        $name = if($Decision -eq "APPROVED"){ "leader_approved_" + $SessionId + ".png" } else { "leader_denied_" + $SessionId + ".png" }
+        $name = if($Decision -eq "APPROVED"){ "approved_" + $SessionId + ".png" } else { "denied_" + $SessionId + ".png" }
         $path = Join-Path $tempDir $name
         [IO.File]::WriteAllBytes($path,[Convert]::FromBase64String("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="))
     } catch {}
@@ -222,7 +222,7 @@ function Cleanup-DecisionMarkers {
     if([string]::IsNullOrWhiteSpace($SessionId)){ return }
     try {
         $tempDir = Join-Path (Resolve-Path (Join-Path $PSScriptRoot "..")).Path "Data\\Temp"
-        foreach($f in @("leader_approved_$SessionId.png","leader_denied_$SessionId.png")){
+        foreach($f in @("approved_$SessionId.png","denied_$SessionId.png")){
             $p = Join-Path $tempDir $f
             if(Test-Path -LiteralPath $p){ Remove-Item -LiteralPath $p -Force -ErrorAction SilentlyContinue }
         }
@@ -522,8 +522,8 @@ try {
         $edgePath = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
         if(-not (Test-Path $edgePath)){ $edgePath = "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe" }
         if(-not (Test-Path $edgePath)){ $edgePath = "msedge.exe" }
-        $url = "file:///" + ($runFile -replace "\\","/") + "?task=Waiting+for+Leader+Approval&session=$session"
-        $edgeProc = Start-Process -FilePath $edgePath -ArgumentList "--app=""$url"" --new-window --start-maximized" -WindowStyle Maximized -PassThru
+        $url = "file:///" + ($runFile -replace "\\","/") + "?task=Waiting+for+Approval&session=$session"
+        $edgeProc = Start-Process -FilePath $edgePath -ArgumentList "--app=""$url"" --new-window --kiosk" -WindowStyle Maximized -PassThru
     } catch {}
 
     $approveQ = [uri]::EscapeDataString("from:$approver newer_than:7d APPROVE $tokenId")
@@ -570,8 +570,8 @@ try {
             message_id = $decisionMsgId
         }
         Write-Output ("APPROVAL_META::" + (($metaObj | ConvertTo-Json -Compress)))
-        # Let the waiting window navigate to Approved page in the SAME window.
-        try { if($edgeProc){ $edgeProc.WaitForExit(900000) | Out-Null } } catch {}
+        # Let the approval window navigate and auto-close before main flow continues.
+        try { if($edgeProc){ $edgeProc.WaitForExit(12000) | Out-Null } } catch {}
         Close-WaitingWindow -SessionId $session -EdgeProc $edgeProc
         Cleanup-DecisionMarkers -SessionId $session
         Write-Output "APPROVED"
@@ -588,8 +588,8 @@ try {
             message_id = $decisionMsgId
         }
         Write-Output ("APPROVAL_META::" + (($metaObj | ConvertTo-Json -Compress)))
-        # Let the waiting window navigate to Denied page in the SAME window.
-        try { if($edgeProc){ $edgeProc.WaitForExit(900000) | Out-Null } } catch {}
+        # Let the approval window navigate and auto-close before main flow continues.
+        try { if($edgeProc){ $edgeProc.WaitForExit(12000) | Out-Null } } catch {}
         Close-WaitingWindow -SessionId $session -EdgeProc $edgeProc
         Cleanup-DecisionMarkers -SessionId $session
         Write-Output "DENIED"
@@ -603,6 +603,7 @@ catch {
     Write-Error $_.Exception.Message
     exit 1
 }
+
 
 
 

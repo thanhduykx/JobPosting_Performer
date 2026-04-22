@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leader Decision</title>
+    <title>Decision</title>
     <style>
         @font-face {
             font-family: 'BR Omega';
@@ -101,18 +101,18 @@
             }, 400);
         }
         window.addEventListener("DOMContentLoaded", function () {
-            document.title = "LEADER_DENIED";
+            document.title = "DENIED";
+            setTimeout(closeNow, 1400);
         });
     </script>
 </head>
 <body>
     <div class="card">
         <div class="icon">!</div>
-        <h1>Leader Denied</h1>
-        <p>The bulk email sending process has been stopped.</p>
+        <h1>Denied</h1>
+        <p>The email sending process has been stopped.</p>
         <div class="msg-strong">No emails were sent.</div>
         <button class="btn" onclick="closeNow()">OK</button>
     </div>
 </body>
 </html>
-

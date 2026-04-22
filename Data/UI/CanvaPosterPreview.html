@@ -290,13 +290,6 @@
             return msg;
         }
         window.onbeforeunload = warnBeforeClose;
-        function signalCancelOnClose() {
-            if (isFinishing) return;
-            isFinishing = true;
-            const sid = (new URLSearchParams(window.location.search)).get('session') || 'default';
-            document.title = "RESULT::" + sid + "::CANCEL";
-        }
-        window.addEventListener("pagehide", signalCancelOnClose);
     </script>
 </head>
 
@@ -334,7 +327,7 @@
 
         <div class="footer">
             <button class="btn btn-cancel" onclick="cancelFlow()">Cancel (Do Not Send)</button>
-            <button class="btn btn-confirm" onclick="finish(true)">Send to Leader to Approve</button>
+            <button class="btn btn-confirm" onclick="finish(true)">Send for Approval</button>
         </div>
     </div>
 
@@ -412,14 +405,13 @@
             setTimeout(function () {
                 try { window.onbeforeunload = null; } catch (_) { }
                 try { window.removeEventListener('beforeunload', warnBeforeClose); } catch (_) { }
-                try { window.removeEventListener('pagehide', signalCancelOnClose); } catch (_) { }
                 try { window.close(); } catch (_) { }
                 setTimeout(function () {
                     try {
                         document.body.innerHTML =
                             '<div style="font-family:sans-serif;padding:40px;text-align:center;color:#444">' +
-                            '<h2>Done. You can close this window.</h2>' +
-                            '<p>The robot has picked up your selection.</p>' +
+                            '<h2>Submitted. You can close this window.</h2>' +
+                            '<p>The robot has received your selection and is continuing the process.</p>' +
                             '</div>';
                     } catch (_) { }
                 }, 800);
@@ -432,7 +424,7 @@
             const marker = "CANVA_RESULT::" + SESSION_ID + "::" + result;
             writeResultToClipboard(marker);
             document.title = "RESULT::" + SESSION_ID + "::" + result;
-            selfCloseSoon(700);
+            selfCloseSoon(3500);
         }
 
         function cancelFlow() {
@@ -447,6 +439,9 @@
 </body>
 
 </html>
+
+
+
 
 
 

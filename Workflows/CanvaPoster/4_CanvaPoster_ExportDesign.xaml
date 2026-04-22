@@ -127,11 +127,14 @@
         <OutArgument x:TypeArguments="x:String" x:Key="out_FileName">[strFileName]</OutArgument>
       </ui:InvokeCode.Arguments>
     </ui:InvokeCode>
-    <ui:InvokeCode ContinueOnError="{x:Null}" Code="If Not System.IO.Directory.Exists(in_Folder) Then&#xA;    System.IO.Directory.CreateDirectory(in_Folder)&#xA;End If" DisplayName="Ensure Output Folder" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_0">
-      <ui:InvokeCode.Arguments>
-        <InArgument x:TypeArguments="x:String" x:Key="in_Folder">[strOutputFolder]</InArgument>
-      </ui:InvokeCode.Arguments>
-    </ui:InvokeCode>
+    <Assign DisplayName="Resolve + Ensure Output Folder" sap:VirtualizedContainerService.HintSize="483.2,81.6" sap2010:WorkflowViewState.IdRef="Assign_EnsureOutputFolder">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:String">[strOutputFolder]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:String">[System.IO.Directory.CreateDirectory(If(System.IO.Path.IsPathRooted(strOutputFolder), strOutputFolder, System.IO.Path.GetFullPath(System.IO.Path.Combine(Environment.CurrentDirectory, strOutputFolder)))).FullName]</InArgument>
+      </Assign.Value>
+    </Assign>
     <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim body As New Newtonsoft.Json.Linq.JObject()&#xA;body(&quot;design_id&quot;) = in_DesignId&#xA;Dim formatObj As New Newtonsoft.Json.Linq.JObject()&#xA;formatObj(&quot;type&quot;) = in_Format.ToLowerInvariant().Trim()&#xA;body(&quot;format&quot;) = formatObj&#xA;out_Body = body.ToString()" DisplayName="Build Export JSON" sap:VirtualizedContainerService.HintSize="483.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_1">
       <ui:InvokeCode.Arguments>
         <InArgument x:TypeArguments="x:String" x:Key="in_DesignId">[in_DesignId]</InArgument>

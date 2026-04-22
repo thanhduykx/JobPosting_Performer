@@ -15,7 +15,7 @@
   "entitiesStores": [],
   "schemaVersion": "4.0",
   "studioVersion": "26.0.187.0",
-  "projectVersion": "1.0.1-alpha.4",
+  "projectVersion": "1.0.1-alpha.6",
   "runtimeOptions": {
     "autoDispose": false,
     "netFrameworkLazyLoading": false,
@@ -49,7 +49,7 @@
   "expressionLanguage": "VisualBasic",
   "entryPoints": [
     {
-      "filePath": "Workflows\\Email\\5_Modules\\Module_SendGmail.xaml",
+      "filePath": "Workflows\\Email\\Modules\\Module_SendGmail.xaml",
       "uniqueId": "58cf54d9-0da7-4186-a26e-1a0b37314e66",
       "input": [],
       "output": []
