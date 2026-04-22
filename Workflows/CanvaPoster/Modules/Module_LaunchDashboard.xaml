@@ -1,0 +1,108 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="Module_LaunchDashboard" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_File" Type="InArgument(x:String)" />
+    <x:Property Name="in_Token" Type="InArgument(x:String)" />
+    <x:Property Name="in_Jobs" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="out_Result" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>866,800</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>Module_LaunchDashboard_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Linq.Expressions</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="48">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.IO</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.Console</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
+      <AssemblyReference>System.ComponentModel</AssemblyReference>
+      <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Launch Canva Dashboard UI and wait for user selection.&#xA;Input: in_File (Dashboard HTML), in_Token (Canva API), in_Jobs (job roles).&#xA;Output: out_Result (user JSON selection or error).&#xA;Main steps: Fetch templates, write data, launch Edge browser, poll for result." DisplayName="Module_LaunchDashboard" sap:VirtualizedContainerService.HintSize="886,488.8" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Name="strTemplatesApiResponse" />
+      <Variable x:TypeArguments="x:Int32" Name="intTemplatesStatusCode" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log Message -  LaunchDashBoard" sap:VirtualizedContainerService.HintSize="449.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Start LaunchDashboard&quot;]" />
+    <ui:HttpClient Body="{x:Null}" ClientCertificate="{x:Null}" ClientCertificatePassword="{x:Null}" ConsumerKey="{x:Null}" ConsumerSecret="{x:Null}" FileAttachments="{x:Null}" OAuth1Token="{x:Null}" OAuth1TokenSecret="{x:Null}" OAuth2Token="{x:Null}" Password="{x:Null}" ResourcePath="{x:Null}" ResponseAttachment="{x:Null}" ResponseHeaders="{x:Null}" SecureClientCertificatePassword="{x:Null}" SecurePassword="{x:Null}" Username="{x:Null}" AcceptFormat="JSON" AuthenticationType="None" BodyFormat="application/json" ContinueOnError="True" DisplayName="HTTP Request Canva Templates (WebAPI)" EnableSSLVerification="True" EndPoint="https://api.canva.com/rest/v1/brand-templates" sap:VirtualizedContainerService.HintSize="449.6,103.2" sap2010:WorkflowViewState.IdRef="HttpClient_CanvaTemplates" Method="GET" Result="[strTemplatesApiResponse]" StatusCode="[intTemplatesStatusCode]" TimeoutMS="30000">
+      <ui:HttpClient.Attachments>
+        <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+      </ui:HttpClient.Attachments>
+      <ui:HttpClient.Cookies>
+        <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+      </ui:HttpClient.Cookies>
+      <ui:HttpClient.Headers>
+        <InArgument x:TypeArguments="x:String" x:Key="Authorization">["Bearer " + in_Token]</InArgument>
+      </ui:HttpClient.Headers>
+      <ui:HttpClient.Parameters>
+        <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+      </ui:HttpClient.Parameters>
+      <ui:HttpClient.UrlSegments>
+        <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+      </ui:HttpClient.UrlSegments>
+    </ui:HttpClient>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim templatesList As New List(Of String)()&#xA;Dim apiError As String = &quot;&quot;&#xA;Try&#xA;    If in_StatusCode &gt;= 200 AndAlso in_StatusCode &lt; 300 AndAlso Not String.IsNullOrWhiteSpace(in_Response) Then&#xA;        Dim root = Newtonsoft.Json.Linq.JObject.Parse(in_Response)&#xA;        Dim items = root(&quot;items&quot;)&#xA;        If items IsNot Nothing Then&#xA;            For Each item In items&#xA;                Dim id As String = If(item(&quot;id&quot;) IsNot Nothing, item(&quot;id&quot;).ToString(), &quot;&quot;)&#xA;                Dim title As String = If(item(&quot;title&quot;) IsNot Nothing, item(&quot;title&quot;).ToString(), &quot;Untitled&quot;)&#xA;                Dim folderName As String = &quot;&quot;&#xA;                Try&#xA;                    If item(&quot;folder&quot;) IsNot Nothing AndAlso item(&quot;folder&quot;)(&quot;name&quot;) IsNot Nothing Then&#xA;                        folderName = item(&quot;folder&quot;)(&quot;name&quot;).ToString()&#xA;                    ElseIf item(&quot;folder_name&quot;) IsNot Nothing Then&#xA;                        folderName = item(&quot;folder_name&quot;).ToString()&#xA;                    End If&#xA;                Catch&#xA;                End Try&#xA;&#xA;                Dim sourceTag As String = (folderName + &quot; &quot; + title).ToUpperInvariant()&#xA;                Dim groupTag As String = &quot;&quot;&#xA;                If sourceTag.StartsWith(&quot;G_&quot;) OrElse sourceTag.StartsWith(&quot;GROUP_&quot;) OrElse sourceTag.Contains(&quot;GROUP_TEMPLATE&quot;) OrElse sourceTag.Contains(&quot;GROUP&quot;) Then&#xA;                    groupTag = &quot;GROUP&quot;&#xA;                ElseIf sourceTag.StartsWith(&quot;I_&quot;) OrElse sourceTag.StartsWith(&quot;INDIVIDUAL_&quot;) OrElse sourceTag.StartsWith(&quot;INVIDUAL_&quot;) OrElse sourceTag.Contains(&quot;INVIDUAL_TEMPLATE&quot;) OrElse sourceTag.Contains(&quot;INDIVIDUAL_TEMPLATE&quot;) OrElse sourceTag.Contains(&quot;INDIVIDUAL&quot;) OrElse sourceTag.Contains(&quot;SINGLE&quot;) Then&#xA;                    groupTag = &quot;INDIVIDUAL&quot;&#xA;                End If&#xA;&#xA;                If Not String.IsNullOrEmpty(id) Then&#xA;                    templatesList.Add(id + &quot;|&quot; + System.Uri.EscapeDataString(title) + &quot;|&quot; + groupTag)&#xA;                End If&#xA;&#xA;                If templatesList.Count &gt;= 500 Then Exit For&#xA;            Next&#xA;        End If&#xA;    Else&#xA;        apiError = &quot;Canva API error &quot; + in_StatusCode.ToString() + &quot; (GET /brand-templates). &quot; + If(String.IsNullOrWhiteSpace(in_Response), &quot;&lt;empty response&gt;&quot;, in_Response)&#xA;    End If&#xA;Catch ex As Exception&#xA;    apiError = &quot;Canva API parse failed: &quot; + ex.Message&#xA;End Try&#xA;&#xA;If Not String.IsNullOrWhiteSpace(apiError) Then&#xA;    Console.WriteLine(&quot;[CANVA API ERROR] &quot; + apiError)&#xA;    Try&#xA;        Dim popupMsg As String = &quot;Canva API Error:&quot; + vbCrLf + vbCrLf + apiError + vbCrLf + vbCrLf + _&#xA;            &quot;Dashboard will still open, but the template list may be empty / incomplete.&quot; + vbCrLf + _&#xA;            &quot;Please check your Canva token / network and retry.&quot;&#xA;        Dim thMb As New System.Threading.Thread(Sub()&#xA;            Try&#xA;                Microsoft.VisualBasic.Interaction.MsgBox(popupMsg, MsgBoxStyle.Exclamation Or MsgBoxStyle.OkOnly, &quot;Canva Poster - API Error&quot;)&#xA;            Catch&#xA;            End Try&#xA;        End Sub)&#xA;        thMb.SetApartmentState(System.Threading.ApartmentState.STA)&#xA;        thMb.Start()&#xA;        thMb.Join(15000)&#xA;    Catch&#xA;    End Try&#xA;End If&#xA;&#xA;Dim global_templates = String.Join(&quot;;&quot;, templatesList)&#xA;Dim jobsList As New List(Of String)()&#xA;jobsList.Add(&quot;ALL&quot;)&#xA;If in_Jobs IsNot Nothing Then&#xA;    For Each row As System.Data.DataRow In in_Jobs.Rows&#xA;        If in_Jobs.Columns.Contains(&quot;Role&quot;) Then&#xA;            jobsList.Add(row(&quot;Role&quot;).ToString().Trim())&#xA;        End If&#xA;    Next&#xA;End If&#xA;Dim global_jobs = String.Join(&quot;;&quot;, jobsList)&#xA;&#xA;' Write sidecar data file loaded by CanvaDashboard.html&#xA;Dim uiDir As String = System.IO.Path.GetDirectoryName(in_File)&#xA;Dim dataFile As String = System.IO.Path.Combine(uiDir, &quot;canvadashboard_data.js&quot;)&#xA;Dim dataJs As String = &quot;// Auto-generated at runtime. Do not edit.&quot; + vbCrLf&#xA;dataJs += &quot;var global_jobs = &quot; + Newtonsoft.Json.JsonConvert.SerializeObject(global_jobs) + &quot;;&quot; + vbCrLf&#xA;dataJs += &quot;var global_templates = &quot; + Newtonsoft.Json.JsonConvert.SerializeObject(global_templates) + &quot;;&quot; + vbCrLf&#xA;System.IO.File.WriteAllText(dataFile, dataJs, New System.Text.UTF8Encoding(False))&#xA;&#xA;Dim sessionId As String = System.Guid.NewGuid().ToString(&quot;N&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + in_File.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?session=&quot; + sessionId&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window --disable-features=msSmartScreenProtection&quot;&#xA;psi.UseShellExecute = True&#xA;psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Maximized&#xA;System.Diagnostics.Process.Start(psi)&#xA;&#xA;Dim uiTitle As String = &quot;CANVA_DASHBOARD::&quot; + sessionId&#xA;Dim uiFile As String = System.IO.Path.GetFileName(in_File)&#xA;Dim prefix As String = &quot;RESULT::&quot; + sessionId + &quot;::&quot;&#xA;Dim clipPrefix As String = &quot;CANVA_RESULT::&quot; + sessionId + &quot;::&quot;&#xA;Dim result As String = &quot;&quot;&#xA;Dim windowClosed As Boolean = False&#xA;Dim uiSeen As Boolean = False&#xA;Dim missingTicks As Integer = 0&#xA;Dim waitForOpenUntil As DateTime = DateTime.Now.AddSeconds(25)&#xA;Dim timeoutAt As DateTime = DateTime.Now.AddMinutes(20)&#xA;&#xA;Do While DateTime.Now &lt; timeoutAt AndAlso String.IsNullOrEmpty(result)&#xA;    System.Threading.Thread.Sleep(300)&#xA;&#xA;    Dim seenResult As Boolean = False&#xA;    Dim seenDashboard As Boolean = False&#xA;    Dim targetProc As System.Diagnostics.Process = Nothing&#xA;&#xA;    ' --- Channel 1: Process.MainWindowTitle scan ---&#xA;    For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;        Dim t As String = &quot;&quot;&#xA;        Try&#xA;            t = p.MainWindowTitle&#xA;        Catch&#xA;            Continue For&#xA;        End Try&#xA;        If String.IsNullOrWhiteSpace(t) Then Continue For&#xA;&#xA;        If t.Contains(prefix) Then&#xA;            Dim idxR As Integer = t.IndexOf(prefix)&#xA;            If idxR &gt;= 0 Then&#xA;                result = t.Substring(idxR + prefix.Length)&#xA;            End If&#xA;            Try&#xA;                result = System.Uri.UnescapeDataString(result)&#xA;            Catch&#xA;            End Try&#xA;            seenResult = True&#xA;            targetProc = p&#xA;            Exit For&#xA;        End If&#xA;&#xA;        If t.Contains(uiTitle) Then&#xA;            seenDashboard = True&#xA;            uiSeen = True&#xA;        End If&#xA;    Next&#xA;&#xA;    ' --- Channel 2: Clipboard scan (robust when screen-share breaks window title detection) ---&#xA;    If Not seenResult Then&#xA;        Dim clipText As String = &quot;&quot;&#xA;        Try&#xA;            Dim thClip As New System.Threading.Thread(Sub()&#xA;                Try&#xA;                    If System.Windows.Clipboard.ContainsText() Then&#xA;                        clipText = System.Windows.Clipboard.GetText()&#xA;                    End If&#xA;                Catch&#xA;                End Try&#xA;            End Sub)&#xA;            thClip.SetApartmentState(System.Threading.ApartmentState.STA)&#xA;            thClip.Start()&#xA;            thClip.Join(1500)&#xA;        Catch&#xA;        End Try&#xA;&#xA;        If Not String.IsNullOrWhiteSpace(clipText) AndAlso clipText.Contains(clipPrefix) Then&#xA;            Dim idxC As Integer = clipText.IndexOf(clipPrefix)&#xA;            If idxC &gt;= 0 Then&#xA;                Dim payload As String = clipText.Substring(idxC + clipPrefix.Length)&#xA;                Try&#xA;                    result = System.Uri.UnescapeDataString(payload)&#xA;                Catch&#xA;                    result = payload&#xA;                End Try&#xA;                seenResult = True&#xA;                Try&#xA;                    Dim thClr As New System.Threading.Thread(Sub()&#xA;                        Try&#xA;                            System.Windows.Clipboard.Clear()&#xA;                        Catch&#xA;                        End Try&#xA;                    End Sub)&#xA;                    thClr.SetApartmentState(System.Threading.ApartmentState.STA)&#xA;                    thClr.Start()&#xA;                    thClr.Join(1500)&#xA;                Catch&#xA;                End Try&#xA;            End If&#xA;        End If&#xA;    End If&#xA;&#xA;    If seenResult Then&#xA;        Try&#xA;            If targetProc IsNot Nothing Then targetProc.CloseMainWindow()&#xA;        Catch&#xA;        End Try&#xA;        Try&#xA;            For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;                Try&#xA;                    Dim mt As String = p.MainWindowTitle&#xA;                    If Not String.IsNullOrWhiteSpace(mt) AndAlso (mt.Contains(prefix) OrElse mt.Contains(uiTitle)) Then&#xA;                        p.CloseMainWindow()&#xA;                    End If&#xA;                Catch&#xA;                End Try&#xA;            Next&#xA;        Catch&#xA;        End Try&#xA;        Exit Do&#xA;    End If&#xA;&#xA;    If uiSeen Then&#xA;        If seenDashboard Then&#xA;            missingTicks = 0&#xA;        Else&#xA;            missingTicks += 1&#xA;            If missingTicks &gt;= 20 Then&#xA;                windowClosed = True&#xA;                Exit Do&#xA;            End If&#xA;        End If&#xA;    Else&#xA;        If DateTime.Now &gt; waitForOpenUntil Then&#xA;            windowClosed = True&#xA;            Exit Do&#xA;        End If&#xA;    End If&#xA;Loop&#xA;&#xA;If String.IsNullOrWhiteSpace(result) Then&#xA;    If windowClosed Then&#xA;        Throw New Exception(&quot;User closed UI window at &quot; + uiTitle + &quot; (&quot; + uiFile + &quot;). Workflow stopped.&quot;)&#xA;    End If&#xA;    Throw New Exception(&quot;Timed out waiting for user action at &quot; + uiTitle + &quot; (&quot; + uiFile + &quot;).&quot;)&#xA;End If&#xA;&#xA;If result.Trim().ToUpperInvariant() = &quot;CANCEL&quot; Then&#xA;    Throw New Exception(&quot;User cancelled at &quot; + uiTitle + &quot; (&quot; + uiFile + &quot;). Workflow stopped.&quot;)&#xA;End If&#xA;&#xA;Console.WriteLine(&quot;UI Result Received: &quot; + result)&#xA;out_Result = result" DisplayName="Launch Canva Dashboard (extracted)" sap:VirtualizedContainerService.HintSize="449.6,188" sap2010:WorkflowViewState.IdRef="InvokeCode_Dashboard">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_File">[in_File]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_Response">[strTemplatesApiResponse]</InArgument>
+        <InArgument x:TypeArguments="x:Int32" x:Key="in_StatusCode">[intTemplatesStatusCode]</InArgument>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Jobs">[in_Jobs]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_Result">[out_Result]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+  </Sequence>
+</Activity>

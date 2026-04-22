@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leader Decision</title>
+    <style>
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Regular-BF6556cee4dd400.otf') format('opentype');
+            font-weight: 400;
+        }
+        @font-face {
+            font-family: 'BR Omega';
+            src: url('../Fonts/BROmega-Bold-BF6556cee4cf0f3.otf') format('opentype');
+            font-weight: 700;
+        }
+        :root {
+            --bg: #90c2d1;
+            --card: #ffffff;
+            --ink: #0f172a;
+            --muted: #475569;
+            --danger: #b42318;
+            --btn: #e2e8f0;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            font-family: 'BR Omega', 'Segoe UI', Arial, sans-serif;
+            color: var(--ink);
+        }
+        .card {
+            width: min(560px, 92vw);
+            background: var(--card);
+            border: 8px solid #fff;
+            border-radius: 24px;
+            padding: 36px 30px;
+            text-align: center;
+            box-shadow: 0 18px 28px rgba(0,0,0,0.12);
+        }
+        .icon {
+            width: 74px;
+            height: 74px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            border: 4px solid rgba(180,35,24,0.2);
+            color: var(--danger);
+            display: grid;
+            place-items: center;
+            font-size: 34px;
+            font-weight: 700;
+        }
+        h1 {
+            margin: 0;
+            font-size: 40px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+        p {
+            margin: 14px auto 0;
+            max-width: 420px;
+            color: var(--muted);
+            font-size: 19px;
+            line-height: 1.45;
+        }
+        .msg-strong {
+            margin-top: 8px;
+            color: var(--danger);
+            font-size: 23px;
+            font-weight: 700;
+        }
+        .btn {
+            margin-top: 24px;
+            border: none;
+            border-radius: 999px;
+            padding: 12px 28px;
+            background: var(--btn);
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function closeNow() {
+            try { window.close(); } catch (_) {}
+            setTimeout(function () {
+                try {
+                    document.body.innerHTML =
+                        "<div style='padding:40px;text-align:center;font-family:sans-serif;color:#444'>" +
+                        "<h2>Closed</h2>" +
+                        "<p>You can close this window.</p>" +
+                        "</div>";
+                } catch (_) {}
+            }, 400);
+        }
+        window.addEventListener("DOMContentLoaded", function () {
+            document.title = "LEADER_DENIED";
+        });
+    </script>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">!</div>
+        <h1>Leader Denied</h1>
+        <p>The bulk email sending process has been stopped.</p>
+        <div class="msg-strong">No emails were sent.</div>
+        <button class="btn" onclick="closeNow()">OK</button>
+    </div>
+</body>
+</html>
+

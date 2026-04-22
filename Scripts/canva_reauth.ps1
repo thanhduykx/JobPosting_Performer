@@ -1,14 +1,4 @@
-# ============================================================
-# Canva OAuth Re-Authorization Script
-# Lay lai access_token + refresh_token moi tu Canva
-# ============================================================
-# Secrets are NEVER stored in this file. They come from (in order):
-#   1) Command-line parameters:  -ClientId <id>  -ClientSecret <SecureString>
-#   2) Environment variables:    CANVA_CLIENT_ID, CANVA_CLIENT_SECRET
-#   3) Interactive prompts (Read-Host)
-# See SECURITY.md for the full setup guide.
-# ============================================================
-
+﻿
 [CmdletBinding()]
 param(
     [string] $ClientId,
@@ -152,10 +142,13 @@ try {
     Write-Host "Token saved to: $tokenFile" -ForegroundColor Green
     Write-Host "Access token expires at: $($tokenObj.expires_at)" -ForegroundColor Green
     Write-Host "Has refresh_token: $(-not [string]::IsNullOrEmpty($r.refresh_token))" -ForegroundColor Green
+    exit 0
 } catch {
     Write-Host "ERROR exchanging code for token: $($_.Exception.Message)" -ForegroundColor Red
     if ($_.Exception.Response) {
         $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
         Write-Host "API response: $($reader.ReadToEnd())" -ForegroundColor Red
     }
+    exit 1
 }
+

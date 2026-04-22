@@ -1,9 +1,27 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Posting</title>
+    <script>
+        (function () {
+            function forceMaximize() {
+                try {
+                    window.moveTo(0, 0);
+                    window.resizeTo(screen.availWidth, screen.availHeight);
+                    if (window.outerWidth < screen.availWidth - 30 || window.outerHeight < screen.availHeight - 30) {
+                        window.moveTo(0, 0);
+                        window.resizeTo(screen.width, screen.height);
+                    }
+                } catch (e) { }
+            }
+            window.addEventListener('load', function () {
+                setTimeout(forceMaximize, 50);
+                setTimeout(forceMaximize, 300);
+            });
+        })();
+    </script>
     <style>
         @font-face {
             font-family: 'BR Omega';
@@ -183,6 +201,10 @@
             box-shadow: 0 6px 18px rgba(0,0,0,.10);
             display: none;
         }
+        .cdd-wrap.open.upward .cdd-list {
+            top: auto;
+            bottom: calc(100% + 4px);
+        }
         .cdd-wrap.open .cdd-list { display: block; }
         .cdd-option {
             padding: 10px 14px;
@@ -260,6 +282,7 @@
                     <label for="targetEmails" style="font-size:11px; font-weight:800; color:#64748b; text-transform:uppercase; margin-bottom:6px; display:block;">Recipient Emails</label>
                     <textarea id="targetEmails" style="height:44px; padding:8px; font-size:13px;" placeholder="alice@company.com; bob@company.com"></textarea>
                     <div style="font-size:11px; color:#64748b; margin-top:4px;">Separate multiple emails with a semicolon <code style="background:#f1f5f9; padding:1px 5px; border-radius:4px;">;</code></div>
+                    <div id="emailError" style="display:none; font-size:11px; color:#dc2626; margin-top:4px;"></div>
                 </div>
             </div>
             <div id="modeHint" style="font-size:11px; color:#64748b; font-style:italic;">
@@ -330,10 +353,27 @@
                 });
             },
             open() {
-                document.getElementById('templateSelect').classList.add('open');
+                const wrap = document.getElementById('templateSelect');
+                const list = document.getElementById('cddList');
+                if (!wrap || !list) return;
+
+                // Decide dropdown direction by available viewport space.
+                wrap.classList.remove('upward');
+                wrap.classList.add('open');
+                const rect = wrap.getBoundingClientRect();
+                const listHeight = Math.min(list.scrollHeight || 0, 220);
+                const gap = 8;
+                const spaceBelow = window.innerHeight - rect.bottom;
+                const spaceAbove = rect.top;
+                if (spaceBelow < listHeight + gap && spaceAbove > spaceBelow) {
+                    wrap.classList.add('upward');
+                }
             },
             close() {
-                document.getElementById('templateSelect').classList.remove('open');
+                const wrap = document.getElementById('templateSelect');
+                if (!wrap) return;
+                wrap.classList.remove('open');
+                wrap.classList.remove('upward');
             },
             toggle() {
                 const w = document.getElementById('templateSelect');
@@ -438,6 +478,32 @@
             document.getElementById('modeAuto').className = mode === 'Auto' ? 'mode-card active' : 'mode-card';
             document.getElementById('modeManual').className = mode === 'Manual' ? 'mode-card active' : 'mode-card';
             document.getElementById('emailContainer').style.display = mode === 'Manual' ? 'block' : 'none';
+            if (mode !== 'Manual') clearEmailError();
+        }
+
+        function showEmailError(message) {
+            const el = document.getElementById('emailError');
+            if (!el) return;
+            el.innerText = message || 'Invalid email format.';
+            el.style.display = 'block';
+        }
+
+        function clearEmailError() {
+            const el = document.getElementById('emailError');
+            if (!el) return;
+            el.innerText = '';
+            el.style.display = 'none';
+        }
+
+        function validateManualEmails(raw) {
+            const text = (raw || '').trim();
+            if (!text) return { ok: false, message: 'Please enter at least one email.' };
+            const parts = text.split(/[;,]/).map(x => x.trim()).filter(Boolean);
+            if (parts.length === 0) return { ok: false, message: 'Please enter at least one email.' };
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const invalid = parts.find(e => !re.test(e));
+            if (invalid) return { ok: false, message: 'Invalid email format: ' + invalid };
+            return { ok: true, message: '' };
         }
 
         function updateUI(trigger) {
@@ -575,6 +641,14 @@
             }
 
             const targetEmails = currentMode === 'Manual' ? document.getElementById('targetEmails').value : "";
+            if (currentMode === 'Manual') {
+                const check = validateManualEmails(targetEmails);
+                if (!check.ok) {
+                    showEmailError(check.message);
+                    return;
+                }
+                clearEmailError();
+            }
             
             const selected = [];
             const checks = document.getElementsByName('jobId');
@@ -628,7 +702,12 @@
         function __tryInit() {
             if (__domReady && __dataReady) init();
         }
-        document.addEventListener('DOMContentLoaded', () => { __domReady = true; __tryInit(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            __domReady = true;
+            const emailInput = document.getElementById('targetEmails');
+            if (emailInput) emailInput.addEventListener('input', clearEmailError);
+            __tryInit();
+        });
 
         (function loadDataScript() {
             // Sidecar file is rewritten by the robot right before every launch.
@@ -645,4 +724,3 @@
     </script>
 </body>
 </html>
-

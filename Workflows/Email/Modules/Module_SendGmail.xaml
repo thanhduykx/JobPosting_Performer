@@ -1,9 +1,8 @@
-<Activity mc:Ignorable="sap sap2010" x:Class="Module_SendGmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:uga="clr-namespace:UiPath.GSuite.Activities;assembly=UiPath.GSuite.Activities" xmlns:ugage="clr-namespace:UiPath.GSuite.Activities.Gmail.Enums;assembly=UiPath.GSuite.Activities" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:upr="clr-namespace:UiPath.Platform.ResourceHandling;assembly=UiPath.Platform" xmlns:usau="clr-namespace:UiPath.Shared.Activities.Utils;assembly=UiPath.GSuite.Activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="Module_SendGmail" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:s="clr-namespace:System;assembly=System.Private.CoreLib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=System.Private.CoreLib" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <x:Members>
     <x:Property Name="in_strBody" Type="InArgument(x:String)" />
     <x:Property Name="in_strToEmail" Type="InArgument(x:String)" />
     <x:Property Name="in_strSubject" Type="InArgument(x:String)" />
-
     <x:Property Name="in_strAttachmentPath" Type="InArgument(x:String)" />
     <x:Property Name="out_Error" Type="OutArgument(x:String)" />
     <x:Property Name="out_IsSent" Type="OutArgument(x:Boolean)" />
@@ -52,11 +51,13 @@
       <x:String>UiPath.GSuite.Activities.Gmail.Filters</x:String>
       <x:String>UiPath.GSuite.Activities.Filters</x:String>
       <x:String>UiPath.GSuite.Gmail.Enums</x:String>
+      <x:String>Newtonsoft.Json.Linq</x:String>
     </sco:Collection>
   </TextExpression.NamespacesForImplementation>
   <TextExpression.ReferencesForImplementation>
     <sco:Collection x:TypeArguments="AssemblyReference">
       <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>Newtonsoft.Json</AssemblyReference>
       <AssemblyReference>NPOI</AssemblyReference>
       <AssemblyReference>System</AssemblyReference>
       <AssemblyReference>System.Activities</AssemblyReference>
@@ -92,67 +93,123 @@
       <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
-  <Sequence DisplayName="Module_SendGmail" sap2010:Annotation.AnnotationText="Goal: Send recruitment email via Gmail connector.&#xA;Input: toEmail, subject, HTML body, attachment path.&#xA;Output: out_IsSent and out_Error.&#xA;Main steps: Log input -> SendEmailConnections -> set success/fail with detailed error." sap:VirtualizedContainerService.HintSize="1067.6000000000001,1939.2" sap2010:WorkflowViewState.IdRef="Sequence_1">
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Send recruitment email via Gmail connector.&#xA;Input: toEmail, subject, HTML body, attachment path.&#xA;Output: out_IsSent and out_Error.&#xA;Main steps: Log input -&gt; SendEmailConnections -&gt; set success/fail with detailed error." DisplayName="Module_SendGmail" sap:VirtualizedContainerService.HintSize="886,3213.6" sap2010:WorkflowViewState.IdRef="Sequence_1">
     <sap:WorkflowViewStateService.ViewState>
       <scg:Dictionary x:TypeArguments="x:String, x:Object">
         <x:Boolean x:Key="IsExpanded">True</x:Boolean>
       </scg:Dictionary>
     </sap:WorkflowViewStateService.ViewState>
-    <TryCatch DisplayName="Try Send Email" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="451.2,1916" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+    <TryCatch sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Try Send Email" sap:VirtualizedContainerService.HintSize="486.4,3190.4" sap2010:WorkflowViewState.IdRef="TryCatch_1">
       <TryCatch.Try>
-        <Sequence DisplayName="Send Gmail Main Flow" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="449.6,1261.6" sap2010:WorkflowViewState.IdRef="Sequence_2">
+        <Sequence sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Send Gmail Main Flow" sap:VirtualizedContainerService.HintSize="484.8,2096.8" sap2010:WorkflowViewState.IdRef="Sequence_2">
+          <Sequence.Variables>
+            <Variable x:TypeArguments="x:String" Name="strCfgClientId" />
+            <Variable x:TypeArguments="x:String" Name="strCfgClientSecret" />
+            <Variable x:TypeArguments="x:String" Name="strCfgRefreshToken" />
+            <Variable x:TypeArguments="x:String" Name="strCfgAccessToken" />
+            <Variable x:TypeArguments="x:String" Name="strTokenApiResponse" />
+            <Variable x:TypeArguments="x:Int32" Name="intTokenStatusCode" />
+            <Variable x:TypeArguments="x:String" Name="strTokenBodyForm" />
+            <Variable x:TypeArguments="x:String" Name="strAccessToken" />
+            <Variable x:TypeArguments="x:String" Name="strSendBodyJson" />
+            <Variable x:TypeArguments="x:String" Name="strSendApiResponse" />
+            <Variable x:TypeArguments="x:Int32" Name="intSendStatusCode" />
+          </Sequence.Variables>
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             </scg:Dictionary>
           </sap:WorkflowViewStateService.ViewState>
-          <ui:LogMessage DisplayName="Log: Attachment Info" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;[Gmail] Attaching file: &quot; + in_strAttachmentPath]" />
-          <ui:LogMessage DisplayName="Log: Sending Email" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_SendDebug" Level="Info" Message="[&quot;[Gmail] Sending recruitment email to: &quot; + in_strToEmail]" />
-          <uga:SendEmailConnections ArgumentAttachmentPaths="{x:Null}" ConnectionAccountName="{x:Null}" AttachmentInputMode="Builder" AttachmentPaths="{x:Null}" Attachments="{x:Null}" AuthScopesInvalid="False" Bcc="{x:Null}" Body="[in_strBody]" Cc="{x:Null}" ConnectionId="a03a0f0a-762f-44c5-9d07-4d280413f2ed" ContinueOnError="{x:Null}" DisplayName="Gmail: Send Recruitment Email" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,512.8" sap2010:WorkflowViewState.IdRef="SendEmailConnections_1" Importance="Normal" InputType="HTML" ReplyTo="{x:Null}" SaveAsDraft="False" SingleAttachment="{x:Null}" Subject="[in_strSubject]" TextBody="{x:Null}" To="[New String(){in_strToEmail}]" UseConnectionService="True">
-            <uga:SendEmailConnections.ArgumentAttachments>
-              <scg:List x:TypeArguments="InArgument(upr:IResource)" Capacity="4">
-                <InArgument x:TypeArguments="upr:IResource">[UiPath.Platform.ResourceHandling.LocalResource.FromPath(in_strAttachmentPath.Trim())]</InArgument>
-              </scg:List>
-            </uga:SendEmailConnections.ArgumentAttachments>
-            <uga:SendEmailConnections.AttachmentsBackup>
-              <usau:BackupSlot x:TypeArguments="ugage:AttachmentInputMode" StoredValue="Builder">
-                <usau:BackupSlot.BackupValues>
-                  <scg:List x:TypeArguments="x:Object" x:Key="UseExisting" Capacity="1">
-                    <x:Null />
-                  </scg:List>
-                  <scg:List x:TypeArguments="x:Object" x:Key="Builder" Capacity="1">
-                    <x:Null />
-                  </scg:List>
-                </usau:BackupSlot.BackupValues>
-              </usau:BackupSlot>
-            </uga:SendEmailConnections.AttachmentsBackup>
-            <uga:SendEmailConnections.InputTypeBackup>
-              <usau:BackupSlot x:TypeArguments="ugage:BodyInputType" StoredValue="HTML">
-                <usau:BackupSlot.BackupValues>
-                  <scg:Dictionary x:TypeArguments="ugage:BodyInputType, scg:List(x:Object)" />
-                </usau:BackupSlot.BackupValues>
-              </usau:BackupSlot>
-            </uga:SendEmailConnections.InputTypeBackup>
-          </uga:SendEmailConnections>
-          <Assign DisplayName="Set Success" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
+          <ui:LogMessage sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Log: Attachment Info" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;[Gmail] Attaching file: &quot; + in_strAttachmentPath]" />
+          <ui:LogMessage sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Log: Sending Email" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_SendDebug" Level="Info" Message="[&quot;[Gmail] Sending recruitment email to: &quot; + in_strToEmail]" />
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim emailRaw As String = If(in_Email, String.Empty).Trim()&#xA;If String.IsNullOrWhiteSpace(emailRaw) Then&#xA;    Throw New FormatException(&quot;Email recipient is empty.&quot;)&#xA;End If&#xA;Dim validated As New System.Net.Mail.MailAddress(emailRaw)&#xA;If String.IsNullOrWhiteSpace(validated.Address) Then&#xA;    Throw New FormatException(&quot;Email recipient format is invalid.&quot;)&#xA;End If" DisplayName="Validate Recipient Email Format" sap:VirtualizedContainerService.HintSize="451.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ValidateEmail">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Email">[in_strToEmail]</InArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim cfgPath As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Data\Temp\gmail_api_config.json&quot;)&#xA;If Not System.IO.File.Exists(cfgPath) Then&#xA;    Throw New Exception(&quot;Missing Gmail API config file: &quot; + cfgPath)&#xA;End If&#xA;&#xA;Dim cfg As Newtonsoft.Json.Linq.JObject = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(cfgPath))&#xA;out_ClientId = System.Environment.GetEnvironmentVariable(&quot;GMAIL_CLIENT_ID&quot;, System.EnvironmentVariableTarget.Process)&#xA;If String.IsNullOrWhiteSpace(out_ClientId) Then out_ClientId = System.Environment.GetEnvironmentVariable(&quot;GMAIL_CLIENT_ID&quot;)&#xA;out_ClientSecret = System.Environment.GetEnvironmentVariable(&quot;GMAIL_CLIENT_SECRET&quot;, System.EnvironmentVariableTarget.Process)&#xA;If String.IsNullOrWhiteSpace(out_ClientSecret) Then out_ClientSecret = System.Environment.GetEnvironmentVariable(&quot;GMAIL_CLIENT_SECRET&quot;)&#xA;If String.IsNullOrWhiteSpace(out_ClientId) Then out_ClientId = If(cfg(&quot;client_id&quot;) IsNot Nothing, cfg(&quot;client_id&quot;).ToString().Trim(), &quot;&quot;)&#xA;If String.IsNullOrWhiteSpace(out_ClientSecret) Then out_ClientSecret = If(cfg(&quot;client_secret&quot;) IsNot Nothing, cfg(&quot;client_secret&quot;).ToString().Trim(), &quot;&quot;)&#xA;out_RefreshToken = If(cfg(&quot;refresh_token&quot;) IsNot Nothing, cfg(&quot;refresh_token&quot;).ToString().Trim(), &quot;&quot;)&#xA;out_AccessToken = If(cfg(&quot;access_token&quot;) IsNot Nothing, cfg(&quot;access_token&quot;).ToString().Trim(), &quot;&quot;)&#xA;&#xA;If String.IsNullOrWhiteSpace(out_ClientId) Then Throw New Exception(&quot;Gmail client_id is missing (Orchestrator/env).&quot;)&#xA;If String.IsNullOrWhiteSpace(out_ClientSecret) Then Throw New Exception(&quot;Gmail client_secret is missing (Orchestrator/env).&quot;)&#xA;&#xA;If String.IsNullOrWhiteSpace(out_AccessToken) AndAlso String.IsNullOrWhiteSpace(out_RefreshToken) Then&#xA;    Dim reauthScript As String = System.IO.Path.Combine(Environment.CurrentDirectory, &quot;Scripts\gmail_reauth.ps1&quot;)&#xA;    If Not System.IO.File.Exists(reauthScript) Then&#xA;        Throw New Exception(&quot;Missing re-auth script: &quot; + reauthScript)&#xA;    End If&#xA;&#xA;    Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;    psi.FileName = &quot;powershell.exe&quot;&#xA;    psi.Arguments = &quot;-NoProfile -ExecutionPolicy Bypass -File &quot;&quot;&quot; + reauthScript + &quot;&quot;&quot; -ConfigPath &quot;&quot;&quot; + cfgPath + &quot;&quot;&quot;&quot;&#xA;    psi.UseShellExecute = False&#xA;    psi.CreateNoWindow = True&#xA;    psi.RedirectStandardOutput = True&#xA;    psi.RedirectStandardError = True&#xA;&#xA;    Dim p As System.Diagnostics.Process = System.Diagnostics.Process.Start(psi)&#xA;    Dim stdOut As String = p.StandardOutput.ReadToEnd()&#xA;    Dim stdErr As String = p.StandardError.ReadToEnd()&#xA;    p.WaitForExit()&#xA;    If p.ExitCode &lt;&gt; 0 Then&#xA;        Throw New Exception(&quot;Gmail re-auth failed. ExitCode=&quot; + p.ExitCode.ToString() + &quot; | STDERR=&quot; + stdErr + &quot; | STDOUT=&quot; + stdOut)&#xA;    End If&#xA;&#xA;    cfg = Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(cfgPath))&#xA;    out_RefreshToken = If(cfg(&quot;refresh_token&quot;) IsNot Nothing, cfg(&quot;refresh_token&quot;).ToString().Trim(), &quot;&quot;)&#xA;    out_AccessToken = If(cfg(&quot;access_token&quot;) IsNot Nothing, cfg(&quot;access_token&quot;).ToString().Trim(), &quot;&quot;)&#xA;End If&#xA;&#xA;If String.IsNullOrWhiteSpace(out_AccessToken) AndAlso String.IsNullOrWhiteSpace(out_RefreshToken) Then&#xA;    Throw New Exception(&quot;Gmail token is still empty after auto re-auth.&quot;)&#xA;End If&#xA;&#xA;Dim body As String = If(in_BodyHtml, &quot;&quot;)&#xA;Dim mime As New System.Text.StringBuilder()&#xA;mime.AppendLine(&quot;To: &quot; + in_To)&#xA;mime.AppendLine(&quot;Subject: &quot; + in_Subject)&#xA;mime.AppendLine(&quot;MIME-Version: 1.0&quot;)&#xA;&#xA;If Not String.IsNullOrWhiteSpace(in_AttachmentPath) AndAlso System.IO.File.Exists(in_AttachmentPath) Then&#xA;    Dim boundary As String = &quot;====PART_&quot; + Guid.NewGuid().ToString(&quot;N&quot;)&#xA;    Dim fileName As String = System.IO.Path.GetFileName(in_AttachmentPath)&#xA;    mime.AppendLine(&quot;Content-Type: multipart/mixed; boundary=&quot;&quot;&quot; + boundary + &quot;&quot;&quot;&quot;)&#xA;    mime.AppendLine()&#xA;    mime.AppendLine(&quot;--&quot; + boundary)&#xA;    mime.AppendLine(&quot;Content-Type: text/html; charset=UTF-8&quot;)&#xA;    mime.AppendLine(&quot;Content-Transfer-Encoding: 7bit&quot;)&#xA;    mime.AppendLine()&#xA;    mime.AppendLine(body)&#xA;    mime.AppendLine()&#xA;    mime.AppendLine(&quot;--&quot; + boundary)&#xA;    mime.AppendLine(&quot;Content-Type: application/octet-stream; name=&quot;&quot;&quot; + fileName + &quot;&quot;&quot;&quot;)&#xA;    mime.AppendLine(&quot;Content-Disposition: attachment; filename=&quot;&quot;&quot; + fileName + &quot;&quot;&quot;&quot;)&#xA;    mime.AppendLine(&quot;Content-Transfer-Encoding: base64&quot;)&#xA;    mime.AppendLine()&#xA;    Dim b64 As String = Convert.ToBase64String(System.IO.File.ReadAllBytes(in_AttachmentPath))&#xA;    For i As Integer = 0 To b64.Length - 1 Step 76&#xA;        Dim ln As Integer = Math.Min(76, b64.Length - i)&#xA;        mime.AppendLine(b64.Substring(i, ln))&#xA;    Next&#xA;    mime.AppendLine(&quot;--&quot; + boundary + &quot;--&quot;)&#xA;Else&#xA;    mime.AppendLine(&quot;Content-Type: text/html; charset=UTF-8&quot;)&#xA;    mime.AppendLine()&#xA;    mime.AppendLine(body)&#xA;End If&#xA;&#xA;Dim raw As String = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(mime.ToString())).TrimEnd(&quot;=&quot;c).Replace(&quot;+&quot;, &quot;-&quot;).Replace(&quot;/&quot;, &quot;_&quot;)&#xA;out_SendJson = &quot;{&quot;&quot;raw&quot;&quot;:&quot;&quot;&quot; + raw + &quot;&quot;&quot;}&quot;&#xA;out_TokenBody = &quot;client_id=&quot; + System.Uri.EscapeDataString(out_ClientId) + &quot;&amp;client_secret=&quot; + System.Uri.EscapeDataString(out_ClientSecret) + &quot;&amp;refresh_token=&quot; + System.Uri.EscapeDataString(out_RefreshToken) + &quot;&amp;grant_type=refresh_token&quot;" DisplayName="Prepare Gmail API Payload" sap:VirtualizedContainerService.HintSize="451.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_PrepareGmailApi">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:String" x:Key="in_To">[in_strToEmail]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Subject">[in_strSubject]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_BodyHtml">[in_strBody]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_AttachmentPath">[in_strAttachmentPath]</InArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_ClientId">[strCfgClientId]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_ClientSecret">[strCfgClientSecret]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_RefreshToken">[strCfgRefreshToken]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_AccessToken">[strCfgAccessToken]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_SendJson">[strSendBodyJson]</OutArgument>
+              <OutArgument x:TypeArguments="x:String" x:Key="out_TokenBody">[strTokenBodyForm]</OutArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <If Condition="[String.IsNullOrWhiteSpace(strCfgAccessToken)]" sap:VirtualizedContainerService.HintSize="451.2,654.4" sap2010:WorkflowViewState.IdRef="If_GetToken">
+            <If.Then>
+              <Sequence DisplayName="Then" sap:VirtualizedContainerService.HintSize="449.6,351.2" sap2010:WorkflowViewState.IdRef="Sequence_GetToken">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <ui:HttpClient ClientCertificate="{x:Null}" ClientCertificatePassword="{x:Null}" ConsumerKey="{x:Null}" ConsumerSecret="{x:Null}" ContinueOnError="{x:Null}" FileAttachments="{x:Null}" OAuth1Token="{x:Null}" OAuth1TokenSecret="{x:Null}" OAuth2Token="{x:Null}" Password="{x:Null}" ResourcePath="{x:Null}" ResponseAttachment="{x:Null}" ResponseHeaders="{x:Null}" SecureClientCertificatePassword="{x:Null}" SecurePassword="{x:Null}" Username="{x:Null}" AcceptFormat="JSON" AuthenticationType="None" Body="[strTokenBodyForm]" BodyFormat="application/x-www-form-urlencoded" DisplayName="HTTP Request - Get Gmail Access Token" EnableSSLVerification="True" EndPoint="https://oauth2.googleapis.com/token" sap:VirtualizedContainerService.HintSize="340.8,103.2" sap2010:WorkflowViewState.IdRef="HttpClient_GetToken" Method="POST" Result="[strTokenApiResponse]" StatusCode="[intTokenStatusCode]" TimeoutMS="30000">
+                  <ui:HttpClient.Attachments>
+                    <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+                  </ui:HttpClient.Attachments>
+                  <ui:HttpClient.Cookies>
+                    <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+                  </ui:HttpClient.Cookies>
+                  <ui:HttpClient.Headers>
+                    <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+                  </ui:HttpClient.Headers>
+                  <ui:HttpClient.Parameters>
+                    <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+                  </ui:HttpClient.Parameters>
+                  <ui:HttpClient.UrlSegments>
+                    <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+                  </ui:HttpClient.UrlSegments>
+                </ui:HttpClient>
+                <ui:InvokeCode ContinueOnError="{x:Null}" Code="If in_Status &lt; 200 OrElse in_Status &gt;= 300 Then&#xA;    Throw New Exception(&quot;Get Gmail token failed [&quot; + in_Status.ToString() + &quot;]: &quot; + in_Response)&#xA;End If&#xA;Dim obj = Newtonsoft.Json.Linq.JObject.Parse(in_Response)&#xA;out_Token = If(obj(&quot;access_token&quot;) IsNot Nothing, obj(&quot;access_token&quot;).ToString().Trim(), &quot;&quot;)&#xA;If String.IsNullOrWhiteSpace(out_Token) Then&#xA;    Throw New Exception(&quot;Gmail token response missing access_token.&quot;)&#xA;End If" DisplayName="Parse Access Token" sap:VirtualizedContainerService.HintSize="416,188" sap2010:WorkflowViewState.IdRef="InvokeCode_ParseToken">
+                  <ui:InvokeCode.Arguments>
+                    <InArgument x:TypeArguments="x:Int32" x:Key="in_Status">[intTokenStatusCode]</InArgument>
+                    <InArgument x:TypeArguments="x:String" x:Key="in_Response">[strTokenApiResponse]</InArgument>
+                    <OutArgument x:TypeArguments="x:String" x:Key="out_Token">[strAccessToken]</OutArgument>
+                  </ui:InvokeCode.Arguments>
+                </ui:InvokeCode>
+              </Sequence>
+            </If.Then>
+            <If.Else>
+              <Assign DisplayName="Use Access Token from Config" sap:VirtualizedContainerService.HintSize="449.6,142.4" sap2010:WorkflowViewState.IdRef="Assign_UseAccessToken">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[strAccessToken]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">[strCfgAccessToken]</InArgument>
+                </Assign.Value>
+              </Assign>
+            </If.Else>
+          </If>
+          <ui:HttpClient ClientCertificate="{x:Null}" ClientCertificatePassword="{x:Null}" ConsumerKey="{x:Null}" ConsumerSecret="{x:Null}" ContinueOnError="{x:Null}" FileAttachments="{x:Null}" OAuth1Token="{x:Null}" OAuth1TokenSecret="{x:Null}" OAuth2Token="{x:Null}" Password="{x:Null}" ResourcePath="{x:Null}" ResponseAttachment="{x:Null}" ResponseHeaders="{x:Null}" SecureClientCertificatePassword="{x:Null}" SecurePassword="{x:Null}" Username="{x:Null}" AcceptFormat="JSON" AuthenticationType="None" Body="[strSendBodyJson]" BodyFormat="application/json" DisplayName="HTTP Request - Send Gmail Message" EnableSSLVerification="True" EndPoint="https://gmail.googleapis.com/gmail/v1/users/me/messages/send" sap:VirtualizedContainerService.HintSize="451.2,103.2" sap2010:WorkflowViewState.IdRef="HttpClient_SendGmail" Method="POST" Result="[strSendApiResponse]" StatusCode="[intSendStatusCode]" TimeoutMS="30000">
+            <ui:HttpClient.Attachments>
+              <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+            </ui:HttpClient.Attachments>
+            <ui:HttpClient.Cookies>
+              <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+            </ui:HttpClient.Cookies>
+            <ui:HttpClient.Headers>
+              <InArgument x:TypeArguments="x:String" x:Key="Authorization">["Bearer " + strAccessToken]</InArgument>
+            </ui:HttpClient.Headers>
+            <ui:HttpClient.Parameters>
+              <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+            </ui:HttpClient.Parameters>
+            <ui:HttpClient.UrlSegments>
+              <scg:Dictionary x:TypeArguments="x:String, InArgument(x:String)" />
+            </ui:HttpClient.UrlSegments>
+          </ui:HttpClient>
+          <ui:InvokeCode ContinueOnError="{x:Null}" Code="If in_Status &lt; 200 OrElse in_Status &gt;= 300 Then&#xA;    Throw New Exception(&quot;Gmail send failed [&quot; + in_Status.ToString() + &quot;]: &quot; + in_Response)&#xA;End If" DisplayName="Validate Gmail Send Response" sap:VirtualizedContainerService.HintSize="451.2,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ValidateSendResponse">
+            <ui:InvokeCode.Arguments>
+              <InArgument x:TypeArguments="x:Int32" x:Key="in_Status">[intSendStatusCode]</InArgument>
+              <InArgument x:TypeArguments="x:String" x:Key="in_Response">[strSendApiResponse]</InArgument>
+            </ui:InvokeCode.Arguments>
+          </ui:InvokeCode>
+          <Assign sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Set Success" sap:VirtualizedContainerService.HintSize="451.2,174.4" sap2010:WorkflowViewState.IdRef="Assign_1">
             <Assign.To>
               <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
             </Assign.To>
@@ -160,10 +217,7 @@ Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" s
               <InArgument x:TypeArguments="x:Boolean">True</InArgument>
             </Assign.Value>
           </Assign>
-          <Assign DisplayName="Clear Error" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_2">
+          <Assign sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Clear Error" sap:VirtualizedContainerService.HintSize="451.2,165.6" sap2010:WorkflowViewState.IdRef="Assign_2">
             <Assign.To>
               <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
             </Assign.To>
@@ -174,24 +228,18 @@ Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,165.6" s
         </Sequence>
       </TryCatch.Try>
       <TryCatch.Catches>
-        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="456,21" sap2010:WorkflowViewState.IdRef="Catch`1_1">
-          <ActivityAction x:TypeArguments="s:Exception">
+        <Catch x:TypeArguments="s:FormatException" sap:VirtualizedContainerService.HintSize="456,21" sap2010:WorkflowViewState.IdRef="Catch`1_FormatException">
+          <ActivityAction x:TypeArguments="s:FormatException">
             <ActivityAction.Argument>
-              <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+              <DelegateInArgument x:TypeArguments="s:FormatException" Name="exception" />
             </ActivityAction.Argument>
-            <Sequence DisplayName="Handle Error" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Sequence_3">
+            <Sequence DisplayName="Handle Invalid Email Format" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Sequence_HandleInvalidEmailFormat">
               <sap:WorkflowViewStateService.ViewState>
                 <scg:Dictionary x:TypeArguments="x:String, x:Object">
                   <x:Boolean x:Key="IsExpanded">True</x:Boolean>
                 </scg:Dictionary>
               </sap:WorkflowViewStateService.ViewState>
-              <Assign DisplayName="Set Fail" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
+              <Assign DisplayName="Set Fail (Invalid Email)" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_SetFailInvalidEmail">
                 <Assign.To>
                   <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
                 </Assign.To>
@@ -199,15 +247,42 @@ Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,174.4" s
                   <InArgument x:TypeArguments="x:Boolean">False</InArgument>
                 </Assign.Value>
               </Assign>
-              <Assign DisplayName="Set Error Msg" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_4">
+              <Assign DisplayName="Set Error Msg (Invalid Email)" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_SetErrorInvalidEmail">
                 <Assign.To>
                   <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
                 </Assign.To>
                 <Assign.Value>
-                  <InArgument x:TypeArguments="x:String">[exception.Message]</InArgument>
+                  <InArgument x:TypeArguments="x:String">["Invalid email format: " + in_strToEmail + " | " + exception.Message]</InArgument>
+                </Assign.Value>
+              </Assign>
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="456,21" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+            </ActivityAction.Argument>
+            <Sequence sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Handle Error" sap:VirtualizedContainerService.HintSize="449.6,400" sap2010:WorkflowViewState.IdRef="Sequence_3">
+              <sap:WorkflowViewStateService.ViewState>
+                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                </scg:Dictionary>
+              </sap:WorkflowViewStateService.ViewState>
+              <Assign sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Set Fail" sap:VirtualizedContainerService.HintSize="416,174.4" sap2010:WorkflowViewState.IdRef="Assign_3">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:Boolean">[out_IsSent]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:Boolean">False</InArgument>
+                </Assign.Value>
+              </Assign>
+              <Assign sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Set Error Msg" sap:VirtualizedContainerService.HintSize="416,165.6" sap2010:WorkflowViewState.IdRef="Assign_4">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[out_Error]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">[If(exception Is Nothing, "Unknown exception", If(exception.InnerException IsNot Nothing, exception.InnerException.ToString() + " | Outer: " + exception.ToString(), exception.ToString()))]</InArgument>
                 </Assign.Value>
               </Assign>
             </Sequence>
@@ -215,10 +290,7 @@ Status: Production Ready" sap:VirtualizedContainerService.HintSize="416,165.6" s
         </Catch>
       </TryCatch.Catches>
       <TryCatch.Finally>
-        <Sequence DisplayName="Finalize Send Gmail" sap2010:Annotation.AnnotationText="Module_SendGmail.xaml
-Purpose: Automates Job Posting workflow via Canva API and GSuite Email.
-Author: RPA Framework Team
-Status: Production Ready" sap:VirtualizedContainerService.HintSize="449.6,89.6" sap2010:WorkflowViewState.IdRef="Sequence_4">
+        <Sequence sap2010:Annotation.AnnotationText="Module_SendGmail.xaml Purpose: Automates Job Posting workflow via Canva API and GSuite Email. Author: RPA Framework Team Status: Production Ready" DisplayName="Finalize Send Gmail" sap:VirtualizedContainerService.HintSize="449.6,89.6" sap2010:WorkflowViewState.IdRef="Sequence_4">
           <sap:WorkflowViewStateService.ViewState>
             <scg:Dictionary x:TypeArguments="x:String, x:Object">
               <x:Boolean x:Key="IsExpanded">True</x:Boolean>

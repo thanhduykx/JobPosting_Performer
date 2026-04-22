@@ -1,0 +1,88 @@
+﻿<Activity mc:Ignorable="sap sap2010" x:Class="Module_PreviewAndConfirm" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="in_GlobalEmail" Type="InArgument(x:String)" />
+    <x:Property Name="in_Report" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="in_PreviewFile" Type="InArgument(x:String)" />
+    <x:Property Name="in_EmailDT" Type="InArgument(sd:DataTable)" />
+    <x:Property Name="out_PreviewResult" Type="OutArgument(x:String)" />
+    <x:Property Name="out_EmailListStr" Type="OutArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>866,800</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>Module_PreviewAndConfirm_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Linq.Expressions</x:String>
+      <x:String>System.Runtime.Serialization</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="48">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.IO</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+      <AssemblyReference>UiPath.Studio.Constants</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities.Design</AssemblyReference>
+      <AssemblyReference>System.Console</AssemblyReference>
+      <AssemblyReference>System.Security.Permissions</AssemblyReference>
+      <AssemblyReference>System.Configuration.ConfigurationManager</AssemblyReference>
+      <AssemblyReference>System.ComponentModel</AssemblyReference>
+      <AssemblyReference>System.Private.Uri</AssemblyReference>
+      <AssemblyReference>System.Linq.Expressions</AssemblyReference>
+      <AssemblyReference>System.Private.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Private.DataContractSerialization</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Formatters</AssemblyReference>
+      <AssemblyReference>System.Runtime.Serialization.Primitives</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Display poster preview and email list, wait for user confirmation.&#xA;Input: in_GlobalEmail, in_Report (poster data), in_PreviewFile (HTML).&#xA;Output: out_PreviewResult (CONFIRM or CANCEL), out_EmailListStr (recipient list).&#xA;Main steps: Build HTML with poster/email JSON, launch Edge, poll for user action." DisplayName="Module_PreviewAndConfirm" sap:VirtualizedContainerService.HintSize="886,385.6" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:LogMessage DisplayName="Log Message - Strat Module Preview" sap:VirtualizedContainerService.HintSize="449.6,174.4" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Start Preview And Confirm&quot;]" />
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim emailList As New List(Of String)()&#xA;If Not String.IsNullOrWhiteSpace(in_GlobalEmail) Then&#xA;    For Each em As String In in_GlobalEmail.Split(New Char() {&quot;;&quot;c, &quot;,&quot;c}, StringSplitOptions.RemoveEmptyEntries)&#xA;        emailList.Add(&quot;|&quot; + em.Trim())&#xA;    Next&#xA;Else&#xA;    If in_EmailDT IsNot Nothing Then&#xA;        Dim emailCol As String = &quot;&quot;&#xA;        Dim nameCol As String = &quot;&quot;&#xA;        For Each col As System.Data.DataColumn In in_EmailDT.Columns&#xA;            Dim h As String = col.ColumnName.ToUpper()&#xA;            If h.Contains(&quot;EMAIL&quot;) Then emailCol = col.ColumnName&#xA;            If h.Contains(&quot;EMPLOYEE&quot;) OrElse h.Contains(&quot;NAME&quot;) OrElse h.Contains(&quot;CANDIDATE&quot;) Then nameCol = col.ColumnName&#xA;        Next&#xA;        If Not String.IsNullOrEmpty(emailCol) Then&#xA;            For Each r As System.Data.DataRow In in_EmailDT.Rows&#xA;                Dim email As String = If(r(emailCol) IsNot DBNull.Value AndAlso r(emailCol) IsNot Nothing, r(emailCol).ToString().Trim(), &quot;&quot;)&#xA;                Dim name As String = If(Not String.IsNullOrEmpty(nameCol) AndAlso r(nameCol) IsNot DBNull.Value AndAlso r(nameCol) IsNot Nothing, r(nameCol).ToString().Trim(), &quot;&quot;)&#xA;                If Not String.IsNullOrWhiteSpace(email) Then&#xA;                    emailList.Add(name + &quot;|&quot; + email)&#xA;                End If&#xA;            Next&#xA;        End If&#xA;    End If&#xA;End If&#xA;&#xA;Dim posterArr As New Newtonsoft.Json.Linq.JArray()&#xA;If in_Report IsNot Nothing Then&#xA;    For Each row As System.Data.DataRow In in_Report.Rows&#xA;        Dim obj As New Newtonsoft.Json.Linq.JObject()&#xA;        obj(&quot;role&quot;) = Convert.ToString(row(&quot;Role&quot;))&#xA;        Dim fPath As String = Convert.ToString(row(&quot;FilePath&quot;))&#xA;        Dim b64 As String = &quot;&quot;&#xA;        Try&#xA;            If System.IO.File.Exists(fPath) Then&#xA;                b64 = &quot;data:image/png;base64,&quot; + Convert.ToBase64String(System.IO.File.ReadAllBytes(fPath))&#xA;            End If&#xA;        Catch&#xA;        End Try&#xA;        obj(&quot;path&quot;) = b64&#xA;        obj(&quot;success&quot;) = Convert.ToString(row(&quot;Status&quot;)).Equals(&quot;Success&quot;)&#xA;        posterArr.Add(obj)&#xA;    Next&#xA;End If&#xA;&#xA;Dim emailArr As New Newtonsoft.Json.Linq.JArray()&#xA;For Each entry As String In emailList&#xA;    Dim parts = entry.Split(&quot;|&quot;c)&#xA;    Dim obj As New Newtonsoft.Json.Linq.JObject()&#xA;    obj(&quot;name&quot;) = If(parts.Length &gt; 1, parts(0).Trim(), &quot;&quot;)&#xA;    obj(&quot;email&quot;) = parts(parts.Length - 1).Trim()&#xA;    emailArr.Add(obj)&#xA;Next&#xA;&#xA;Dim htmlContent As String = System.IO.File.ReadAllText(in_PreviewFile)&#xA;Dim jsInject As String = &quot;&lt;script&gt;var global_poster_data = &quot; + posterArr.ToString() + &quot;; var global_email_data = &quot; + emailArr.ToString() + &quot;;&lt;/script&gt;&quot;&#xA;htmlContent = htmlContent.Replace(&quot;&lt;/head&gt;&quot;, jsInject + vbCrLf + &quot;&lt;/head&gt;&quot;)&#xA;Dim runFile As String = in_PreviewFile.Replace(&quot;.html&quot;, &quot;_Run.html&quot;)&#xA;System.IO.File.WriteAllText(runFile, htmlContent, System.Text.Encoding.UTF8)&#xA;&#xA;Dim sessionId As String = System.Guid.NewGuid().ToString(&quot;N&quot;)&#xA;Dim edgePath As String = &quot;C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;C:\Program Files\Microsoft\Edge\Application\msedge.exe&quot;&#xA;If Not System.IO.File.Exists(edgePath) Then edgePath = &quot;msedge.exe&quot;&#xA;&#xA;Dim url As String = &quot;file:///&quot; + runFile.Replace(&quot;\&quot;, &quot;/&quot;) + &quot;?session=&quot; + sessionId&#xA;Dim psi As New System.Diagnostics.ProcessStartInfo()&#xA;psi.FileName = edgePath&#xA;psi.Arguments = &quot;--app=&quot;&quot;&quot; + url + &quot;&quot;&quot; --new-window&quot;&#xA;psi.UseShellExecute = True&#xA;psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Maximized&#xA;System.Diagnostics.Process.Start(psi)&#xA;Dim uiTitle As String = &quot;CANVA_PREVIEW::&quot; + sessionId&#xA;Dim uiFile As String = System.IO.Path.GetFileName(runFile)&#xA;Dim prefix As String = &quot;RESULT::&quot; + sessionId + &quot;::&quot;&#xA;Dim result As String = &quot;&quot;&#xA;Dim windowClosed As Boolean = False&#xA;Dim uiSeen As Boolean = False&#xA;Dim uiPid As Integer = -1&#xA;Dim missingTitleTicks As Integer = 0&#xA;Dim waitForOpenUntil As DateTime = DateTime.Now.AddSeconds(20)&#xA;Dim timeoutAt As DateTime = DateTime.Now.AddMinutes(30)&#xA;Do While DateTime.Now &lt; timeoutAt AndAlso String.IsNullOrEmpty(result)&#xA;    System.Threading.Thread.Sleep(300)&#xA;    If uiPid &lt; 0 Then&#xA;        For Each p As System.Diagnostics.Process In System.Diagnostics.Process.GetProcessesByName(&quot;msedge&quot;)&#xA;            Dim title As String = &quot;&quot;&#xA;            Try&#xA;                title = p.MainWindowTitle&#xA;            Catch&#xA;            End Try&#xA;            If String.IsNullOrWhiteSpace(title) Then Continue For&#xA;            If title.Contains(prefix) Then&#xA;                Dim idx As Integer = title.IndexOf(prefix)&#xA;                If idx &gt;= 0 Then&#xA;                    result = title.Substring(idx + prefix.Length)&#xA;                End If&#xA;                Try&#xA;                    result = System.Uri.UnescapeDataString(result)&#xA;                Catch&#xA;                End Try&#xA;                Try&#xA;                    p.CloseMainWindow()&#xA;                Catch&#xA;                End Try&#xA;                Exit For&#xA;            End If&#xA;            If title.Contains(uiTitle) Then&#xA;                uiSeen = True&#xA;                uiPid = p.Id&#xA;                Exit For&#xA;            End If&#xA;        Next&#xA;        If String.IsNullOrEmpty(result) AndAlso (Not uiSeen) AndAlso DateTime.Now &gt; waitForOpenUntil Then&#xA;            windowClosed = True&#xA;            Exit Do&#xA;        End If&#xA;    Else&#xA;        Dim uiProc As System.Diagnostics.Process = Nothing&#xA;        Try&#xA;            uiProc = System.Diagnostics.Process.GetProcessById(uiPid)&#xA;            If uiProc Is Nothing OrElse uiProc.HasExited Then&#xA;                windowClosed = True&#xA;                Exit Do&#xA;            End If&#xA;        Catch&#xA;            windowClosed = True&#xA;            Exit Do&#xA;        End Try&#xA;        Dim hwnd As IntPtr = IntPtr.Zero&#xA;        Try&#xA;            hwnd = uiProc.MainWindowHandle&#xA;        Catch&#xA;        End Try&#xA;        If hwnd = IntPtr.Zero Then&#xA;            windowClosed = True&#xA;            Exit Do&#xA;        End If&#xA;        Dim currentTitle As String = &quot;&quot;&#xA;        Try&#xA;            currentTitle = uiProc.MainWindowTitle&#xA;        Catch&#xA;        End Try&#xA;        If String.IsNullOrWhiteSpace(currentTitle) Then&#xA;            missingTitleTicks += 1&#xA;            If missingTitleTicks &gt;= 8 Then&#xA;                windowClosed = True&#xA;                Exit Do&#xA;            End If&#xA;            Continue Do&#xA;        Else&#xA;            missingTitleTicks = 0&#xA;        End If&#xA;        If currentTitle.Contains(prefix) Then&#xA;            Dim idx As Integer = currentTitle.IndexOf(prefix)&#xA;            If idx &gt;= 0 Then&#xA;                result = currentTitle.Substring(idx + prefix.Length)&#xA;            End If&#xA;            Try&#xA;                result = System.Uri.UnescapeDataString(result)&#xA;            Catch&#xA;            End Try&#xA;            Try&#xA;                uiProc.CloseMainWindow()&#xA;            Catch&#xA;            End Try&#xA;            Exit Do&#xA;        End If&#xA;    End If&#xA;Loop&#xA;If String.IsNullOrWhiteSpace(result) Then&#xA;    If windowClosed Then&#xA;        Throw New Exception(&quot;User closed UI window at &quot; + uiTitle + &quot; (&quot; + uiFile + &quot;). Workflow stopped.&quot;)&#xA;    End If&#xA;    Throw New Exception(&quot;Timed out waiting for user action at &quot; + uiTitle + &quot; (&quot; + uiFile + &quot;).&quot;)&#xA;End If&#xA;&#xA;out_PreviewResult = result&#xA;out_EmailListStr = String.Join(&quot;;&quot;, emailList)" DisplayName="Build Preview &amp; Wait for Confirmation (extracted)" sap:VirtualizedContainerService.HintSize="449.6,188" sap2010:WorkflowViewState.IdRef="InvokeCode_Preview">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_GlobalEmail">[in_GlobalEmail]</InArgument>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_Report">[in_Report]</InArgument>
+        <InArgument x:TypeArguments="x:String" x:Key="in_PreviewFile">[in_PreviewFile]</InArgument>
+        <InArgument x:TypeArguments="sd:DataTable" x:Key="in_EmailDT">[in_EmailDT]</InArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_PreviewResult">[out_PreviewResult]</OutArgument>
+        <OutArgument x:TypeArguments="x:String" x:Key="out_EmailListStr">[out_EmailListStr]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+  </Sequence>
+</Activity>

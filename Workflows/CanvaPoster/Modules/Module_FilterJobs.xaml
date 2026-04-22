@@ -1,0 +1,108 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Module_FilterJobs" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=System.Private.CoreLib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data.Common" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="io_Jobs" Type="InOutArgument(sd:DataTable)" />
+    <x:Property Name="in_SelectedStr" Type="InArgument(x:String)" />
+  </x:Members>
+  <VisualBasic.Settings>
+    <x:Null />
+  </VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>866,1200</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>Module_FilterJobs_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="32">
+      <x:String>GlobalConstantsNamespace</x:String>
+      <x:String>GlobalVariablesNamespace</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Collections.ObjectModel</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="24">
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>System.Collections</AssemblyReference>
+      <AssemblyReference>System.ComponentModel.TypeConverter</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.IO</AssemblyReference>
+      <AssemblyReference>System.Linq</AssemblyReference>
+      <AssemblyReference>System.Memory</AssemblyReference>
+      <AssemblyReference>System.ObjectModel</AssemblyReference>
+      <AssemblyReference>System.Private.CoreLib</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Workflow</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence sap2010:Annotation.AnnotationText="Goal: Filter jobs by selected roles and aggregate to GROUP row if multiple selected.&#xA;Input: io_Jobs (DataTable), in_SelectedStr (semicolon-separated job list).&#xA;Output: io_Jobs filtered/aggregated.&#xA;Main steps: Parse selections -> Filter rows -> If 2+ roles, create GROUP aggregation." DisplayName="Module_FilterJobs" sap:VirtualizedContainerService.HintSize="883.6,1500" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="scg:List(x:String)" Name="lstSelectedJobs" />
+      <Variable x:TypeArguments="x:Boolean" Name="bolHasAll" />
+      <Variable x:TypeArguments="x:Int32" Name="intSelectedCount" />
+      <Variable x:TypeArguments="x:Boolean" Name="bolIsGroupMode" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <ui:InvokeCode ContinueOnError="{x:Null}" Code="' Parse selected jobs from semicolon-separated string&#xA;Dim selectedJobs As New List(Of String)()&#xA;If Not String.IsNullOrWhiteSpace(in_SelectedStr) Then&#xA;    Dim items = in_SelectedStr.Split(&quot;;&quot;c).Select(Function(s) s.Trim()).Where(Function(s) Not String.IsNullOrWhiteSpace(s)).Distinct(StringComparer.OrdinalIgnoreCase).ToList()&#xA;    selectedJobs.AddRange(items)&#xA;End If&#xA;out_SelectedList = selectedJobs&#xA;out_HasAll = selectedJobs.Any(Function(s) s.Equals(&quot;ALL&quot;, StringComparison.OrdinalIgnoreCase))" DisplayName="Parse Selected Jobs" sap:VirtualizedContainerService.HintSize="450,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_ParseJobs">
+      <ui:InvokeCode.Arguments>
+        <InArgument x:TypeArguments="x:String" x:Key="in_SelectedStr">[in_SelectedStr]</InArgument>
+        <OutArgument x:TypeArguments="scg:List(x:String)" x:Key="out_SelectedList">[lstSelectedJobs]</OutArgument>
+        <OutArgument x:TypeArguments="x:Boolean" x:Key="out_HasAll">[bolHasAll]</OutArgument>
+      </ui:InvokeCode.Arguments>
+    </ui:InvokeCode>
+    <If Condition="[lstSelectedJobs.Count &gt; 0 AndAlso Not bolHasAll]" DisplayName="If Need to Filter" sap:VirtualizedContainerService.HintSize="450,400" sap2010:WorkflowViewState.IdRef="If_Filter">
+      <If.Then>
+        <ui:InvokeCode ContinueOnError="{x:Null}" Code="If io_Jobs Is Nothing OrElse io_Jobs.Rows.Count = 0 Then Return&#xA;&#xA;Dim rows = io_Jobs.AsEnumerable().Where(&#xA;    Function(r) lstSelectedJobs.Contains(Convert.ToString(r(&quot;Role&quot;)).Trim(), StringComparer.OrdinalIgnoreCase)&#xA;).ToArray()&#xA;&#xA;If rows.Length &gt; 0 Then&#xA;    io_Jobs = rows.CopyToDataTable()&#xA;Else&#xA;    io_Jobs = io_Jobs.Clone()&#xA;End If" DisplayName="Filter by Selected Roles" sap:VirtualizedContainerService.HintSize="400,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_FilterRows">
+          <ui:InvokeCode.Arguments>
+            <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_Jobs">[io_Jobs]</InOutArgument>
+            <InArgument x:TypeArguments="scg:List(x:String)" x:Key="lstSelectedJobs">[lstSelectedJobs]</InArgument>
+          </ui:InvokeCode.Arguments>
+        </ui:InvokeCode>
+      </If.Then>
+    </If>
+    <Assign DisplayName="Calculate Selected Count" sap:VirtualizedContainerService.HintSize="450,100" sap2010:WorkflowViewState.IdRef="Assign_Count">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Int32">[intSelectedCount]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Int32">[If(bolHasAll, If(io_Jobs IsNot Nothing, io_Jobs.Rows.Count, 0), lstSelectedJobs.Count)]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <Assign DisplayName="Set GroupMode Flag" sap:VirtualizedContainerService.HintSize="450,100" sap2010:WorkflowViewState.IdRef="Assign_GroupMode">
+      <Assign.To>
+        <OutArgument x:TypeArguments="x:Boolean">[bolIsGroupMode]</OutArgument>
+      </Assign.To>
+      <Assign.Value>
+        <InArgument x:TypeArguments="x:Boolean">[intSelectedCount &gt;= 2]</InArgument>
+      </Assign.Value>
+    </Assign>
+    <If Condition="[bolIsGroupMode AndAlso io_Jobs IsNot Nothing AndAlso io_Jobs.Rows.Count &gt; 0]" DisplayName="If Group Mode - Aggregate" sap:VirtualizedContainerService.HintSize="450,600" sap2010:WorkflowViewState.IdRef="If_GroupMode">
+      <If.Then>
+        <ui:InvokeCode ContinueOnError="{x:Null}" Code="Dim srcRows = io_Jobs.AsEnumerable().ToList()&#xA;Dim agg As DataTable = io_Jobs.Clone()&#xA;Dim newRow As DataRow = agg.NewRow()&#xA;&#xA;For Each col As DataColumn In io_Jobs.Columns&#xA;    Dim colName As String = col.ColumnName&#xA;    Dim values = srcRows.Select(Function(r) If(r(colName) Is DBNull.Value OrElse r(colName) Is Nothing, &quot;&quot;, r(colName).ToString().Trim())).Where(Function(v) Not String.IsNullOrWhiteSpace(v)).Distinct(StringComparer.OrdinalIgnoreCase).ToList()&#xA;&#xA;    If values.Count = 0 Then&#xA;        newRow(colName) = &quot;&quot;&#xA;    ElseIf values.Count = 1 Then&#xA;        newRow(colName) = values(0)&#xA;    Else&#xA;        Dim lower As String = colName.Trim().ToLowerInvariant()&#xA;        If lower.Contains(&quot;role&quot;) OrElse lower.Contains(&quot;qual&quot;) Then&#xA;            Dim formattedLines As New List(Of String)()&#xA;            For i As Integer = 0 To values.Count - 1 Step 2&#xA;                Dim col1 As String = values(i)&#xA;                If i + 1 &lt; values.Count Then&#xA;                    Dim col2 As String = values(i + 1)&#xA;                    formattedLines.Add(col1.PadRight(35) + col2)&#xA;                Else&#xA;                    formattedLines.Add(col1)&#xA;                End If&#xA;            Next&#xA;            newRow(colName) = String.Join(vbLf, formattedLines)&#xA;        Else&#xA;            newRow(colName) = String.Join(&quot; | &quot;, values)&#xA;        End If&#xA;    End If&#xA;Next&#xA;&#xA;agg.Rows.Add(newRow)&#xA;io_Jobs = agg" DisplayName="Create GROUP Aggregation Row" sap:VirtualizedContainerService.HintSize="400,196.8" sap2010:WorkflowViewState.IdRef="InvokeCode_AggregateGroup">
+          <ui:InvokeCode.Arguments>
+            <InOutArgument x:TypeArguments="sd:DataTable" x:Key="io_Jobs">[io_Jobs]</InOutArgument>
+          </ui:InvokeCode.Arguments>
+        </ui:InvokeCode>
+      </If.Then>
+    </If>
+    <ui:LogMessage DisplayName="Log Filter Result" sap:VirtualizedContainerService.HintSize="450,80" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;FilterJobs: Processed &quot; + If(io_Jobs IsNot Nothing, io_Jobs.Rows.Count.ToString(), &quot;0&quot;) + &quot; job rows (GroupMode=&quot; + bolIsGroupMode.ToString() + &quot;)&quot;]" />
+  </Sequence>
+</Activity>

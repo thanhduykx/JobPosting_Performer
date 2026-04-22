@@ -114,13 +114,29 @@
     </style>
     <script>
         let isFinishing = false;
+        (function () {
+            function forceMaximize() {
+                try {
+                    window.moveTo(0, 0);
+                    window.resizeTo(screen.availWidth, screen.availHeight);
+                    if (window.outerWidth < screen.availWidth - 30 || window.outerHeight < screen.availHeight - 30) {
+                        window.moveTo(0, 0);
+                        window.resizeTo(screen.width, screen.height);
+                    }
+                } catch (e) { }
+            }
+            window.addEventListener('load', function () {
+                setTimeout(forceMaximize, 50);
+                setTimeout(forceMaximize, 300);
+            });
+        })();
     </script>
 </head>
 <body>
     <div class="container">
         <div class="loader"></div>
         <h2 id="task-title">Processing</h2>
-        <p>The system is currently generating high-quality posters via Canva...</p>
+        <p id="task-desc">The system is currently generating high-quality posters via Canva...</p>
         <div class="progress-bar">
             <div class="progress-fill"></div>
         </div>
@@ -133,9 +149,21 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const task = urlParams.get('task');
+        const titleEl = document.getElementById('task-title');
+        const statusEl = document.getElementById('status-text');
+        const descEl = document.getElementById('task-desc');
         if (task) {
-            document.getElementById('task-title').innerText = task;
-            document.getElementById('status-text').innerText = "Working on " + task + "...";
+            titleEl.innerText = task;
+            const t = task.toLowerCase();
+            if (t.includes('approval')) {
+                descEl.innerText = "Please wait while the system checks the leader's decision from Gmail.";
+                statusEl.innerText = "Checking approval response...";
+            } else if (t.includes('sending')) {
+                descEl.innerText = "The system is now sending emails to all approved recipients.";
+                statusEl.innerText = "Sending bulk emails...";
+            } else {
+                statusEl.innerText = "Working on " + task + "...";
+            }
         }
 
         const SESSION_ID = urlParams.get('session') || 'default';
@@ -169,6 +197,36 @@
                 probe.onload = doSelfClose;
                 // Cache-bust so we always hit disk.
                 probe.src = sentinelUrl + '?t=' + Date.now();
+            }, 500);
+        })();
+
+        // Decision sentinel. Approval gate writes one of these files:
+        // - ../Temp/leader_approved_<sid>.png
+        // - ../Temp/leader_denied_<sid>.png
+        // When detected, we navigate to the decision page in the SAME window.
+        (function () {
+            const approvedUrl = '../Temp/leader_approved_' + SESSION_ID + '.png';
+            const deniedUrl = '../Temp/leader_denied_' + SESSION_ID + '.png';
+            let navigated = false;
+            function go(page) {
+                if (navigated) return;
+                navigated = true;
+                isFinishing = true;
+                try {
+                    window.location.replace(page + '?session=' + encodeURIComponent(SESSION_ID) + '&t=' + Date.now());
+                } catch (_) {
+                    try { window.location.href = page; } catch (_) { }
+                }
+            }
+            setInterval(function () {
+                if (navigated || isFinishing) return;
+                const a = new Image();
+                a.onload = function () { go('CanvaApprovalApproved.html'); };
+                a.src = approvedUrl + '?t=' + Date.now();
+
+                const d = new Image();
+                d.onload = function () { go('CanvaApprovalDenied.html'); };
+                d.src = deniedUrl + '?t=' + Date.now();
             }, 500);
         })();
 
